@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>话题</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.min.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body ontouchstart id="bodyBackground">
+    <header class='weui-header'>
+        <a href="javascript:;" class="turn" title=""><i class="iconfont">&#xe601;</i></a>
+        <h1 class="weui-title">体育商户圈</h1>
+        <a href="#" class="convert-btn"><img src="images/tiyu_03.png" alt=""></a>
+    </header>
+
+    <div class="order-item huati">
+        <div class="weui_cells">
+            <div class="weui_cell">
+                <div class="weui_cell_hd">
+                    <img src="images/huati_03.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong style="font-weight: normal;font-size: 16px;">一念慎思量</strong><span class="touxian"><img src="images/huati_06.png" alt=""></span>头衔
+                    <div><span class="gray" style="font-size: 12px;">2016-7-14</span><b class="gray" style="font-weight: normal;font-size: 12px">22:13:37</b></div>
+                </div>
+                <div class="weui_cell_ft gray" style="color:#999999;margin-top:2px;">
+                     楼主
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <p style="font-size: 20px;">蒙西水泥厂能给我们司机安装一个450兆的大点外派吗</p>
+            <div class="time" style="color:#777777;"><span>2015-5-24</span><b style="font-weight: normal;">22:15</b></div>
+            <div class="topic_xiangqin" style="color:#777777;">
+                蒙西水泥厂能给我们司机安装一个450兆的大点外派吗,等着时，玩游戏
+            </div>
+        </div>
+        <div class="weui_cells renshu">
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p style="font-size: 90%;color:#bdbdbd;"><img src="images/tiyu_22.png" alt="">26</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--------全部评论--------->
+    <div class="all">
+        <div class="weui_cells weui_cells_access">
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_hd">
+                    <span style="width:5px;height:20px;background:#0cb5f2;margin-right:10px;display:block"></span>
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p style="color:#505050;font-weight: 500;">全部评论</p>
+                </div>
+            </a>
+        </div>
+        <div class="message" id="list-1">
+            <div class="order-item">
+                <div class="weui_cells">
+                    <div class="weui_cell">
+                        <div class="weui_cell_hd" style="margin-top: -5px;">
+                            <img src="images/tiyu_07.png" alt="icon" style="width:30px;border-radius: 30px;margin-right:10px;display:block">
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary" style="color:#9d9d9d;">
+                            道 <span style="padding:0px 7px;margin-left:5px;font-size: 12px; background:#f8bf4d;color:#fff;display: inline-block;">LV<b style="font-weight: normal;">1</b></span>
+                            <div style="margin-top: 10px;"><span class="gray" style="font-size: 14px;color:#777;">给你外派到哪合适？</span></div>
+                        </div>
+                        <div class="weui_cell_ft gray">
+                            <san>3楼</san>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_cells dj">
+                    <a class="weui_cell" href="javascript:;">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p style="color:#d3d3d3;">6个月前</p>
+                        </div>
+                        <div class="weui_cell_ft">
+                            <img src="images/tiyu_11.png" alt="">
+                            <img src="images/tiyu_13.png" alt="">
+                            <img src="images/tiyu_15.png" alt="">
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="order-item">
+                <div class="weui_cells">
+                    <div class="weui_cell">
+                        <div class="weui_cell_hd" style="margin-top: -5px;">
+                            <img src="images/huati_18.png" alt="icon" style="width:30px;border-radius: 30px;margin-right:10px;display:block">
+                        </div>
+                        <div class="weui_cell_bd weui_cell_primary" style="color:#9d9d9d;">
+                            道 <span style="padding:0px 7px;margin-left:5px;font-size: 12px; background:#f8bf4d;color:#fff;display: inline-block;">LV<b style="font-weight: normal;">1</b></span>
+                            <div style="margin-top: 10px;"><span class="gray" style="font-size: 14px;color:#777;">说的好啊！</span></div>
+                        </div>
+                        <div class="weui_cell_ft gray">
+                            <san>4楼</san>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_cells dj">
+                    <a class="weui_cell" href="javascript:;">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <p style="color:#d3d3d3;display: inline-block;">刚刚</p><span style="color:#7285a9;margin-left:10px;">删除</span>
+                        </div>
+                        <div class="weui_cell_ft">
+                            <img src="images/tiyu_11.png" alt="">
+                            <img src="images/tiyu_13.png" alt="">
+                            <img src="images/tiyu_15.png" alt="">
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="weui-infinite-scroll" style="margin-bottom:44px;">
+            <div class="infinite-preloader"></div><!-- 菊花 -->
+            正在加载... <!-- 文案，可以自行修改 -->
+        </div>
+    </div>
+
+    <!---------------底部------------->
+    <div id="bot">
+        <div class="weui-row weui-no-gutter bottom">
+            <div class="weui-col-33 pinlun">
+                <img src="images/ht_03.png" alt="">
+                <span>4</span>
+            </div>
+            <div class="weui-col-33">
+                <img src="images/huati_21.png" alt="">
+                <span>1</span>
+            </div>
+            <div class="weui-col-33">
+                <img src="images/ht_06.png" alt="">
+                <span>1</span>
+            </div>
+        </div>
+    </div>
+
+    <!-----------半透明层--------->
+    <div class="modal">  <!--半透明的背景层-->
+        <div class="modal-dialog"> <!--定位和宽高-->
+            <div class="modal-content"> <!--背景和边框-->
+                <div class="weui_cells weui_cells_form">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <textarea class="weui_textarea" placeholder="内容，2-700个字" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_cells">
+                    <div class="weui_cell">
+                        <div class="weui_cell_ft weui_cell_primary">
+                            <span>取消</span><b style="font-weight: normal;margin-left:10px;">发表</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/jquery-weui.min.js"></script>
+    <script src="js/topic.js"></script>
+</body>
+</html>

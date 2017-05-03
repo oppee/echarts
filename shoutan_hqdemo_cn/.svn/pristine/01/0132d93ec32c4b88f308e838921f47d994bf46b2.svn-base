@@ -1,0 +1,27 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+
+    <div class="controls">
+        <div class="input-append date {$tca.class} form_{$tca.mode}">
+            <gt name="info[$name]" value="0">
+                <if condition="$tca['mode'] eq 'datetime'">
+                    <input size="16" type="text" name="{$name}" value="{$info[$name]|date='Y-m-d H:i:s',###}"
+                           readonly="readonly" class="m-wrap"  />
+                <else/>
+                    <if condition="$tca['mode'] eq 'time'">
+                        <input size="16" type="text" name="{$name}" value="{$info[$name]|date='H:i:s',###}"
+                               readonly="readonly" class="m-wrap"  />
+                    <else/>
+                        <input size="16" type="text" name="{$name}" value="{$info[$name]|date='Y-m-d',###}"
+                               readonly="readonly" class="m-wrap"  />
+                    </if>
+                </if>
+            <else/>
+                <input size="16" type="text" name="{$name}" value="" readonly="readonly" class="m-wrap"  />
+            </gt>
+            <span class="add-on"><i class="icon-remove"></i></span>
+            <span class="add-on"><i class="icon-calendar"></i></span>
+        </div>
+        <span class="help-inline">{$tca.help}</span>
+    </div>
+</div>

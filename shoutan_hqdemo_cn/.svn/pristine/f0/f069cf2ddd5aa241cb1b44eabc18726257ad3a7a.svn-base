@@ -1,0 +1,86 @@
+<include file="Public/header" />
+<!--header-->
+<header class='weui-header'>
+    <a href="{:U('login')}" class="turn" title=""><i class="iconfont">&#xe601;</i>一皆通</a>
+    <h1 class="weui-title">登录{$mata.title}</h1>
+</header>
+
+<!--logo-->
+<div class="logo">
+    <a href="javascript:;"><img src="__TMPL__Public/images/login_logo.png"/></a>
+</div>
+
+<!--表单-->
+<div class="weui_cells_form">
+    <div class="form_box">
+        
+        <form class="login content form1" id="login_form" action="{:U('login')}" >
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label name" for="username"></label></div>
+                <div class="weui_cell_bd weui_cell_primary resets">
+                    <input class="weui_input"  name="username" type="text" placeholder="用户名">
+                    <div class="reset_icon"><i class="fa fa-times"></i></div>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="password"></label></div>
+                <div class="weui_cell_bd weui_cell_primary find">
+                    <input class="weui_input" id="password" type="text" name="password" placeholder="密码">
+                    <div class="find_icon"><i class="fa fa-eye"></i></div>
+                </div>
+            </div>
+            <input type="hidden" name="openid" value="{$openid}" />
+        </form>
+         
+    </div>
+
+    <p class="weui_btn_area">
+		<a href="javascript:;" class="weui_btn weui_btn_warn wechat_bind" id="login_btn" title="登录">登录</a>
+    </p>
+	<p class="code_link ">
+		<a href="{:U('loginMobile')}" class="left blue">手机验证登陆</a>
+   	 	<a href="{:U('forgotpwd')}" class="right gray">忘记密码？</a><br>
+	</p>
+	<p class="register_btn">
+	没有账户？<a href="{:U('register')}" class="blue">立即注册</a>
+	</p>
+</div>
+ 
+<script type="text/javascript">
+    $("#login_btn").click(function () {
+        var username = $("input[name=username]").val();
+        if(username==''){
+            $.alert('请输入用户名！');
+            return false;
+        }
+        var password = $("input[name=password]").val();
+        if(password==''){
+            $.alert('请输入密码！');
+            return false;
+        }
+		//window.location.href = "{:U('bind')}";
+		
+        var sendurls = $("#login_form").attr("action");
+        var sendForms = $("#login_form").serialize();
+        $.ajax({
+            type:'post',
+            url:sendurls,
+            data:sendForms,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 1){
+                   // $.alert(data.info, function() {
+                        window.location.href = data.url;
+                   // });
+                }else{
+                    $.alert(data.info);
+                }
+            }
+        });
+    });
+
+
+
+</script>
+
+ <include file="Public/footer" />

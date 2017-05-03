@@ -1,0 +1,54 @@
+<!--<html>-->
+	<!--<head>-->
+		<!--<title>创建账户</title>-->
+	<!--</head>-->
+	<!---->
+	<!--<body>-->
+		<!--<h2 style="text-align:center;">创建账户</h2>-->
+	<!--</body>-->
+<!--</html>-->
+<include file="Public:header"/>
+<!--开通下属账户-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/account.jpg"/>
+</div>
+
+<div class="weui_cells create_account">
+	<div class="weui_cell dro_sec">
+		<span>选择商户</span>
+		<b class="fr"><i class="fa fa-angle-down"></i></b>
+		<div class="radio">
+			<div class="weui_cells weui_cells_radio">
+				<label class="weui_cell weui_check_label" for="x11">
+					<div class="weui_cell_bd weui_cell_primary">
+						<p>一皆通科技有限公司1</p>
+					</div>
+					<div class="weui_cell_ft">
+						<input type="radio" class="weui_check" name="radio1" id="x11">
+						<span class="weui_icon_checked"></span>
+					</div>
+				</label>
+				<label class="weui_cell weui_check_label" for="x12">
+
+					<div class="weui_cell_bd weui_cell_primary">
+						<p>一皆通科技有限公司2</p>
+					</div>
+					<div class="weui_cell_ft">
+						<input type="radio" name="radio1" class="weui_check" id="x12" checked="checked">
+						<span class="weui_icon_checked"></span>
+					</div>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label class="weui_label">手机号</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入手机号">
+		</div>
+	</div>
+	
+	<div class="weui_cell"></div>
+</div>
+
+<include file="Public:footer"/>

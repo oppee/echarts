@@ -1,0 +1,56 @@
+<?php
+namespace HQ\Controller;
+class LoginController extends BaseController
+{
+
+    /*
+     * 登录界面
+     */
+    public function index()
+    {
+        $this->display();
+    }
+
+    /*
+     * 后台用户忘记密码
+     */
+	public function forgot()
+    {
+        if (I('post.email')) {
+            $userInfo = D('BeUsers')->where(array('deleted' => 0, 'hidden' => 0, 'email' => I('post.email')))->find();
+            if ($userInfo && $this->Config['email_forgot_be']) {
+                $emailConfig = getEmailConfig('email_forgot_be'); //getEmailConfig取邮件模板
+                if ($emailConfig) {
+                    $newPwd = mt_rand(100000,999999);
+                    $paramters = array(
+                        'UserName' => $userInfo['username'],
+                        'Password' => $newPwd
+                    );
+                    foreach ($paramters as $k => $v) {
+                        $emailConfig['content'] = str_replace('{###' . $k . '###}', $v, $emailConfig['content']);
+                    }
+                    $newPwd = parent::encryption_backend($newPwd);
+                    $res = D('BeUsers')->where(array('deleted' => 0, 'hidden' => 0, 'email' => I('post.email')))->setField(array('password'=>$newPwd));
+                    if($res){
+                        sendMail($emailConfig['subject'], $emailConfig['content'], $userInfo['email'], '', $emailConfig['bcc'], '', $this->Config['mail_from'], $this->Config['mail_fromname']);
+                        $this->success('发送成功，请查看你的邮箱！');
+                        exit;
+                    }else{
+                        $this->error('系统繁忙，请稍后再试！');
+                    }
+                }
+            } else {
+                $this->error('邮箱未注册或找密功能未开启！');
+            }
+        }
+    }
+
+    //显示验证码
+    public function code(){
+//        import('Org.Util.Image');
+//        \Image::buildOperationVerify();
+        $Image = new \Org\Util\Image();
+        $Image->buildOperationVerify();
+    }
+
+}

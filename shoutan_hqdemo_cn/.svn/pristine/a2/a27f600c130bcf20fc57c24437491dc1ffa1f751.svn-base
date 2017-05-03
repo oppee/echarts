@@ -1,0 +1,15 @@
+<include file="Public:header"/>
+<!--修改用户资料-->
+<div class="weui_cells userinfo">
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>头像</p>
+        </div>
+        <div class="weui_cell_ft">
+            <a class="camera" href=""><i class="fa fa-camera"></i></a>
+            <span><img src="http://img.ycg.qq.com/201832/0/ba6eb6cd-7f46-48f8-920d-064fdcacd897/preview"/></span>
+        </div>
+    </div>
+</div>
+
+<include file="Public:footer"/>

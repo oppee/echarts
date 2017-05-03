@@ -1,0 +1,33 @@
+<div class="control-group {$name}">
+   <label class="control-label">{$tca.label}<if condition="$tca['required'] eq true">*</if></label>
+
+    <div class="controls">
+        <volist name="tca.data" id="vo">
+            <label class="radio">
+            	<eq name="Think.ACTION_NAME" value="edit">
+	                <eq name="info[$name]" value="$vo[0]">
+	                    <input type="radio" name="{$name}" value="{$vo[0]}" checked="checked"/>
+	                    <else/>
+	                    <input type="radio" name="{$name}" value="{$vo[0]}"/>
+	                </eq>
+	            </eq>
+                <eq name="Think.ACTION_NAME" value="save">
+                	<eq name="tca.default" value="$vo[0]">
+	                    <input type="radio" name="{$name}" value="{$vo[0]}" checked="checked"/>
+	                    <else/>
+	                    <input type="radio" name="{$name}" value="{$vo[0]}"/>
+	                </eq>
+                </eq>
+                <eq name="a_name" value="edit">
+                	<eq name="info[$name]" value="$vo[0]">
+	                    <input type="radio" name="{$name}" value="{$vo[0]}" checked="checked"/>
+	                    <else/>
+	                    <input type="radio" name="{$name}" value="{$vo[0]}"/>
+	                </eq>
+                </eq>
+                {$vo[1]}
+            </label>
+        </volist>
+        <span class="help-block">{$tca.help}</span>
+    </div>
+</div>

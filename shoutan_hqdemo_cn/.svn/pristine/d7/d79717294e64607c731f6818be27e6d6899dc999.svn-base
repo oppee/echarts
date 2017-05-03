@@ -1,0 +1,66 @@
+<?php
+/**
+ * 申请
+ * @author zhaojie
+ */
+namespace Mobile\Controller;
+use Mobile\Controller\BaseController;
+
+class ApplyController extends BaseController{
+	/**
+	 * 修改用户资料
+	 */
+	public function index(){
+		$this->assign('title',"申请列表");
+		//获取微信授权openid
+		/* $openid = session('openid');
+		if(empty($openid)){
+			$openid = I('request.openid');
+		}
+		
+		if(empty($openid)){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Index/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		} */
+		
+		//加载HTML模板
+		$this->display();
+	}
+	
+	public function fuwu(){
+	$this->assign('title',"申请服务");
+		//获取微信授权openid		
+		/* $openid = session('openid');
+		if(empty($openid)){
+			$openid = I('request.openid');
+		}
+		
+		if(empty($openid)){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Index/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		} */
+		//加载HTML模板
+		$this->display();
+	}
+	
+}

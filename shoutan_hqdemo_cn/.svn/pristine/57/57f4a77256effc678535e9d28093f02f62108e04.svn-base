@@ -1,0 +1,53 @@
+<include file="Public:header"/>
+<!--账户列表-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/bindlist.jpg"/>
+</div>
+
+<div class="weui_cells account_list bindlist">
+	<volist name="list" id="vo">
+		<div class="weui_cell">
+			<p>{$vo.crm_kh_dpmc}</p>
+			<div class="list_link">{$vo.accessStr}<a class="blue fr unbind" href="javaScript:;" data-id="{$vo.id}">解绑</a> </div>
+		</div>
+	</volist>
+</div>
+
+<p class="weui_btn_area list_btn">
+	<a href="{:U('bind')}" class="weui_btn weui_btn_warn" title="绑定商户">绑定商户</a>
+</p>
+
+<script>
+$(document).ready(function(){
+	$('.unbind').click(function(){
+		var _this=$(this);
+		var _key=_this.attr('data-id');
+		if(!_key){
+			$.alert("获取参数错误！");
+			return false;
+		}		
+		$.ajax({
+			url:"{:U('unBind')}",
+			method:"POST",
+			data: { key: _key },
+			dataType:"json",
+			success:function(data){
+				if(data.status>0){
+					$.alert(data.info,function(){
+						_this.parent('div').parent('.weui_cell').remove();
+					});
+				}else{
+					$.alert(data.info);
+					return false;
+				}
+			},
+			error:function(){
+				$.alert("网络不给力哦，请稍后再试。。。");
+				return false;
+			},
+			async:false
+		});
+	});
+});
+</script>
+<include file="Public:footer"/>

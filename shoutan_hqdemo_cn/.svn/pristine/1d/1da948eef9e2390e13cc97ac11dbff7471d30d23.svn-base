@@ -1,0 +1,23 @@
+<include file="Public:header"/>
+<!--账户列表-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/bindlist.jpg"/>
+</div>
+
+<div class="weui_cells account_list bindlist">
+	<div class="weui_cell">
+		<p>上海首坦金融信息有限公司<span class="fr">正常</span></p>
+		 
+		<div class="list_link"><span>POS查询</span><span>微社区</span><a class="blue fr" href="">解绑</a> </div>
+	</div>
+	<div class="weui_cell">
+		<p>上海首坦金融信息有限公司<span class="fr">正常</span></p>
+		 
+		<div class="list_link"><span>POS查询</span><span>微社区</span><a class="blue fr" href="">解绑</a> </div>
+	</div>
+</div>
+
+<p class="weui_btn_area list_btn">
+	<a href="{:U('bind')}" class="weui_btn weui_btn_warn" title="创建新账户">创建新账户</a>
+</p>
+<include file="Public:footer"/>

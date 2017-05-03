@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>商圈首页</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.min.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body ontouchstart>
+    <header class='weui-header'>
+
+        <h1 class="weui-title">商户圈</h1>
+    </header>
+
+    <!-----------------主体部分开始------------------>
+    <div id="search-top">
+        <div class="weui_search_bar" id="search_bar">
+            <form class="weui_search_outer">
+                <div class="weui_search_inner">
+                    <input type="search" class="weui_search_input" id="search_input" placeholder="请输入关键字" required/>
+                    <a href="javascript:" class="weui_icon_clear" id="search_clear">搜索</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-----------兴趣爱好----------->
+    <div class="order-item">
+        <div class="weui_cells">
+            <h3>兴趣爱好</h3>
+            <a class="weui_cell" href="list.html">
+                <div class="weui_cell_hd">
+                    <img src="images/shouye_03.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong>体育</strong>
+                    <div><span class="gray">金川石材:下周一见</span></div>
+                </div>
+                <div class="weui_cell_ft gray">
+                    16:01
+                </div>
+            </a>
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_hd">
+                    <img src="images/shouye_06.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong>文学</strong>
+                    <div><span class="gray">加入文学，值得拥有</span></div>
+                </div>
+                <div class="weui_cell_ft gray">
+                    16:01
+                </div>
+            </a>
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_hd">
+                    <img src="images/shouye_08.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong>户外</strong>
+                    <div><span class="gray">加入户外，值得拥有</span></div>
+                </div>
+                <div class="weui_cell_ft gray">
+                    16:01
+                </div>
+            </a>
+        </div>
+
+        <div class="weui_cells">
+            <h3>生活主题</h3>
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_hd">
+                    <img src="images/shouye_10.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong>养生</strong>
+                    <div><span class="gray">金川石材:下周一见</span></div>
+                </div>
+                <div class="weui_cell_ft gray">
+                    16:01
+                </div>
+            </a>
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_hd">
+                    <img src="images/shouye_12.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong>情感</strong>
+                    <div><span class="gray">东方陈总:下周一见！</span></div>
+                </div>
+                <div class="weui_cell_ft gray">
+                    16:01
+                </div>
+            </a>
+            <a class="weui_cell" href="javascript:;">
+                <div class="weui_cell_hd">
+                    <img src="images/shouye_14.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <strong>教育</strong>
+                    <div><span class="gray">加入教育，值得拥有</span></div>
+                </div>
+                <div class="weui_cell_ft gray">
+                    16:01
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/jquery-weui.min.js"></script>
+</body>
+</html>

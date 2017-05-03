@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>体育商户圈</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.min.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body ontouchstart>
+    <header class='weui-header'>
+        <a href="javascript:;" class="turn" title=""><i class="iconfont">&#xe601;</i></a>
+        <h1 class="weui-title">体育商户圈</h1>
+        <a href="#" class="convert-btn"><img src="images/tiyu_03.png" alt=""></a>
+    </header>
+
+    <div class="weui_panel weui_panel_access tiyu">
+        <div class="weui_panel_bd">
+            <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
+                <div class="weui_media_hd">
+                    <img class="weui_media_appmsg_thumb" src="images/shouye_03.png" alt="">
+                </div>
+                <div class="weui_media_bd">
+                    <h4 class="weui_media_title">体育</h4>
+                    <p class="weui_media_desc">腾讯体育是中国知名的体育门户国内足球，国际足球，NBA</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="weui-row weui-no-gutter fwl">
+        <div class="weui-col-33">
+                访问
+                <p>200</p>
+        </div>
+        <div class="weui-col-33">
+                主题
+                <p>20</p>
+        </div>
+        <div class="weui-col-33">
+                今日
+                <p>15</p>
+        </div>
+    </div>
+
+    <!-----------用户留言----------->
+    <div class="message" id="list">
+        <div class="order-item tiyu">
+            <div class="weui_cells">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">
+                        <img src="images/tiyu_07.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        渔舟唱晚
+                        <div><span class="gray">5个月前</span></div>
+                    </div>
+                    <div class="weui_cell_ft gray">
+                        <img src="images/tiyu_22.png" alt="">
+                        1
+                    </div>
+                </div>
+            </div>
+            <div class="weui_cells pl">
+                <a class="weui_cell" href="info.html">
+                    <div class="weui_cell_bd">
+                        <h4>包装机及零配件</h4>
+                        <p>我们专业生产包装机及其零配件，需要请联系手机号1330282344</p>
+                    </div>
+                </a>
+            </div>
+            <div class="weui-row weui-no-gutter dd">
+                <a class="weui-col-33" href="javascript:;">
+                    <i class="fa fa-commenting-o"></i> <span></span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-thumbs-o-up"></i> <span></span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-heart"></i> <span></span>
+                </a>
+            </div>
+        </div>
+        <div class="order-item tiyu">
+            <div class="weui_cells">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">
+                        <img src="images/tiyu_20.png" alt="icon" style="width:40px;margin-right:10px;display:block;border-radius:40px;">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        坐等红杏来
+                        <div><span class="gray">更早</span></div>
+                    </div>
+                    <div class="weui_cell_ft gray">
+                        <img src="images/tiyu_22.png" alt="">
+                        118
+                    </div>
+                </div>
+            </div>
+            <div class="weui_cells pl">
+                <a class="weui_cell" href="info.html">
+                    <div class="weui_cell_bd">
+                        <h4>我是袋装水泥司机</h4>
+                        <p>我是袋装水泥司机，怎么能把jps安装到我新买的车上</p>
+                    </div>
+                </a>
+            </div>
+            <div class="weui-row weui-no-gutter dd">
+                <a class="weui-col-33" href="info.html">
+                    <i class="fa fa-commenting-o"></i> <span>2</span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-thumbs-o-up"></i> <span></span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-heart"></i> <span></span>
+                </a>
+            </div>
+        </div>
+        <div class="order-item tiyu">
+            <div class="weui_cells">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">
+                        <img src="images/tiyu_555.png" alt="icon" style="width:40px;margin-right:10px;display:block;border-radius:40px;">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        水木年华
+                        <div><span class="gray">更早</span></div>
+                    </div>
+                    <div class="weui_cell_ft gray">
+                        <img src="images/tiyu_22.png" alt="">
+                        131
+                    </div>
+                </div>
+            </div>
+            <div class="weui_cells pl">
+                <a class="weui_cell" href="info.html">
+                    <div class="weui_cell_bd">
+                        <h4>求购水泥发票</h4>
+                        <p>求购水泥发票</p>
+                    </div>
+                </a>
+            </div>
+            <div class="weui-row weui-no-gutter dd">
+                <a class="weui-col-33" href="info.html">
+                    <i class="fa fa-commenting-o"></i> <span>3</span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-thumbs-o-up"></i> <span></span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-heart"></i> <span></span>
+                </a>
+            </div>
+        </div>
+        <div class="order-item tiyu">
+            <div class="weui_cells">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd">
+                        <img src="images/tiyu_27.png" alt="icon" style="width:40px;margin-right:10px;display:block;border-radius:40px;">
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        海宁湖
+                        <div><span class="gray">更早</span></div>
+                    </div>
+                    <div class="weui_cell_ft gray">
+                        <img src="images/tiyu_22.png" alt="">
+                        144
+                    </div>
+                </div>
+            </div>
+            <div class="weui_cells pl">
+                <a class="weui_cell" href="info.html">
+                    <div class="weui_cell_bd">
+                        <h4>42</h4>
+                        <p>42.5定量大什么价？</p>
+                    </div>
+                </a>
+            </div>
+            <div class="weui-row weui-no-gutter dd">
+                <a class="weui-col-33" href="info.html">
+                    <i class="fa fa-commenting-o"></i> <span>3</span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-thumbs-o-up"></i> <span>1</span>
+                </a>
+                <a class="weui-col-33">
+                    <i class="fa fa-heart"></i> <span></span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <div class="weui-infinite-scroll">
+        <div class="infinite-preloader"></div>
+        正在加载...
+    </div>
+
+    <!----------留言进入-------->
+    <div class="liuyanban">
+        <a href="fabiao.html"><img src="images/tiyu_30.png" alt=""></a>
+    </div>
+
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/jquery-weui.min.js"></script>
+    <script>
+        $(document.body).infinite(100);
+    </script>
+</body>
+</html>

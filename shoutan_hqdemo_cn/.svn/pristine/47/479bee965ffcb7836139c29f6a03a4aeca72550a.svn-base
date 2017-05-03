@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <include file="Public:meta"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.css"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>{$Think.CONTROLLER_NAME}</small>
+                    </h3>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3 class="form-section"></h3>
+
+                    <form id="smsForm" action="{:U('Smstogroup/index')}" data-url="{:U('Smstogroup/index')}" method="post" class="form-horizontal" enctype="multipart/form-data">
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <div class="control-group">
+                                    <label class="control-label">发送类型</label>
+                                    <div class="controls">
+                                        <label class="radio is_level"><input type="radio" name="is_level" value="1" checked="checked" />会员组</label>
+                                        <label class="radio is_level"><input type="radio" name="is_level" value="0" />自定义</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-fluid div-levels">
+                            <div class="span6">
+                                <div class="control-group">
+                                    <label class="control-label">收信组</label>
+                                    <div class="controls">
+                                    <select class="span12 m-wrap levels required" name="level_id" id="levels">
+                                        <option value="">==请选择会员等级==</option>
+                                        <volist name="levels" id="vo">
+                                            <option value="{$vo[0]}">{$vo[1]}</option>
+                                        </volist>
+                                    </select>
+                                <span class="help-inline musics">如果选择按组群发，会员等级是必选项！</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <div class="control-group">
+                                    <label class="control-label">收信人</label>
+                                    <div class="controls"><input type="text" class="span12 m-wrap recipient" name="recipient" />
+                                    <span class="help-inline">请填写接收人手机号，并在多个手机号之间用","逗号隔开</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <div class="control-group">
+                                    <label class="control-label">内容</label>
+                                    <div class="controls"><textarea class="span12 m-wrap content required" rows="3" name="content" placeholder="短信内容，不能包含敏感词..."></textarea>
+                                    <span class="help-inline">内容写好后，建议点击下面的“验证收信人”按钮，确认无误后再发送！</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls"><button type="submit" id="checkBtn" class="btn yellow"><i class="icon-refresh"></i> 验证收信人</button>&nbsp;&nbsp;<button type="button" id="smsBtn" class="btn blue"><i class="icon-ok-sign"></i> 开始发送</button></div>
+                        </div>
+                    </form>
+                    <div id="msg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<include file="Public:footer"/>
+<!-- <script type="text/javascript" src="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.js"></script> -->
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $('#smsForm .is_level').live('click', function(){
+            var is_level = $('#smsForm .is_level .checked').find('input[name=is_level]').val();
+            if(is_level==1){
+                $('#smsForm .div-levels').show();
+                $('#smsForm .levels').addClass('required');
+                $('#smsForm .recipient').removeClass('required');
+                $('#smsForm .recipient').css('border','solid 1px #E6E6E6');
+                $('#smsForm .recipient').parent().children('span').css('color','#E6E6E6');
+            }else{
+                $('#smsForm .div-levels').hide();
+                $('#smsForm .recipient').addClass('required');
+                $('#smsForm .levels').removeClass('required');
+                $('#smsForm .levels').css('border','solid 1px #E6E6E6');
+                $('#smsForm .levels').parent().children('span').css('color','#E6E6E6');
+            }
+        })
+        $('#smsBtn').live('click', function(){
+            var is_level = $('#smsForm .is_level .checked').find('input[name=is_level]').val();
+            if(is_level==1){
+                $('#smsForm .levels').addClass('required');
+                $('#smsForm .recipient').removeClass('required');
+            }else{
+                $('#smsForm .recipient').addClass('required');
+                $('#smsForm .levels').removeClass('required');
+            }
+            var len = $('#smsForm .required').length;
+            for(i=0;i<len;i++){
+                var required = $('#smsForm .required').eq(i).val();
+                if(required==''){
+                    $('#smsForm .required').eq(i).css('border','solid 1px red');
+                    $('#smsForm .required').eq(i).parent().children('span').css('color','red');
+                    return false;
+                }else{
+                    $('#smsForm .required').eq(i).css('border','solid 1px #E6E6E6');
+                    $('#smsForm .required').eq(i).parent().children('span').css('color','#E6E6E6');
+                }
+            }
+            var level_id = $('#smsForm .levels').val();
+            var sendurl = $('#smsForm').attr("data-url");
+            var recipient = $('#smsForm .recipient').val();
+            var content = $('#smsForm .content').val();
+            $.ajax({
+                type: "post",
+                url: sendurl,
+                data: {
+                    'sendsms':'sendsms',
+                    'is_level':is_level,
+                    'level_id':level_id,
+                    'recipient':recipient,
+                    'content':content
+                },
+                dataType:"json",
+                success: function(msg){
+                    $('body').modalmanager('loading');
+                    $('#msg').html(msg.info);
+                    $('#msg').fadeIn();
+                },
+                beforeSend: function(){
+                    $('#msg').fadeOut();
+                    $('body').modalmanager('loading');
+                }
+            });
+            return false;
+        })
+        $('#checkBtn').live('click', function(){
+            var is_level = $('#smsForm .is_level .checked').find('input[name=is_level]').val();
+            if(is_level==1){
+                $('#smsForm .levels').addClass('required');
+                $('#smsForm .recipient').removeClass('required');
+            }else{
+                $('#smsForm .recipient').addClass('required');
+                $('#smsForm .levels').removeClass('required');
+            }
+            var len = $('#smsForm .required').length;
+            for(i=0;i<len;i++){
+                if($('#smsForm .required').eq(i).hasClass('content')){
+                    continue;
+                }else{
+                    var required = $('#smsForm .required').eq(i).val();
+                    if(required==''){
+                        $('#smsForm .required').eq(i).css('border','solid 1px red');
+                        $('#smsForm .required').eq(i).parent().children('span').css('color','red');
+                        return false;
+                    }else{
+                        $('#smsForm .required').eq(i).css('border','solid 1px #E6E6E6');
+                        $('#smsForm .required').eq(i).parent().children('span').css('color','#E6E6E6');
+                    }
+                }
+            }
+            if(is_level==1){
+                var level_id = $('#smsForm .levels').val();
+            }else{
+                level_id = null;
+            }
+            var sendurl = $('#smsForm').attr("data-url");
+            var recipient = $('#smsForm .recipient').val();
+            $.ajax({
+                type: "post",
+                url: sendurl,
+                data: {
+                    'check':'check',
+                    'is_level':is_level,
+                    'level_id':level_id,
+                    'recipient':recipient,
+                },
+                dataType:"json",
+                success: function(msg){
+                    //$('body').modalmanager('loading');
+                    $('#msg').html(msg.info);
+                    $('#msg').fadeIn();
+                },
+                beforeSend: function(){
+                    $('#msg').fadeOut();
+                    //$('body').modalmanager('loading');
+                }
+            });
+            return false;
+        })
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

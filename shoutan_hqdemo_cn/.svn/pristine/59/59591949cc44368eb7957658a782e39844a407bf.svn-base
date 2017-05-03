@@ -1,0 +1,191 @@
+<?php
+/**
+ * 个人中心
+ * @author zhaojie
+ *
+ */
+namespace Mobile\Controller;
+
+class IndexController extends BaseController {
+	private $openid = "TESTOPENID";
+	/**
+	 * 手机端个人中心
+	 */	
+    public function index() {
+    	//授权 获取openid
+    	/* $openid = session('openid');
+    	if(empty($openid)){
+    		$openid = I('request.openid');
+    	}
+    	if(empty($openid) || $openid == '-1'){
+    		$code = I('request.code');
+    		if($code){
+    			$openid = $this->getOpenid($code);
+    			session('openid',$openid,3600);
+    		}else{
+    			$url = "http://" . $_SERVER['SERVER_NAME'] . "/" . U("Mobile/Index/".ACTION_NAME);
+    			$scope = I('request.scope')?I('request.scope'):'snsapi_base';
+    			$this->autho_url($url, $scope);die;
+    		}
+    	} */
+    	//if(empty($userinfo)){
+    		$this->redirect("login");
+    	//}else{
+//     		$this->display();
+    	//}
+
+    }
+
+    /**
+     * 微信绑定页面
+     */
+	public function bind(){
+		$this->assign('title',"绑定账户");
+		//授权获得用户信息
+		$openid = session('openid');
+		if(empty($openid)){
+			$openid = I('request.openid')?I('request.openid'):$this->openid;
+		}
+		/* if(empty($openid) || $openid == '-1'){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Index/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		}
+		if(session('access_token')){
+			$access_token = session("access_token");
+		}
+		$wechat_info = $this->getWechatUserinfo($openid,$access_token);
+		$this->assign('wechat_info',$wechat_info); */
+		
+		if(IS_POST){
+			$data = I('request.');
+			$user_info = M('user')->where(array('mobile'=>$data['phone']))->find();
+			$store_info = M('user_store')->where(array('users'=>$user_info['id']))->find();
+			if(empty($store)){
+				$this->error("手机号码或激活码错误。");
+			}else{
+				$this->success("绑定成功！");
+			}
+		}else{
+			$where = array("openid"=>$openid);
+			$userinfo = M('user')->where($where)->find();
+			//加载页面
+			$this->display();
+		}
+	}
+	
+	/**
+	 * 没有账户登陆
+	 */
+	public function login(){
+		if(IS_POST){
+			$data = I('request.');
+			$password = md5(base64_encode($data['password']));
+			$where = array("username"=>$data['username'],'password'=>$password);
+			$info = M('user')->where($where)->find();
+			if(empty($info)){
+				$this->error("手机号码或者密码错误！");
+			}else{
+				$this->success("登陆成功",U('bind',array("openid"=>$openid)));
+			}
+		}else{
+			$openid = I('request.openid');
+			$this->assign('title',"登录");
+			$this->assign("openid",$openid);
+			$this->display();
+		}
+	}
+	
+	/**
+	 * 找回密码
+	 */
+	public function forgotpwd(){
+		$this->assign('title',"忘记密码");
+		if(IS_POST){
+			$code = I('request.code');
+			if($code != cookie('code')){
+				$this->error("验证码错误！");
+			}
+			$data = I('request.');
+			if($data['password'] == $data['confirm_password']){
+				$save_data = array('password'=>md5(base64_encode($data['password'])),"tstamp"=>time());
+				$res = M('user')->where(array("mobile"=>$data['phone']))->save($save_data);
+			}
+			if($res){
+				$this->success("重置密码成功!",U('login'));
+			}else{
+				$this->error("重置密码失败，请重新提交!",U('forgotpwd'));
+			}
+			//var_dump($_POST);die;
+		}else{
+			$this->display();
+		}
+	}
+	
+	public function agree(){
+		if(IS_POST){
+			$check_agb = $_POST['check'];
+			if(empty($check_agb)){
+				$this->success("注册失败");
+			}			
+			$data = cookie('post_data');
+			$Obj = M('user');
+			$res = $Obj->add($data);
+			if($res){
+				$this->success("用户创建成功!",U('login',array("openid"=>$data['openid'])));
+			}else{
+				$this->success("注册失败");
+			}
+		}else{
+			$config = $this->Config;
+			$this->assign('title',"注册");
+			$this->assign("age",$config['agb']);
+			$this->display();
+		}
+	}
+	
+	public function sendCode(){
+		$code = mt_rand(1000, 9999);
+		cookie('code',$code);
+		$this->success("发送成功！测试验证码是:".$code);
+	}
+	
+	/**
+	 * 注册
+	 */
+	public function register(){
+		if(IS_POST){
+			$code = I('request.code');
+			if($code != cookie('code')){
+				$this->error("验证码错误！");
+			}
+			$data = array(
+				"crdate" => time(),
+				"username" => $_POST['phone'],
+				"mobile" => $_POST['phone'],
+				"password" => md5(base64_encode($_POST['password'])),
+				"openid" => $_POST['openid'],
+			);
+			cookie('post_data',$data);
+			$this->success("注册成功!",U('agree'));
+		}else{
+			$openid = $this->openid;
+			$this->assign("openid",$openid);
+			$this->assign('title',"注册");
+			$this->display();
+		}
+	}
+	
+	
+}
+
+?>

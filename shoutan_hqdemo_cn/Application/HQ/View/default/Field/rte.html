@@ -1,0 +1,11 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+
+    <div class="controls">
+        <div class="span12">
+            <!--            <textarea class="ckeditor m-wrap" name="{$name}" rows="6" id="rte-{$name}">{$info[$name]}</textarea>-->
+            <script id="container" show_type="{$tca.class}" name="{$name}" type="text/plain" style="height:500px">{$info[$name]}</script>
+        </div>
+        <span class="help-inline">{$tca.help}</span>
+    </div>
+</div>

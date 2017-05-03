@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>发表主题帖</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+
+    <!-- <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.min.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/global.css"> -->
+    <include file="Public/header" />
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/css/webuploader.css"/>
+    <script type="text/javascript" src="__TMPL__Public/js/webuploader.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/js/upload4.js"></script>
+</head>
+<body ontouchstart id="publish">
+    <header class='weui-header'>
+        <a href="javascript:history(-1);" class="turn" title="" style="left:8px;"><i class="iconfont">&#xe601;</i></a>
+        <h1 class="weui-title">商圈子</h1>
+        <a href="#" class="convert-btn"><img src="__TMPL__Public/images/tiyu_03.png" alt=""></a>
+    </header>
+    <div class="fabiao">
+        <form method="post" action="" name="join_form" id="join_form">
+            <input name="category" value="{$category}" type="hidden"/>
+            <div class="weui_cells weui_cells_form">
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <textarea name="title" class="weui_textarea" placeholder="标题，4-25个字" rows="1"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="weui_cells weui_cells_form">
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <textarea name="remark" class="weui_textarea" placeholder="内容，2-700个字" rows="5"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weui_cells fb">
+                <div class="weui_cell">
+                    <div class="weui_cell_ft weui_cell_primary">
+                        <p id="fabu">发表</p>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="ldentity">
+                <div class="weui_cells weui_cells_form">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <div class="weui_uploader">
+                                <div class="weui_uploader_bd">
+                                    <div class="weui_uploader_input_wrp">
+                                        <input class="weui_uploader_input" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" multiple="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+            <div class="vedio-box">
+                <div class="con">
+                    <div id="wrapper" class="wrapper" data-url="{:U('Business/fabiao')}" >
+                        <div id="uploader" class="uploader">
+                            <div class="queueList wap-uppic">
+                                <div id="dndArea" class="placeholder">
+                                    <div id="filePicker"></div>
+                                </div>
+                            </div>
+                            <div class="statusBar" style="display:none;">
+                                <div class="progress">
+                                    <span class="text">0%</span>
+                                    <span class="percentage"></span>
+                                </div><div class="info"></div>
+                                <div class="btns">
+                                    <div id="filePicker2" class="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <script type="text/javascript">
+        $("#fabu").click(function(){
+            var title = $("textarea[name=title]").val();
+            if(title.length<4||title.length>25){
+                $.alert('标题必须为4~25个字！');
+                return false;
+            }
+            var remark = $("textarea[name=remark]").val();
+            if(remark.length<2||remark.length>700){
+                $.alert('内容必须为2~700个字！');
+                return false;
+            }
+            var category = $("input[name=category]").val();
+            $.post("{:U('fabiao')}",{title:title,remark:remark,category:category},function(data){
+                if(data.status==1){
+                    $.alert(data.info,function(){
+                        location.href = data.url;
+                    })
+                }else if(data.status==2){
+                    $.alert(data.info,function(){
+                        location.href = data.url;
+                    })
+                }else{
+                    $.alert(data.info);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

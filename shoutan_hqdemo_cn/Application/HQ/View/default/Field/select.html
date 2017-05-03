@@ -1,0 +1,17 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}<if condition="$tca['required'] eq true">*</if></label>
+
+    <div class="controls">
+        <select class="span6 m-wrap" tabindex="-1" name="{$name}">
+        <if condition="count($tca[data]) eq 1"><else/><option value="">请选择{$tca.label}...</option></if>
+            <volist name="tca.data" id="vo">
+                <eq name="info[$name]" value="$vo[0]">
+                    <option value="{$vo[0]}" selected="selected">{$vo[1]}</option>
+                    <else/>
+                    <option value="{$vo[0]}">{$vo[1]}</option>
+                </eq>
+            </volist>
+        </select>
+        <span class="help-inline">{$tca.help}</span>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+ <include file="Public/header" />
+    <header class='weui-header'>
+        <h1 class="weui-title">商户圈</h1>
+    </header>
+
+    <!-----------------主体部分开始------------------>
+   <!-- <div id="search-top">
+		<div class="weui_search_bar weui_search_focusing search_focus">
+			<form class="weui_search_outer">
+				<div class="weui_search_inner">
+					<i class="weui_icon_search"></i>
+					<input type="search" class="weui_search_input" id="search_input" placeholder="搜索" required/>
+					<a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+				</div>
+			</form>
+		</div>
+    </div>-->
+
+    <div class="order-item">
+	<volist name="business_category" id="vo">
+	    <!-----------兴趣爱好----------->
+	        <div class="weui_cells">
+	            <h3>{$vo['name']}</h3>
+	            <volist name="t_business" id="v">
+	            <if condition="$v['parent_id'] eq $vo['id']">
+		            <a class="weui_cell" href="{:U('Mobile/Business/lists',array('category'=>$v['id']))}">
+		                <div class="weui_cell_hd">
+		                	<notempty name="v.image"><php>$v['image'] = "__ROOT__/Uploads/Topiccategory/".$v['image'];</php></notempty>
+		                    <img src="{$v.image|default='__TMPL__Public/images/default.png'}" alt="icon" style="width:40px;margin-right:10px;display:block">
+		                </div>
+		                <div class="weui_cell_bd weui_cell_primary">
+		                    <strong>{$v.name|msubstr=0,30}</strong>
+		                    <div><span class="gray">{$v.newdata.title|msubstr=0,30}</span></div>
+		                </div>
+		                <div class="weui_cell_ft gray">
+		                <notempty name="v.newdata.crdate">
+		                    {$v.newdata.crdate|date="H:i",###}
+	                    </notempty>
+		                </div>
+		            </a>
+	            </if>
+	            </volist>
+	         </div>
+	</volist>
+    </div>
+
+ <include file="Public/footer" />

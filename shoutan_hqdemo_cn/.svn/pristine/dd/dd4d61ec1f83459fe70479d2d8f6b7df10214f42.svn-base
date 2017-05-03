@@ -1,0 +1,84 @@
+<!--<html>-->
+	<!--<head>-->
+		<!--<title>绑定列表</title>-->
+	<!--</head>-->
+	<!---->
+	<!--<body>-->
+		<!--<h2 style="text-align:center;">绑定列表</h2>-->
+	<!--</body>-->
+<!--</html>-->
+
+<include file="Public:header"/>
+
+<div class="weui_panel btn_group bind_list">
+	<div class="btn_items btn_sm clearfix">
+	<div class="weui_panel_hd">选择服务项目(可多选)</div>
+	<div class="weui_panel_bd machine cl_i clearfix">
+		<a href="javascript:;" class="weui_btn weui_btn_plain_default blue_bor black_bor">云POS</a>
+		<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor black_bg">扫码支付</a>
+		<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor">免费WiFi</a>
+	</div>
+</div>
+	<div class="btn_items btn_sm clearfix">
+		<div class="weui_panel_hd">选择方便的联系时间</div>
+		<div class="weui_panel_bd machine clearfix">
+			<a href="javascript:;" class="weui_btn weui_btn_plain_default blue_bor"><span>2个时间段</span></a>
+		</div>
+	</div>
+</div>
+
+<div class="weui_cells userinfo">
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>头像</p>
+		</div>
+		<div class="weui_cell_ft">
+			<a class="camera" href=""><i class="fa fa-camera"></i></a>
+			<span><img src="http://img.ycg.qq.com/201832/0/ba6eb6cd-7f46-48f8-920d-064fdcacd897/preview"/></span>
+		</div>
+	</div>
+
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>公司名称</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入手机号">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>公司地址</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入用户名">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>联系人</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入昵称">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>联系电话</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入昵称">
+		</div>
+	</div>
+
+	<p class="weui_btn_area">
+		<a href="javascript:;" class="weui_btn weui_btn_warn" title="确定">确定</a>
+	</p>
+</div>
+
+
+
+
+
+
+
+<script>
+	$(".cl_i a").click(function(){
+		if($(this).hasClass("blue_bor")){
+			$(this).removeClass("blue_bor");
+		} else $(this).addClass("blue_bor");
+	})
+</script>
+<include file="Public:footer"/>

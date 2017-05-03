@@ -1,0 +1,109 @@
+<!-- BEGIN HEADER -->
+<div class="header navbar navbar-inverse navbar-fixed-top">
+<!-- BEGIN TOP NAVIGATION BAR -->
+<div class="navbar-inner">
+<div class="container-fluid">
+<!-- BEGIN LOGO -->
+<a class="brand" href="__MODULE__">
+    <if condition="$Config.be_logo neq ''">
+    {$Config.be_logo_name}
+    <!--<img src="./Uploads/{$Config.be_logo}" alt="{$Config.be_logo_name}"/>-->
+        <elseif condition="$Config.be_logo_name neq ''"/>
+        {$Config.be_logo_name}
+        <else/>
+        
+    </if>
+</a>
+<!-- END LOGO -->
+<!-- BEGIN RESPONSIVE MENU TOGGLER -->
+<a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+    <img src="__TMPL__Public/img/menu-toggler.png" alt=""/>
+</a>
+<!-- END RESPONSIVE MENU TOGGLER -->
+<!-- BEGIN TOP NAVIGATION MENU -->
+<ul class="nav pull-right">
+<!-- BEGIN NOTIFICATION DROPDOWN -->
+<li class="dropdown" id="header_notification_bar" style="display:none">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-warning-sign"></i>
+        <span class="badge">6</span>
+    </a>
+    <ul class="dropdown-menu extended notification">
+        <li>
+            <p>You have 14 new notifications</p>
+        </li>
+        <li>
+            <a href="#">
+                <span class="label label-success"><i class="icon-plus"></i></span>
+                New user registered.
+                <span class="time">Just now</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <span class="label label-important"><i class="icon-bolt"></i></span>
+                Server #12 overloaded.
+                <span class="time">15 mins</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <span class="label label-warning"><i class="icon-bell"></i></span>
+                Server #2 not respoding.
+                <span class="time">22 mins</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <span class="label label-info"><i class="icon-bullhorn"></i></span>
+                Application error.
+                <span class="time">40 mins</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <span class="label label-important"><i class="icon-bolt"></i></span>
+                Database overloaded 68%.
+                <span class="time">2 hrs</span>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <span class="label label-important"><i class="icon-bolt"></i></span>
+                2 user IP blocked.
+                <span class="time">5 hrs</span>
+            </a>
+        </li>
+        <li class="external">
+            <a href="#">See all notifications <i class="m-icon-swapright"></i></a>
+        </li>
+    </ul>
+</li>
+<!-- END NOTIFICATION DROPDOWN -->
+
+<!-- BEGIN USER LOGIN DROPDOWN -->
+<li class="dropdown user">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <img class="user-logo" alt="" src="<notempty name='user_logo'>{$user_logo}<else />__TMPL__Public/img/avatar1_small.jpg</notempty>"  onerror="this.src='__TMPL__Public/img/avatar1_small.jpg'" />
+        &nbsp;<span class="username"><notempty name="_SESSION['BEUSER']['name']">{$_SESSION['BEUSER']['name']}<else />{$_SESSION['BEUSER']['username']}</notempty></span>
+        <i class="icon-angle-down"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="{:U('Beusers/user_save', 'id='.$_SESSION['BEUSER']['id'])}"><i class="icon-user"></i>&nbsp;我的资料</a></li>
+        <!-- <li class="divider"></li>
+				<li><a href="{$Config.baseurl}" target="_blank"><i class="icon-home"></i>&nbsp;查看前台</a></li> -->
+        <li class="divider"></li>
+				<li><a href="javascript:void(0)" class="cache" id="clear_cache" data-url="{:U('Index/clearcache')}"><i class="icon-wrench"></i>&nbsp;清除缓存</a></li>
+        <li class="divider"></li>
+        <!-- <li><a href="__APP__?logintype=logout"><i class="icon-key"></i>&nbsp;退出</a></li> -->
+        <li><a href="{:U('Index/index','logintype=logout')}"><i class="icon-key"></i>&nbsp;退出</a></li>
+    </ul>
+</li>
+<!-- END USER LOGIN DROPDOWN -->
+</ul>
+<!-- END TOP NAVIGATION MENU -->
+</div>
+</div>
+<!-- END TOP NAVIGATION BAR -->
+</div>
+<!-- END HEADER -->

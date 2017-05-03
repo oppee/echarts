@@ -1,0 +1,670 @@
+<?php
+namespace HQ\Controller;
+/**
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+
+class OrdersController extends BaseController {
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = CONTROLLER_NAME;  //CONTROLLER_NAME
+    //private $types = array(array(1, '零元购'), array(2, '消费返现'), array(3, '商城'));
+    private $state = array(array(0, '等待付款'), array(1, '已付款'), array(2, '已发货'), array(3, '已收货'), array(4, '已失效')/* , array(5, '已过期'), array(4, '已售馨') */);
+    private $is_receipt = array(array(0, '否'), array(1, '是'));
+    //高级筛选
+    public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse'),
+        array('status'=>'state', 'value'=>0, 'title'=>'确认', 'class'=>'warning'),
+        array('status'=>'state', 'value'=>1, 'title'=>'无效', 'class'=>'important'),
+        array('status'=>'state', 'value'=>2, 'title'=>'取消', 'class'=>'info'),
+
+       
+       /*  array('status'=>'state', 'value'=>5, 'title'=>'已过期', 'class'=>'inverse'),
+        array('status'=>'state', 'value'=>6, 'title'=>'缺货', 'class'=>'important') */
+    );
+
+    protected function init() {
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+
+        $id = I('request.id') ? I('request.id') : null;
+        $list= M($this->tbName)->where('id = ' . $id)->find();
+        $supplier = M('supplier')->where(array('id'=>$list['supplier_id']))->select();
+        foreach($supplier as $k => $v){
+            $supplier[$k] = array($v['id'],$v['id']. "." . $v['name']);
+        }
+        $this->assign('supplier', $supplier);
+        
+        $this->assign('types', $this->types);
+
+        if (ACTION_NAME == 'edit') {
+            $users = M('User')->where('hidden=0 and deleted=0 and id='.$list['user_id'])->field('id as "0",concat_ws("-",id,username,mobile) as "1"')->select();
+        }
+
+		//Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            'user_id' => array(
+                'label' => '所属会员',
+                'type' => 'select2',
+                'required' => true,
+                'data' => $users
+            ),
+            'number' => array(
+                'label' => '订单号',
+                'type' => 'text',
+                'required' => true
+            ),
+            'money' => array(
+                'label' => '订单金额',
+                'type' => 'text',
+                'required' => true
+            ),
+            'payment_title' => array(
+                'label' => '支付方式',
+                'type' => 'text'
+            ),
+            'shipping_name' => array(
+                'label' => '配送方式',
+                'type' => 'text'
+            ),
+            'state' => array(
+                'label' => '订单状态',
+                'type' => 'select',
+                'data' => $this->state
+            ),
+            'invoice' => array(
+                'label' => '物流编号',
+                'type' => 'text'
+            ),
+            'supplier_id' => array(
+                'label' => '供应商',
+                'type' => 'select2',
+                'data'=>$supplier
+            ),
+            'referee' => array(
+                'label' => '推荐会员号',
+                'type' => 'text'
+            ),
+			'name' => array(
+                'label' => '收货人',
+                'type' => 'text'
+            ),
+			'mobile' => array(
+                'label' => '联系方式',
+                'type' => 'text'
+            ),
+            'email' => array(
+                'label' => '收货人邮箱',
+                'type' => 'text'
+            ),
+             'province' => array(
+                'label' => '地区选择',
+                'type' => 'select_cascade2'
+            ),
+            'address' => array(
+                'label' => '收货人地址',
+                'type' => 'text'
+            ),
+            'remark' => array(
+                'label' => '订单备注',
+                'type' => 'textarea'
+            ),
+            /*,
+		    'invoice' => array(
+                'label' => '物流单号',
+                'type' => 'text'
+            ),
+            'invoice_url' => array(
+                'label' => '物流单号查询网址',
+                'type' => 'text'
+            )
+            'win' => array(
+                'label' => '是否中奖',
+                'type' => 'radio',
+                'data' => array(array(0,'没中奖'),array(1,'已中奖'))
+            ),
+            'lotto_num' => array(
+                'label' => '抽奖号',
+                'type' => 'text'
+            ), */
+        );
+    }
+
+    /*
+     * 列表页面
+     */
+
+    public function index() {
+        $this->init(); //加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = M($this->tbName.' o'); //实例化对象
+        $Where = "o.deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or o.`".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+
+        // 时间搜索
+        if($starttime = I('get.starttime')){
+            $Where .=' and (o.crdate >= ' . strtotime($starttime) . ')';
+        }
+        if($endtime = I('get.endtime')){
+            $Where .=' and (o.crdate <= ' . strtotime($endtime . ' 23:59:59') . ')';
+        }
+        if (I('request.delivery_date')) {
+            $I_delivery_date = trim(I('request.delivery_date'));
+            $I_delivery_date_format_2 = date('Y/m/d', strtotime($I_delivery_date));
+            $Where .= " and (o.delivery_time like '%" . $I_delivery_date . "%' OR o.delivery_time like '%" . $I_delivery_date_format_2 . "%')";
+        }
+        if (I('request.delivery_time')!='') {
+            $I_delivery_time = trim(I('request.delivery_time'));
+            $Where .= " and (o.delivery_time like '%" . $I_delivery_time . "%')";
+        }
+        // 地区搜索
+        /* if($province = I('get.chinaprovinces_province')){
+            $Where .=' and (o.province = "' . $province . '")';
+            $dq['province'] = $province;
+        }
+        if($city = I('get.chinaprovinces_city')){
+            $Where .=' and (o.city = "' . $city . '")';
+            $dq['city'] = $city;
+        }
+        if($area = I('get.chinaprovinces_area')){
+            $Where .=' and (o.area = "' . $area . '")';
+            $dq['area'] = $area;
+        }
+        $this->assign("dq",$dq); */
+        //地标级联搜索
+        if(I('get.cbd_0')!=''){
+            $I_cbd_0 = I('get.cbd_0');
+            $Where .= " and (o.cbd_0='" . $I_cbd_0 . "')";
+            if(I('get.cbd_1')!=''){
+                $I_cbd_1 = I('get.cbd_1');
+                $Where .= " and (o.cbd_1='" . $I_cbd_1 . "')";
+            }
+            $CbdCategory = M('CbdCategory');
+            $cbd_0_id = $CbdCategory->where("deleted=0 and hidden=0 and name='".$I_cbd_0."'")->getField('id');
+            $cbd_1_list = $CbdCategory->where('deleted=0 and hidden=0 and parent_id='.$cbd_0_id)->field('name')->order('sorting asc')->select();
+            $this->assign('cbd_1_list', $cbd_1_list);
+        }
+		
+		/* if (I('request.types')) {
+             $Where .= " and o.type = '" . I('request.types') . "'";
+        } */
+        if (I('request.keyword')!='') {
+            $I_keyword = trim(I('request.keyword'));
+            $Where .= " and (o.id='" . $I_keyword . "' or o.name like '%" . $I_keyword . "%' or o.number like '%" . $I_keyword . "%' or o.money like '%" . $I_keyword . "%' or o.remark like '%" . $I_keyword . "%' or o.mobile like '%" . $I_keyword . "%' or o.payment_title like '%" . $I_keyword . "%' or o.address like '%" . $I_keyword . "%' or o.landmark like '%" . $I_keyword . "%' or o.cbd_0 like '%" . $I_keyword . "%' or o.cbd_1 like '%" . $I_keyword . "%' or o.delivery_time like '%" . $I_keyword . "%' or u.username like '%" . $I_keyword . "%')";
+        }
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+        $Page = new \HQ\Util\Page($Obj->join(C('DB_PREFIX').'user as u on u.id=o.user_id')->where($Where)->count(), $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj->join(C('DB_PREFIX').'user as u on u.id=o.user_id')->where($Where)->field('o.*')->order('o.'.$sorting.' '.$order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        //dump($list);
+        //当前页面获取列表项目加入excel导出队列 执行excel导出操作
+        if(I('get.export')=='2'){
+            $this->export($list);
+        }
+        //读取一级地标
+        //$cbd_0_list = M('cbd_category')->where('deleted=0 and hidden=0 and parent_id=0')->order('sorting asc')->field('name')->select();
+        //$this->assign('cbd_0_list', $cbd_0_list);
+        
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 编辑数据
+     */
+    public function edit() {
+        $this->save();
+    }
+    /**
+     * 保存数据
+     */
+    public function save() {
+    	$this->init();
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+        $info = M($this->tbName)->where('id = ' . $id)->find();
+        if (IS_POST) {
+            
+            // $_POST['shipping_name'] = M('Shipping')->where("id=".$_POST['shipping_id'])->getField('name');
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    $_POST[$key] = implode(",", $val);
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $Obj->hidden = 1;
+                }
+
+                $Obj->tstamp = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+					if($_POST['state']!=$info['state']){
+						//写入订单流水
+						$this->saveOrdersStatus($id);
+					}
+                } else {
+                    $Obj->crdate = time();
+                    $id = $Obj->add();
+                    if (trim($_POST['sorting']) == '') {
+                        $Obj->where(array('id' => $id))->save(array('sorting' => $id));
+                    }
+                    $message = '添加成功!';
+                }
+
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+		//地区赋值的几个变量
+		$dq=array(
+			'province'=>$info['province'],
+			'city'=>$info['city'],
+			'area'=>$info['area'],
+		);
+		$this->assign('dq',$dq);
+        //自动渲染字段
+        parent::autoFields($this->tca, $info);
+        $this->display('info');
+    }
+	
+	
+	//查看清单
+    public function view(){
+       	$id = I('request.id') ? I('request.id') : null;
+		$objInfo = M($this->tbName)->find($id);	
+		$objInfo['state'] = $this->state[$objInfo['state']][1];
+		
+		 //取出订单商品表的关键信息
+        $OrdersGoods = M('OrdersGoods');
+		$goods_info = $OrdersGoods->where('deleted=0 and hidden=0 and orders_id='.$id)->field('title, quantity, price')->select();
+        //商品总数和总价
+        $goods_total_item = 0;
+        $goods_total_price = 0;
+		foreach($goods_info as $k=>$v){
+			if($k==0){
+				$objInfo['goods_list'] .= $v['title'].' '.$v['quantity'].'份';
+			}else{
+				$objInfo['goods_list'] .= " ，".$v['title'].' '.$v['quantity'].'份';
+			}
+            //小票商品清单
+            $goods_info[$k]['item_price'] = $v['price'] * $v['quantity'];
+            $goods_total_item += $v['quantity'];
+            $goods_total_price += $goods_info[$k]['item_price'];
+		}
+        //商品总价对应的积分
+        $goods_total_gold = $objInfo['money'] * trim($this->Config['pay_gold_rate']);
+        //会员当前积分
+        $user_id = M('Orders')->where('deleted=0 and hidden=0 and id='.$id)->getField('user_id');
+        $user_gold = M('User')->where('deleted=0 and hidden=0 and id='.$user_id)->getField('gold');
+        
+        $objInfo['goods_info'] = $goods_info;
+        $objInfo['goods_total_item'] = $goods_total_item;
+        $objInfo['goods_total_price'] = $goods_total_price;
+        $objInfo['goods_total_gold'] = $goods_total_gold;
+        $objInfo['user_gold'] = $user_gold;
+        
+		$this->assign('objInfo', $objInfo); //替换标签
+       	$this->display('view');
+    }
+
+	//查看清单
+    public function prints(){
+       	$ids = I('request.ids') ? I('request.ids') : null;
+        $ids_arr = explode(',', $ids);
+        $objList = array();
+        foreach($ids_arr as $id){
+            $objInfo = array();
+            $objInfo = M($this->tbName)->find($id);	
+            $objInfo['state'] = $this->state[$objInfo['state']][1];
+            
+             //取出订单商品表的关键信息
+            $OrdersGoods = M('OrdersGoods as a');
+            $goods_info = $OrdersGoods->join(C('DB_PREFIX').'goods as b on b.id=a.goods_id')->where('a.deleted=0 and a.hidden=0 and a.orders_id='.$id)->field('a.title, a.quantity, a.price,b.weight,b.weight_des')->select();
+            //商品总数和总价
+            $goods_total_item = 0;
+            $goods_total_price = 0;
+            foreach($goods_info as $k=>$v){
+                if($k==0){
+                    $objInfo['goods_list'] .= $v['title'].' '.$v['quantity'].'份';
+                }else{
+                    $objInfo['goods_list'] .= " ，".$v['title'].' '.$v['quantity'].'份';
+                }
+                //小票商品清单
+                $goods_info[$k]['item_price'] = $v['price'] * $v['quantity'];
+                $goods_total_item += $v['quantity'];
+                $goods_total_price += $goods_info[$k]['item_price'];
+            }
+            //商品总价对应的积分
+            $goods_total_gold = $objInfo['money'] * trim($this->Config['pay_gold_rate']);
+            //会员当前积分
+            $user_id = M('Orders')->where('deleted=0 and hidden=0 and id='.$id)->getField('user_id');
+            $user_gold = M('User')->where('deleted=0 and hidden=0 and id='.$user_id)->getField('gold');
+            
+            $objInfo['goods_info'] = $goods_info;
+            $objInfo['goods_total_item'] = $goods_total_item;
+            $objInfo['goods_total_price'] = $goods_total_price;
+            $objInfo['goods_total_price_ch'] = $this->ch_num($goods_total_price);
+            $objInfo['goods_total_gold'] = $goods_total_gold;
+            $objInfo['user_gold'] = $user_gold;
+            $objInfo['provincename'] = M('Province')->where(array('code'=>$objInfo['province']))->getField('name');
+            $objInfo['cityname'] = M('City')->where(array('code'=>$objInfo['city']))->getField('name');
+            $objInfo['areaname'] = M('Area')->where(array('code'=>$objInfo['area']))->getField('name');
+            $objList[] = $objInfo;
+        }
+
+		$this->assign('objList', $objList); //替换标签
+       	$this->display('prints');
+    }
+	
+    //获取地标级联
+    public function getCbdList(){
+        $name = I('name');
+        $CbdCategory = M('CbdCategory');
+        $id = $CbdCategory->where("deleted=0 and hidden=0 and name='".$name."'")->getField('id');
+        $cbd_list = $CbdCategory->where('deleted=0 and hidden=0 and parent_id='.$id)->field('name')->order('sorting asc')->select();
+        $this->success($cbd_list);
+    }
+	
+    //获取送餐时间(从后台配置获取区间 以1小时为偏移量)
+    public function getDeliveryTime($start_time = '', $end_time = ''){
+        $time_list = array();
+        if($this->Config['delivery_time']){
+            $time = explode('-', trim($this->Config['delivery_time']));
+            $start_time = ($start_time && $start_time>$time[0]) ? date('H', strtotime(trim($start_time))) : date('H', strtotime(trim($time[0])));
+            $end_time = ($end_time  && $end_time<$time[1]) ? date('H', strtotime(trim($end_time))) : date('H', strtotime(trim($time[1])));
+            $time_length = $end_time - $start_time;
+            //这里长度-1，结束时间不往后推一小时
+            for ($i=0; $i<$time_length; $i++) {
+                $time_list[$i] = $start_time+$i;
+            }
+        }
+        return $time_list;
+    }
+
+    public function export($list){  
+        vendor('PHPExcel');        
+        $Excel = new \PHPExcel();       
+        $Obj = M($this->tbName.' as o'); //实例化对象
+        
+        //dump($_POST);die;
+        //$datas = M("Orders_goods")->where('deleted = 0 and hidden = 0')->select(); 
+        $datas = $list;        
+        //echo $Obj->getLastSql();die;
+        //dump($datas);die;
+        // 设置基本属性
+        $Excel_pro = $Excel->getProperties();
+        $Excel_pro->setCreator('admin') //设置创建者
+                  ->setLastModifiedBy(date('Y-m-d H:i:s', time())) //设置时间
+                  ->setTitle($this->tbName) //设置标题
+                  ->setSubject('remark') //备注
+                  ->setDescription($this->tbName) //描述
+                  ->setKeywords('keyword') //关键字
+                  ->setCategory('category');//类别
+        // sheet
+        $Excel->setActiveSheetIndex(0);
+        // sheet title
+        $Excel->getActiveSheet(0)->setTitle($this->tbName);
+
+        $Excel->getActiveSheet()->setCellValue('A1', '订单号');
+        $Excel->getActiveSheet()->setCellValue('B1', '订单金额');
+        $Excel->getActiveSheet()->setCellValue('C1', '使用积分  ');
+        $Excel->getActiveSheet()->setCellValue('D1', '收货人');
+        $Excel->getActiveSheet()->setCellValue('E1', '收货电话');
+        $Excel->getActiveSheet()->setCellValue('F1', '省份');
+        $Excel->getActiveSheet()->setCellValue('G1', '城市');
+        $Excel->getActiveSheet()->setCellValue('H1', '区域');
+        $Excel->getActiveSheet()->setCellValue('I1', '收货地址');
+        $Excel->getActiveSheet()->setCellValue('J1', '配送时间');
+        $Excel->getActiveSheet()->setCellValue('K1', '备注');
+        $Excel->getActiveSheet()->setCellValue('L1', '订单状态');
+        $Excel->getActiveSheet()->setCellValue('M1', '下单时间');
+        $Excel->getActiveSheet()->setCellValue('N1', '供应商');
+        $Excel->getActiveSheet()->setCellValue('O1', '推荐人会员号');
+         foreach ($datas as $t => $y) {
+             $datas[$t]['supplier_id']=M('supplier')->where(array('id'=>$y['supplier_id']))->getField('name');
+             
+             switch ($y['state']) {
+                 case '0':
+                     $datas[$t]['state']='确认';
+                     break;
+                 case '1':
+                     $datas[$t]['state']='无效';
+                     break;
+                 default:
+                     $datas[$t]['state']='取消';
+                     break;
+             }
+            
+           
+         }
+       
+        foreach($datas as $k => $v){
+            $k = $k + 2;
+            $Excel->getActiveSheet()->setCellValue('A' . $k, $v['number']);
+            $Excel->getActiveSheet()->setCellValue('B' . $k, $v['money']);
+            $Excel->getActiveSheet()->setCellValue('C' . $k, $v['gold']);
+            $Excel->getActiveSheet()->setCellValue('D' . $k, $v['name']);
+            $Excel->getActiveSheet()->setCellValue('E' . $k, $v['mobile']);
+            $Excel->getActiveSheet()->setCellValue('F' . $k, $v['province']);
+            $Excel->getActiveSheet()->setCellValue('G' . $k, $v['city']);
+            $Excel->getActiveSheet()->setCellValue('H' . $k, $v['area']);
+            $Excel->getActiveSheet()->setCellValue('I' . $k, $v['address']);
+            if($v['delivery_time']==''){
+                $Excel->getActiveSheet()->setCellValue('J' . $k, '暂无');
+            }else{
+                $Excel->getActiveSheet()->setCellValue('J' . $k, date('Y-m-d H:i:s',$v['delivery_time']));
+            }
+            $Excel->getActiveSheet()->setCellValue('K' . $k, $v['remark']);
+            $Excel->getActiveSheet()->setCellValue('L' . $k, $v['state']);
+            $Excel->getActiveSheet()->setCellValue('M' . $k, date('Y-m-d H:i:s',$v['crdate']));
+            $Excel->getActiveSheet()->setCellValue('N' . $k, $v['supplier_id']);
+            $Excel->getActiveSheet()->setCellValue('O' . $k, $v['referee']);
+            
+        
+        }
+
+        //写入
+        $Excel_write = \PHPExcel_IOFactory::createWriter($Excel, 'Excel5');
+
+        // 输出
+        ob_end_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+        header('Content-Type:application/force-download');
+        header('Content-Type:applicationnd.ms-execl;');
+        header('Content-Type:application/octet-stream');
+        header('Content-Type:application/download');
+        header("Content-Disposition:attachment;filename=订单列表_".date("YmdH").".xls");
+        header('Content-Transfer-Encoding:binary');
+        $Excel_write->save('php://output');
+        
+
+    }
+	
+	// export Excel
+	//$import_item=array('Firstname','Lastname','Passport','Address','Zip','City','Country');
+	function exportData($filename = 'xls', $dataArray, $type = 'download'){
+
+		/** PHPExcel */
+		/* require_once('typo3conf/ext/ext_public/excel/PHPExcel.php');
+		require_once('typo3conf/ext/ext_public/excel/PHPExcel/Writer/Excel5.php'); */
+        
+        //引入core核心文件,前后台导出均可使用
+		vendor("PHPExcel.PHPExcel");
+        
+		$objPHPExcel = new PHPExcel();
+		// Create a first sheet
+
+		/* @func 设置文档基本属性 */
+		$obj_pro = $objPHPExcel->getProperties();
+		$obj_pro->setCreator('administrator')//设置创建者
+		         ->setLastModifiedBy(date('Y-m-d H:i:s',time()))//设置时间
+		         ->setTitle('data')//设置标题
+		         ->setSubject('remark')//设置备注
+		         ->setDescription('description')//设置描述
+		         ->setKeywords('keyword')//设置关键字 | 标记
+		         ->setCategory('catagory');//设置类别
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objPHPExcel->getActiveSheet()->setTitle('订单列表');
+
+		//set Excel Header
+		$cellArray = array(
+			'A1' => '订单号',
+			'B1' => '订单金额',
+			'C1' => '使用积分',
+			'D1' => '收货人',
+			'E1' => '收货电话',
+
+			'F1' => '收货地址',
+			'G1' => '配送时间',
+			'H1' => '备注',
+			'I1' => '订单状态',
+			'J1' => '下单时间',
+            'K1' =>'供应商',
+            'L1' =>'推荐人会员号'
+		);
+
+		//et Excel Header Style
+		foreach ($cellArray as $key => $cell) {
+			$objPHPExcel->getActiveSheet()->setCellValue($key, $cell);
+
+			//Set Font
+			//$objPHPExcel->getActiveSheet()->getStyle($key)->getFont()->setSize(12);
+			$objPHPExcel->getActiveSheet()->getStyle($key)->getFont()->setBold(true);
+			//$objPHPExcel->getActiveSheet()->getStyle($key)->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_WHITE);
+
+			//Set the fill color
+
+			//$objPHPExcel->getActiveSheet()->getStyle($key)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+			//$objPHPExcel->getActiveSheet()->getStyle($key)->getFill()->getStartColor()->setARGB('FF808080');
+
+			// Set align
+			$objPHPExcel->getActiveSheet()->getStyle($key)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT); //HORIZONTAL_LEFT HORIZONTAL_CENTER  HORIZONTAL_RIGHT HORIZONTAL_JUSTIFY VERTICAL_CENTER
+
+			//set border color
+			$objPHPExcel->getActiveSheet()->getStyle($key)->getBorders()->getTop()->getColor()->setARGB('FF993300');
+			$objPHPExcel->getActiveSheet()->getStyle($key)->getBorders()->getRight()->getColor()->setARGB('FF993300');
+			$objPHPExcel->getActiveSheet()->getStyle($key)->getBorders()->getBottom()->getColor()->setARGB('FF993300');
+			$objPHPExcel->getActiveSheet()->getStyle($key)->getBorders()->getLeft()->getColor()->setARGB('FF993300');
+
+
+		}
+
+		//设置单元格的数据显示类型
+		//$objPHPExcel->getActiveSheet()->getStyle('B')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+		//$objPHPExcel->getActiveSheet()->getStyle('F')->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+
+		//Excel data
+        //dump($dataArray);exit;
+		foreach ($dataArray as $key => $value) {
+            $value["location"] = $value["cbd_0"].$value["cbd_1"].$value["address"];
+            $value["state"] = $this->state[$value["state"]][1];
+            $value["crdate"] = date('Y-m-d H:i', $value["crdate"]);
+            $value['supplier_id']=M('supplier')->where(array('id'=>$value['supplier_id']))->getField('name');
+			$objPHPExcel->getActiveSheet()->setCellValue('A' . ($key + 2), $value["number"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('B' . ($key + 2), $value["money"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('C' . ($key + 2), $value["gold"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('D' . ($key + 2), $value["name"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('E' . ($key + 2), $value["mobile"] . " ");
+
+			$objPHPExcel->getActiveSheet()->setCellValue('F' . ($key + 2), $value["location"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('G' . ($key + 2), $value["delivery_time"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('H' . ($key + 2), $value["remark"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('I' . ($key + 2), $value["state"] . " ");
+			$objPHPExcel->getActiveSheet()->setCellValue('J' . ($key + 2), $value["crdate"] . " ");
+            $objPHPExcel->getActiveSheet()->setCellValue('K' . ($key + 2), $value["supplier_id"] . " ");
+            $objPHPExcel->getActiveSheet()->setCellValue('L' . ($key + 2), $value["referee"] . " ");
+		}
+
+		//设置单元格样式
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+
+		$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(35);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(35);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(10);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
+
+
+
+		//$objPHPExcel->getActiveSheet()->getStyle('A1:E36')->getFont()->setName('Arial');
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$m_strOutputExcelFileName = $filename . '.xls';
+		if ($type == 'download') {
+            //清除缓冲区,避免文件报错
+            ob_end_clean();
+			header("Pragma: public");
+			header("Expires: 0");
+			header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+			header("Content-Type:application/force-download");
+			header("Content-Type: application/vnd.ms-excel;");
+			header("Content-Type:application/octet-stream");
+			header("Content-Type:application/download");
+
+			header("Content-Disposition:attachment;filename=" . $m_strOutputExcelFileName);
+            header('Content-Transfer-Encoding:binary');
+			$objWriter->save('php://output');
+			exit;
+		} elseif ($type == 'save') {
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$tmp_name = PATH_site . $this->uploadfolder . $m_strOutputExcelFileName;
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$objWriter->save($tmp_name);
+			return $tmp_name;
+
+		}
+
+	}
+}
+
+?>

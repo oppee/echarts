@@ -1,0 +1,8 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}<if condition="$tca['required'] eq true">*</if></label>
+
+    <div class="controls">
+        <textarea class="span6 m-wrap" rows="3" name="{$name}">{$info[$name]}</textarea>
+        <span class="help-inline">{$tca.help}</span>
+    </div>
+</div>

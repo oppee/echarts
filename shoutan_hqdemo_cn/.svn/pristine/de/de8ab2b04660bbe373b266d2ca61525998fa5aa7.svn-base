@@ -1,0 +1,274 @@
+<include file="Public/header" />
+<!--header-->
+<header class='weui-header'>
+    <a href="javascript:history.back(-1);" class="turn" title=""><i class="iconfont">&#xe601;</i>一皆通</a>
+    <h1 class="weui-title">绑定账号</h1>
+</header>
+
+<!--logo-->
+<div class="logo">
+   <a href="javascript:;"><img src="__TMPL__Public/images/login_logo.png"/></a>
+</div>
+
+<!--表单-->
+<div class="weui_cells_form">
+    
+	<form class="login" id="login_form" action="{:U('bind')}" >
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label phone" for="phone"></label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="tel" name="phone" id="phone" value="" placeholder="登记手机">
+            </div>
+        </div>
+       <!-- <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label bus-name" for="pass"></label></div>
+            <div class="weui_cell_bd weui_cell_primary" id="store_prev">
+				<select class=" selectpicker" type="text" name="store" id="store">
+					<option value="0">选择商户</option>
+					<option value="1">选择商户</option>
+					<option value="2">选择商户</option>
+					<volist name="store" id="vo">
+						<option value="{$vo.store}">{$vo.merchant_name}</option>
+					</volist>
+			    </select>
+			 	 
+            </div>
+        </div>-->
+		
+		<!--<div class="weui_cell">-->
+            <!--<div class="weui_cell_hd"><label class="weui_label pass-label" for="pass"><i class="iconfont">&#xe606;</i></label></div>-->
+            <!--<div class="weui_cell_bd weui_cell_primary" id="store_prev">-->
+				<!--<select   class="weui_input" type="text" name="store" id="store">-->
+					<!--<option value="">选择商户</option>-->
+					<!--<volist name="store" id="vo">-->
+						<!--&lt;!&ndash;<option value="{$vo.store}">{$vo.merchant_name}</option>&ndash;&gt;-->
+                        <!--<option value="{$vo.store}">{$vo.merchant_name}</option>-->
+					<!--</volist>-->
+			    <!--</select>-->
+			 	<!--&lt;!&ndash;<input class="weui_input store_input" type="text" value=""  placeholder="选择商户">&ndash;&gt;-->
+            <!--</div>-->
+        <!--</div>-->
+
+
+
+        <div class="weui_cell weui_cell_select">
+            <div class="weui_cell_bd weui_cell_primary">
+                <select class="weui_select" name="select1">
+                    <option selected="" value="0">选择</option>
+                    <option value="1">微信号</option>
+                    <option value="2">QQ号</option>
+                    <option value="3">Email</option>
+                </select>
+            </div>
+        </div>
+
+
+
+
+
+
+        
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label card" for="fujiama"></label></div>
+            <div class="weui_cell_bd weui_cell_primary addition">
+                <input id="code" class="weui_input" type="tel" name="code" placeholder="激活码">
+                 
+            </div>
+        </div>
+    </form>
+
+    <p class="weui_btn_area">
+        <!--<a href="{:U('bind')}" class="weui_btn weui_btn_warn" title="">绑定</a>-->
+		<a href="javascript:;" class="weui_btn weui_btn_warn " id="login_btn" title="绑定">绑定</a>
+    </p>
+    <p class="code_link"><a href="javascript:;" id="getcode" class="blue">获取激活码</a></p>
+</div>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+wx.config({
+	debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+	appId: "{$jssdk.appId}", // 必填，公众号的唯一标识
+	timestamp: {$jssdk.timestamp}, // 必填，生成签名的时间戳
+	nonceStr: "{$jssdk.nonceStr}", // 必填，生成签名的随机串
+	signature: "{$jssdk.signature}",// 必填，签名，见附录1
+	jsApiList: ['closeWindow'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+</script>
+<script type="text/javascript">
+wx.ready(function () {
+	$("#getcode").click(function () {
+		var phone = $('#phone').val();
+		var store = $('#store').val();
+
+		if(!phone){
+            $.alert('请输入登记手机！');
+            return false;
+        }else{
+            if(!(/^1[3|4|5|7|8][0-9]\d{8,8}$/).test(phone)){
+                $.alert('请输入有效的登记手机！');
+                return false;
+            }
+        }
+		
+		if(!store){
+			$.alert('请选择商户！');
+			return false;
+		}		
+		//$(this).addClass('send_on');
+		//发送验证码
+		var data = $("#login_form").serialize();
+		var url = "{:U('reInviteCode')}";
+		$.post(url,data,function(msg){
+			$.alert(msg.info);
+		});
+	});
+	
+
+    $("#login_btn").click(function () {
+        var phone = $("input[name=phone]").val();
+        if(phone==''){
+            $.alert('请输入登记手机！');
+            return false;
+        }else{
+            if(!(/^1[3|4|5|7|8][0-9]\d{8,8}$/).test(phone)){
+                $.alert('请输入有效的登记手机！');
+                return false;
+            }
+        }
+		
+        var store = $('#store').val();
+        if(!store){
+            $.alert('请选择商户！');
+            return false;
+        }
+		
+		var code = $("input[name=code]").val();
+        if(code==''){
+            $.alert('请输入激活码！');
+            return false;
+        }
+		
+		//$.alert('绑定成功！');
+		
+		//window.location.href = "{:U('bind')}";
+		
+		var sendurls = $("#login_form").attr("action");
+        var sendForms = $("#login_form").serialize();
+        $.ajax({
+            type:'post',
+            url:sendurls,
+            data:sendForms,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 1){
+                    $.alert(data.info, function() {
+                       // window.location.href = data.url;
+                   	   wx.closeWindow();
+                    });
+                }else{
+                    $.alert(data.info);
+                }
+            }
+        });
+    });
+	
+	
+});
+
+$("#store,.store_input").click(function () {
+    var phone = $("#phone").val();
+    if(phone){
+        if(!(/^1[3|4|5|7|8][0-9]\d{8,8}$/).test(phone)){
+            $.alert('请输入有效的登记手机！');
+            return false;
+        }
+    	//获取对应的商户号
+    	var sendurls = "{:U('Index/getStores')}";
+        $.ajax({
+            type:'post',
+            url:sendurls,
+            data:{phone:phone},
+            dataType:'json',
+            success:function(data){
+                if(data.status == 1){
+                	var str = '';
+                	for(var i=0;i<data.data.length;i++){
+                		str+='<option value="'+data.data[i]["value"]+'">'+data.data[i]["title"]+'</option>';
+                	}
+                    $("#store").html(str).show();
+                    $(".store_input").hidden();
+                	/*$("#store").select({
+    			        title: "选择商户",
+    			        items: data.data,
+    			    });*/
+                }else if(data.status == 2){
+                	$.alert('商户已绑定，请勿重复绑定！');
+                }else{
+					$.alert('请输入有效的登记手机号码！');
+				}
+            }
+        });
+    }else{
+        $.alert('请输入登记手机！');
+        return false;
+	}
+});
+
+$("#phone").blur(function () {
+    var phone = $("#phone").val();
+    if(phone){
+    	//获取对应的商户号
+    	var sendurls = "{:U('Index/getStores')}";
+        $.ajax({
+            type:'post',
+            url:sendurls,
+            data:{phone:phone},
+            dataType:'json',
+            success:function(data){
+                if(data.status == 1){
+                	var str = '';
+                	for(var i=0;i<data.data.length;i++){
+                		str+='<option value="'+data.data[i]["value"]+'">'+data.data[i]["title"]+'</option>';
+                	}
+                    $("#store").html(str).show();
+                    $(".store_input").hide();
+                	/*$("#store").select({
+    			        title: "选择商户",
+    			        items: data.data,
+    			    });*/
+
+                }else if(data.status == 2){
+                	$.alert('商户已绑定，请勿重复绑定！');
+                }else{
+					$.alert('请输入有效的登记手机号码！');
+				}
+            }
+        });
+    }
+});
+
+</script>
+
+<eq name="error" value="1">
+<script type="text/javascript">
+wx.config({
+	debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+	appId: "{$jssdk.appId}", // 必填，公众号的唯一标识
+	timestamp: {$jssdk.timestamp}, // 必填，生成签名的时间戳
+	nonceStr: "{$jssdk.nonceStr}", // 必填，生成签名的随机串
+	signature: "{$jssdk.signature}",// 必填，签名，见附录1
+	jsApiList: ['closeWindow'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+
+wx.ready(function () {
+	//激活码错误三次，不能操作
+	//$.toast.prototype.defaults.duration = 3600000;
+	//$.toast('激活码多次输入错误，为了保证您的数据安全，请一小时后重试！', "forbidden");
+	$.alert('激活码多次输入错误，为了保证您的数据安全，请一小时后重试！',function(){
+		wx.closeWindow();
+	});
+})	
+</script>
+</eq>
+
+ <include file="Public/footer" />

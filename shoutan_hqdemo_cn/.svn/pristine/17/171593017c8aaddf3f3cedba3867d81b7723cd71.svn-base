@@ -1,0 +1,25 @@
+<!--<html>-->
+	<!--<head>-->
+		<!--<title>创建账户</title>-->
+	<!--</head>-->
+	<!---->
+	<!--<body>-->
+		<!--<h2 style="text-align:center;">创建账户</h2>-->
+	<!--</body>-->
+<!--</html>-->
+<include file="Public:header"/>
+<!--开通下属账户-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/account.jpg"/>
+</div>
+
+<div class="weui_cells create_account">
+	<div class="weui_cell dro_sec">
+		<span>选择商户</span>
+		<b class="fr"><i class="fa fa-angle-up"></i></b>
+	</div>
+	<div class="weui_cell"></div>
+	<div class="weui_cell"></div>
+</div>
+
+<include file="Public:footer"/>

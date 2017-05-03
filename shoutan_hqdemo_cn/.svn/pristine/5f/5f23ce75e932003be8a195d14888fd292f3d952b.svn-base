@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h3>邮件模板</h3>
+</div>
+<div class="modal-body">
+    <div class="row-fluid">
+        <div class="span12">
+            <form action="__SELF__" class="horizontal-form" method="post">
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="hidden" class="m-wrap span12" name="key" value="{$info.key}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="row-fluid span11">
+                    <div class="control-group span6">
+                        <label class="control-label">标题</label>
+
+                        <div class="controls">
+                            <input type="text" class="m-wrap span12" name="subject" value="{$info.subject}"
+                                   placeholder="邮件标题"/>
+                        </div>
+                    </div>
+                    <div class="control-group span6">
+                        <label class="control-label">暗送</label>
+
+                        <div class="controls">
+                            <div class="input-icon left">
+                                <i class="icon-envelope"></i>
+                                <input type="text" placeholder="Email Address" class="m-wrap span12" name="bcc"
+                                       value="{$info.bcc}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid span11">
+                    <div class="control-group">
+                        <label class="control-label span12">内容</label>
+
+                        <div class="controls">
+                            <textarea class="m-wrap span12" rows="10" name="content" placeholder="邮件内容">{$info.content}</textarea>
+                        <ul class="help-inline">
+                            <li>验证链接:{###Link###}补发内容:{###EmailContent###}</li>
+                            <li>会员名称:{###UserName###}会员邮箱:{###UserEmail###}登录密码:{###Password###}</li>
+                            <li>本站名称:{###SiteName###}本站网址:{###SiteUrl###}本站邮箱:{###SiteEmail###}客服电话:{###SiteTel###}</li>
+                            <li>订单编号:{###OrderNumber###}订单金额:{###Money###}下单时间:{###Time###}收货人:{###Name###}送货清单:{###List###}物流单号:{###Invoice###}查询网址:{###SearchUrl###}</li>
+                        </ul>
+                        </div>
+                        <span class="help-inline">注：不区分大小写，但是不能有空格</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">关闭</button>
+    <button type="button" class="btn blue email_save">保存</button>
+</div>

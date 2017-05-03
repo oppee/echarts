@@ -1,0 +1,269 @@
+<?php
+namespace HQ\Controller;
+/**
+ * @author HeQi
+ * @Email info@heqi.hk
+ */
+class SupplierController extends BaseController {
+
+	//模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+	private $tca = array();
+	public $tbName = CONTROLLER_NAME;  //MODULE_NAME
+	public $image_path = '';
+	//高级筛选
+	public $status_all = array(
+		array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+		array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse')
+	);
+
+
+	protected function init() {
+		//高级筛选
+		$users = M("User")->where(array("hidden"=>0,"deleted"=>0))->field("id as '0',concat_ws('-',id,username,name) as '1'")->select();
+		//$users = M('User')->where('hidden=0 and deleted=0 and id='.$list['user_id'])->field('id as "0",concat_ws("-",id,username,mobile) as "1"')->select();
+		$this->assign('status_all', $this->status_all);
+
+		if (ACTION_NAME == 'save') {
+			$id = $this->_get('id');
+			$crdate = M($this->tbName)->where('id = ' . $id)->getField('crdate');
+
+			//图片路径
+			$this->image_path = CONTROLLER_NAME . '/source/' . date('Ym', $crdate) . '/';
+		}
+
+		 
+		$this->tca = array(
+			'hidden' => array(
+				'label' => '显示',
+				'type' => 'toggle_button',
+				'data' => '0' //checkbox value
+			),
+/*			'top' => array(
+				'label' => '是否置顶',
+				'type' => 'toggle_button',
+				'data' => '1'
+			),
+			'hot' => array(
+				'label' => '是否推荐',
+				'type' => 'toggle_button',
+				'data' => '1'
+			),*/
+			'referee' => array(
+				'label' => '推荐人',
+				'type' => 'select2',
+                'data' => $users
+			),			 
+			'company' => array(
+				'label' => '公司名称',
+				'type' => 'text',
+				'required' => true
+			),
+
+			'name' => array(
+				'label' => '联系人',
+				'type' => 'text'
+			),
+			'phone' => array(
+				'label' => '手机号码',
+				'type' => 'text',
+			),
+			'email' => array(
+				'label' => '电子邮箱',
+				'type' => 'text',
+			),
+			'address' => array(
+				'label' => '联系地址',
+				'type' => 'text',
+			),
+
+		);
+	}
+
+	/*
+     * 列表页面
+     */
+
+	public function index() {
+		$this->init(); //加载初始化数据
+		import('@.Util.Page'); // 导入分页类
+		$Obj = D($this->tbName); //实例化对象
+		$Where = "deleted=0";
+		//高级搜索 数据状态
+		$Where_status = ' and ( ';
+		$Where_status_info = '';
+		foreach($this->status_all as $k=>$v){
+			if(I('request.'.$v['status'])!=''){
+				$I_status = I('request.'.$v['status']);
+				if(in_array($v['value'], $I_status)){
+					$Where_status_info .= " or `".$v['status']."`='".$v['value']."' ";
+				}
+			}
+		}
+		if($Where_status_info==''){
+			unset($Where_status);
+		}else{
+			$Where_status .= substr($Where_status_info, 3).' ) ';
+			$Where .= $Where_status;
+		}
+		/*if (I('request.gender')!='') {
+			$I_taste = trim(I('request.gender'));
+			$Where .= " and gender = '".I('request.gender')."'";
+		}
+		if (I('request.agegroup')!='') {
+			$I_taste = trim(I('request.agegroup'));
+			$Where .= " and agegroup = '".I('request.agegroup')."'";
+		}
+		if (I('request.taste')!='') {
+			$I_taste = trim(I('request.taste'));
+			$Where .= " and taste = '".I('request.taste')."'";
+		}
+		if (I('request.industry')!='') {
+			$Where .= " and industry_id = ".I('request.industry');
+		}*/
+		// 地区搜索
+		if($province = I('get.chinaprovinces_province')){
+			$Where .=' and (province = "' . $province . '")';
+			$dq['province'] = $province;
+		}
+		if($city = I('get.chinaprovinces_city')){
+			$Where .=' and (city = "' . $city . '")';
+			$dq['city'] = $city;
+		}
+		if($area = I('get.chinaprovinces_area')){
+			$Where .=' and (area = "' . $area . '")';
+			$dq['area'] = $area;
+		}
+		$this->assign("dq",$dq);
+
+		if (I('request.keyword')!='') {
+			$I_keyword = trim(I('request.keyword'));
+			$Where .= " and (id like '%" . $I_keyword . "%' or username like '%" . $I_keyword . "%' or company_name like '%" . $I_keyword . "%'  or phone like '%" . $I_keyword . "%')";
+		}
+		//控制分页显示条数
+		if(I('post.limit_num')!=''){
+			session('page_limit_num', I('post.limit_num'));
+		}
+		//控制列表排序
+		$sorting = I('get.sorting') ? I('get.sorting') : 'id';
+		$order = I('get.order') ? I('get.order') : 'desc';
+		$limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+		$Page = new \HQ\Util\Page($Obj->where($Where)->count(), $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+		$list = $Obj->where($Where)->order($sorting.' '.$order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		//var_dump($Where);exit;
+		/* foreach($list as $k => $v){
+            $list[$k]['userDate']=round(($v['end_time']-time())/3600/24);
+            $list[$k]['userDate']=$list[$k]['userDate']<0?0:$list[$k]['userDate'];
+        } */
+
+		$this->assign('list', $list); // 赋值数据集
+		$this->assign('page', $Page->show()); // 分页显示输出
+		$this->display(); // 输出模板
+	}
+
+	/**
+	 * 编辑数据
+	 */
+	public function edit() {
+		$this->save();
+	}
+
+	/**
+	 * 保存数据
+	 */
+	public function save() {
+		$this->init();
+		//编辑数据
+		$id = I('request.id') ? I('request.id') : null;
+		$info = M($this->tbName)->where('id = ' . $id)->find();
+		//dump(date('Y-m-d H:i:s',$info['end_time']));exit();
+		if (IS_POST) {
+			if ($_POST['password'] != $info['password'] && !empty($_POST['password'])){
+				$_POST['password'] = $this->encryption($_POST['password']);
+			} else {
+				unset($_POST['password']);
+			}
+			//处理地区选择
+			$_POST['province']=$_POST['chinaprovinces_province'];
+			$_POST['city']=$_POST['chinaprovinces_city'];
+			$_POST['area']=$_POST['chinaprovinces_area'];
+			//日期处理
+			$_POST['start_time']=strtotime($_POST['start_time']);
+			$_POST['end_time']=strtotime($_POST['end_time']);
+			foreach ($_POST as $key => $val) {
+				//处理POST数据
+				if (is_array($val)) {
+					$_POST[$key] = implode(",", $val);
+				}
+				if (@$this->tca[$key]['required'] && !$val) {
+					$this->error($this->tca[$key]['label'] . '是必填项!');
+				}
+			}
+
+			//删除文件 begin **********************************
+			$path = $this->Config['path_upload'] . CONTROLLER_NAME . '/';
+			if ($info && $info['image'] && $_POST['delete_image'] == '1') {
+				$file_path = $path . 'source/' . date('Ym', $info['crdate']) . '/';
+				$this->delInfoFile($file_path, $info['image']);
+			} else {
+				unset($_POST['image']);
+			}
+			//删除文件 end **********************************
+			//文件上传 begin **********************************
+			if (count($_FILES) && isset($_FILES['image'])) {
+				$save_path = 'source/'; // 设置附件上传目录
+				$extent_path = ($info['crdate'] ? date('Ym', $info['crdate']) : date('Ym')) . '/';
+
+				$upload = $this->uploadFile('image', $path, $save_path, $extent_path);
+
+				if (is_array($upload) && $upload['upload']) {
+					$_POST['image'] = $upload['info'];
+				} else {
+					$this->error($upload['info']);
+				}
+			}
+			//文件上传 end **********************************
+
+			$Obj = D($this->tbName);
+			$result = $Obj->create();
+			if (!$result) {
+				$this->error($Obj->getError());
+			} else {
+				if (!isset($_POST['hidden'])) {
+					$Obj->hidden = 1;
+				}
+				if (!isset($_POST['top'])) {
+					$Obj->top = 0;
+				}
+
+				$Obj->tstamp = time();
+				if ($id) {
+					$Obj->where(array('id' => $id))->save();
+					$message = '编辑成功!';
+				} else {
+					$Obj->crdate = time();
+					$id = $Obj->add();
+					if (trim($_POST['sorting']) == '') {
+						$Obj->where(array('id' => $id))->save(array('sorting' => $id));
+					}
+					$message = '添加成功!';
+				}
+
+				$this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+				exit;
+			}
+		}
+		//地区赋值的几个变量
+		$dq=array(
+			'province'=>$info['province'],
+			'city'=>$info['city'],
+			'area'=>$info['area'],
+		);
+		$this->assign("dq",$dq);
+		//自动渲染字段
+		parent::autoFields($this->tca, $info);
+		$this->display('info');
+	}
+
+}
+
+?>

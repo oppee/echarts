@@ -1,0 +1,90 @@
+<include file="Public:header"/>
+<!--修改密码-->
+<div class="logo">
+    <a href=""><img src="__TMPL__Public/images/login_logo.png"/></a>
+</div>
+
+<!--表单-->
+<div class="weui_cells_form edit_pass">
+        <form class="login content">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="ypass"></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="ypass" class="weui_input" type="password" placeholder="原密码">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="npass"></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="npass" class="weui_input" type="password" placeholder="新密码">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="qpass"></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="qpass" class="weui_input" type="password" placeholder="确认密码">
+                </div>
+            </div>
+        </form>
+
+    <p class="weui_btn_area" style=" margin-top:130px;">
+        <a href="javascript:;" class="weui_btn weui_btn_warn" title="修改密码" id="btnCommit">修改密码</a>
+    </p>
+</div>
+<script>    
+    $('#btnCommit').click(function(){
+		var _opwd=$('#ypass').val();
+		var _npwd=$('#npass').val();
+		var _rpwd=$('#qpass').val();
+		if(_opwd==''){
+            $.alert('请输入密码！');
+            return false;
+        }
+		if(_npwd==''){
+            $.alert('请输入新密码！');
+            return false;
+        }
+		var regex =/^[\@A-Za-z0-9\!\+\-\#\$\%\^\&\*\.\~]{6,16}$/;
+		if(!regex.test(_npwd)){
+			$.alert('新密码有误，请输入6-16位数字、字母或常用符号！！');
+            return false;
+		}
+		if(_opwd==_npwd){
+			$.alert('新密码不能与旧密码一致哦！');
+            return false;
+		}
+        if(_rpwd==''){
+            $.alert('请输入确认密码！');
+            return false;
+        }
+		if(_npwd!=_rpwd){
+            $.alert('新密码与确认密码不一致！');
+            return false;
+        }
+		$('#btnCommit').attr({"disabled":"disabled"});
+		$.ajax({
+			url:"{:U('passWordSave')}",
+			method:"POST",
+			data: { opwd:_opwd,npwd: _npwd,rpwd: _rpwd },
+			dataType:"json",
+			success:function(data){
+				if(data.status==1){
+					$.alert(data.info,function(){
+						window.location.reload();	
+					});
+				}else{
+					$('#btnCommit').removeAttr("disabled");
+					$.alert(data.info);
+					return false;
+				}
+			},
+			error:function(){
+				$('#btnCommit').removeAttr("disabled");
+				$.alert("网络不给力哦，请稍后再试。。。");
+				return false;
+			},
+			async:false
+		});
+    });
+</script>
+<include file="Public:footer"/>

@@ -1,0 +1,302 @@
+<?php
+
+/**
+ * 创建新模块, 请复制DemoAction.class.php与主题下Demo文件夹, Demo改为新模块名. 数据库存字段请手动定义,Banner.sql
+ * @author HeQi, info@heqi.hk
+ */
+namespace HQ\Controller;
+class BannerController extends BaseController {
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = CONTROLLER_NAME;
+    //高级筛选
+    public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse')
+    );
+
+    protected function init() {
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+        if (ACTION_NAME == 'edit') {
+            $id = $this->_get('id');
+            $current = M($this->tbName)->where('id = ' . $id)->getField('position');
+        } else {
+            $current = $this->_get('position');
+        }
+
+        $position = $this->getCategoryTree(0, $current, 'banner_position');
+        $this->assign('position', $position);
+        $multiple =array();
+
+        //批量图片
+        $data = array(
+        		'info_tab' => CONTROLLER_NAME,
+        		'info_id' => $id
+        );
+        $multiple = M('Attach')->where($data)->select();
+
+        if (count($multiple)) {
+        	foreach ($multiple as $k => $v) {
+        		$multiple[$k]['path'] = $this->Config['path_upload'] . 'Banner/attach/' . date('Ym', $v['crdate']) . '/' . $v['path'];
+        	}
+        }
+        //Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            'sorting' => array(
+                'label' => '排序',
+                'type' => 'text'
+            ),
+            'title' => array(
+                'label' => '广告标题',
+                'type' => 'text',
+                'required' => true
+            ),
+            'position' => array(
+                'label' => '广告位置',
+                'type' => 'select_tree',
+                'data' => $position
+            ),
+            'link' => array(
+                'label' => '广告链接',
+                'type' => 'text'
+            ),
+            'type' => array(
+                'label' => '广告类型',
+                'type' => 'select',
+                'data' => array(array(0, '图片'), array(1, 'FLASH'), array(2, '文本'), array(3, '代码'))
+            ),
+            'target' => array(
+                'label' => '打开方式',
+                'type' => 'select',
+                'data' => array(array('_blank', '新窗口'), array('_self', '本窗口'), array('_parent', '父窗口'))
+            ), //data: 可动态查询，可自定义选项
+            'text' => array(
+                'label' => '文字内容',
+                'help' => '',
+                'type' => 'textarea'
+            ),
+            'code' => array(
+                'label' => '广告代码',
+                'help' => '',
+                'type' => 'textarea'
+            ),
+            'flash_file' => array(
+                'label' => 'Flash文件',
+                'help' => '',
+                'type' => 'attachment'
+            ),
+            'flash_url' => array(
+                'label' => 'Flash网址',
+                'help' => '',
+                'type' => 'text'
+            ),
+            'image' => array(
+                'label' => '广告图片',
+                'type' => 'image'
+            ),
+            'start_time' => array(
+                'label' => '开始时间',
+                'type' => 'datetime',
+                'mode'=> 'date'
+            ),
+            'end_time' => array(
+                'label' => '结束时间',
+                'type' => 'datetime',
+                'mode'=> 'date'
+            ),
+            'remark' => array(
+                'label' => '备注',
+                'help' => '',
+                'type' => 'textarea'
+            ),
+        );
+    }
+
+    /*
+     * 列表页面
+     */
+
+    public function index() {
+		$this->init();	//加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = D($this->tbName); //实例化对象
+
+        $Where = "deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or `".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+        if (I('request.keyword')!='') {
+            $I_keyword = I('request.keyword');
+            $Where .= " and title like '%" . $I_keyword . "%'";
+        }
+
+        // if (I('request.position')) {
+            // $Where .= " and position = '" . I('request.position') . "'";
+        // }
+        $position=I('request.position');
+        if ($position) {
+            $ids = array();
+            $rs = $this->getPathAndClass($position, 'banner_position', true);
+            if (count($rs)) {
+                foreach ($rs as $v) {
+                    $ids[] = $v['id'];
+                }
+                $ids = implode(',', $ids);
+                $Where .= " and position in (" . $ids . ") ";
+            }
+        }
+
+        /* if (I('request.category')) {
+             $Where .= " and category = '" . I('request.category') . "'";
+        } */
+
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+        $Page = new \HQ\Util\Page($Obj->where($Where)->count(), $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj->where($Where)->order($sorting.' '.$order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 编辑数据
+     */
+    public function edit() {
+        $this->save();
+    }
+
+    /**
+     * 保存数据
+     */
+    public function save() {
+    	 $this->init();
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+//         $info = M($this->tbName)->where('id = ' . $id)->find();
+        $info = M(CONTROLLER_NAME)->where('id = ' . $id)->find();
+        if (IS_POST) {
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    $_POST[$key] = implode(",", $val);
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+            $_POST['start_time']=strtotime($_POST['start_time']);
+            $_POST['end_time']=strtotime($_POST['end_time']);
+            //删除文件 begin **********************************
+            $path = $this->Config['path_upload'] . CONTROLLER_NAME . '/';
+            if ($info && $info['image'] && $_POST['delete_image'] == '1') {
+                $file_path = $path;
+                $this->delInfoFile($file_path, $info['image']);
+            } else {
+                unset($_POST['image']);
+            }
+            //删除文件 end **********************************
+            //文件上传 begin **********************************
+            if (count($_FILES) && isset($_FILES['image'])) {
+                $upload = $this->uploadFile('image', $path);
+
+                if (is_array($upload) && $upload['upload']) {
+                    $_POST['image'] = $upload['info'];
+                } else {
+                    $this->error($upload['info']);
+                }
+            }
+            //文件上传 end **********************************
+
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $Obj->hidden = 1;
+                }
+                if (!isset($_POST['top'])) {
+                    $Obj->top = 0;
+                }
+                if (!isset($_POST['hot'])) {
+                    $Obj->hot = 0;
+                }
+                $Obj->tstamp = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+                } else {
+                    $Obj->crdate = time();
+
+                    $id = $Obj->add();
+                    if (trim($_POST['sorting']) == '') {
+                        $Obj->where(array('id' => $id))->save(array('sorting' => $id));
+                    }
+
+                    $message = '添加成功!';
+                }
+                //多文件上传 begin
+                if (isset($_POST['multiple'])) {
+                    $multiple = explode(',', $_POST['multiple']);
+                    foreach ($multiple as $file) {
+                        if ($file) {
+                            $file = explode('/', trim($file));
+                            if (empty($file[0]) || empty($file[1])){
+                                continue;
+                            }
+
+                            $file_info = array(
+                                'tstamp' => time(),
+                                'crdate' => time(),
+                                'title' => substr($file[1], 0, strrpos($file[1], '.')),
+                                'info_id' => $id,
+                                'info_tab' => CONTROLLER_NAME,
+                                'path' => $file[0],
+                            );
+
+                            M('Attach')->add($file_info);
+                        }
+                    }
+                }
+                //多文件上传 end ************************************
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+        //自动渲染字段
+        parent::autoFields($this->tca, $info);
+        $this->assign('Multiple', true);
+        $this->display('info');
+    }
+
+}
+
+?>

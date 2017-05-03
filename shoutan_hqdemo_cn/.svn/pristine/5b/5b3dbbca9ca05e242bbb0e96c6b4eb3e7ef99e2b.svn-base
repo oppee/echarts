@@ -1,0 +1,203 @@
+<?php
+namespace HQ\Controller;
+/**
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+class GroupbuyController extends BaseController
+{
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = CONTROLLER_NAME;
+    //高级筛选
+    public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse'),
+        /*array('status'=>'hot', 'value'=>1, 'title'=>'推荐', 'class'=>'success'),
+        array('status'=>'hot', 'value'=>0, 'title'=>'未推', 'class'=>'inverse'),
+        array('status'=>'top', 'value'=>1, 'title'=>'置顶', 'class'=>'success'),
+        array('status'=>'top', 'value'=>0, 'title'=>'未顶', 'class'=>'inverse'),*/
+    );
+		 
+    protected function init()
+    { 
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+		//根据ID获取用户名
+        $id = I('request.id') ? I('request.id') : null;
+		if ($id != '') {
+			$user_id = M($this->tbName)->where(array('deleted' => 0, 'id' => $id))->getField('user_id');
+			$users = M('User')->where(array('deleted' => 0, 'id' => $user_id))->getField('username');
+			$users = array(array(0, $users));
+		}else {//分类关联
+			$users = M('User')->where(array('deleted' => 0))->select();
+			foreach ($users as $key3 => $val3) {
+				$users[$key3] = array($val3['id'], $val3['id'] . "." . $val3['username']);
+			}
+		}
+		$this->assign('users',$users);
+        //Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            /*'hot' => array(
+                'label' => '是否推荐',
+                'type' => 'toggle_button',
+                'data' => '1'
+            ),
+            'top' => array(
+                'label' => '是否置顶',
+                'type' => 'toggle_button',
+                'data' => '1'
+            ),						
+            'sorting' => array(
+                'label' => '排列顺序',
+                'type' => 'text'
+            ),*/
+            'linkman' => array(
+                'label' => '联系人',
+                'type' => 'text',
+                'required' => true
+            ),
+            'company' => array(
+                'label' => '单位名称',
+                'type' => 'text',
+                'required' => true
+            ),
+            'addr' => array(
+                'label' => '单位地址',
+                'type' => 'text',
+                'required' => true
+            ),
+            'tel' => array(
+                'label' => '单位电话',
+                'type' => 'text',
+            ),
+            'mobile' => array(
+                'label' => '联系电话',
+                'type' => 'text',
+                'required' => true
+            ),
+            'num' => array(
+                'label' => '订餐人数',
+                'type' => 'text',
+            ),
+            'paytype' => array(
+                'label' => '支付方式',
+                'type' => 'text'
+            ),
+            'content' => array(
+                'label' => '具体订餐',
+                'type' => 'textarea'
+            ),
+            'dishes' => array(
+                'label' => '套餐清单',
+                'type' => 'textarea'
+            ),
+        );
+    }
+
+    /*
+     * 列表页面
+     */
+    public function index()
+    {
+        $this->init();	//加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = D($this->tbName); //实例化对象
+        $Where = "deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or `".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+        if (I('request.keyword')!='') {
+            $I_keyword = trim(I('request.keyword'));
+            $Where .= " and (id like '%" . $I_keyword . "%' or company like '%" . $I_keyword . "%' or tel like '%" . $I_keyword . "%' or addr like '%" . $I_keyword . "%' or linkman like '%" . $I_keyword . "%' or mobile like '%" . $I_keyword . "%')";
+        }
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+        $Page = new \HQ\Util\Page($Obj->where($Where)->count(), $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj->where($Where)->order($sorting.' '.$order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        //dump($list);exit;
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 保存数据
+     */
+    public function save() {
+    	 $this->init();
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+        $info = M($this->tbName)->where('id = ' . $id)->find();
+        if (IS_POST) {
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    $_POST[$key] = implode(",", $val);
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+ 
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $Obj->hidden = 1;
+                }
+                 
+                $Obj->tstamp = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+                } else {
+                    $Obj->crdate = time();
+
+                    $id = $Obj->add();
+                    /*if (trim($_POST['sorting']) == '') {
+                        $Obj->where(array('id' => $id))->save(array('sorting' => $id));
+                    }*/
+                    $message = '添加成功!';
+                }
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+        //自动渲染字段
+				//dump($info);
+        parent::autoFields($this->tca, $info);
+        $this->display('info');
+    }
+
+}
+
+?>

@@ -1,0 +1,13 @@
+.control-group{ position: relative; width: 100%; margin-bottom: 20px;}
+.control-group .code-box .form-control{ padding-right: 0!important; margin: 0!important; height: 32px; line-height: 26px; border: none; box-sizing: border-box; box-shadow: 0 0 0 #fff;}
+.code-box{ background: #fff;}
+.code-box .code-update{
+    cursor: pointer; background: url("../img/ico.png") no-repeat 1px 1px; width: 24px; height: 24px; float: right; margin:4px 10px;}
+.code-box .form-control{ width: 140px;}
+.code-box .code-pic{ float: right;  margin-top: 3px; width: 69px; height: 24px;}
+.code-box .code-pic img{ width: 100%;}
+.code-box .input-icon.left i{}
+.control-group .help-block, .help-inline{ position: absolute; left: 0; top: 31px;}
+.control-group.error .code-box input:focus{ -webkit-box-shadow:0 0 0 #fff!important; -moz-box-shadow:0 0 0 #fff!important; box-shadow:0 0 0 #fff!important; outline:none!important;}
+.control-group.error .code-box input{ color:#666!important;}
+.control-group.error .code-box{ border:1px solid #b94a48;}

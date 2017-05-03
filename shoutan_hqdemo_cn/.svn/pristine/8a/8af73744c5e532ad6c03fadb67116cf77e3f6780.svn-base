@@ -1,0 +1,219 @@
+<style type="text/css" media="screen">
+	.print_c{ display:block}
+	#pirnt_content{ font-size:12px;}
+	.modal-title{ text-align:center; font-weight:bold;}	
+	.borders{ border-bottom:#333333 1px dotted}
+	.pad{ padding:5px 0}
+	</style>
+<div class="modal-header ">
+	<button aria-hidden="true" data-dismiss="modal" class="close" type="button"></button>
+	<h3>订单详情</h3>
+</div>
+<div class="modal-body" >
+
+ <form class="form-horizontal form-verify view" action="" method="post" name="" id="" style="display:none" >
+	<div class="tab-content noprint">
+		<div class="row-fluid">
+			<div class="span6 ">
+				<div class="control-group">
+					<label class="control-label"><span>订单号码：</span></label>
+	
+					<div class="controls"><span class="text">{$objInfo.number}</span></div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>订单金额：</span></label>
+					<div class="controls"><span class="text">{$objInfo.money}</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>订单状态：</span></label>
+					<div class="controls"><span class="text">{$objInfo.state}</span></div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>支付方式：</span></label>
+					<div class="controls"><span class="text">{$objInfo.payment_id|getTitle=###,'payment','title'}</span></div>
+				</div>
+			</div>
+			 
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>收货人：</span></label>
+					<div class="controls"><span class="text">{$objInfo.name}</span></div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>收货电话：</span></label>
+					<div class="controls"><span class="text">{$objInfo.mobile}</span></div>
+				</div>
+			</div>
+		</div>		 
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>科技园区：</span></label>
+					<div class="controls"><span class="text">{$objInfo.cbd_0}</span></div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>园区楼层：</span></label>
+					<div class="controls"><span class="text">{$objInfo.cbd_1}</span></div>
+				</div>
+			</div>
+		</div>	
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>详细地址：</span></label>
+					<div class="controls"><span class="text">{$objInfo.address}</span></div>
+				</div>
+			</div>
+			<div class="span6">
+				<div class="control-group">
+					<label class="control-label"><span>标志建筑：</span></label>
+					<div class="controls"><span class="text">{$objInfo.landmark}</span></div>
+				</div>
+			</div>
+		</div>	
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="control-group">
+					<label class="control-label"><span>送货时间：</span></label>
+	
+					<div class="controls"><span class="text">{$objInfo.delivery_time}</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="control-group">
+					<label class="control-label"><span>订单清单：</span></label>
+	
+					<div class="controls"><span class="text">{$objInfo.goods_list}</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="control-group">
+					<label class="control-label"><span>订单备注：</span></label>
+	
+					<div class="controls"><span class="text">{$objInfo.remark}</span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+	 <div class="tab-content" id="pirnt_content">
+	 <style type="text/css" media="print">
+	.noprint{ display:none}
+	.modal-title{ text-align:center; font-weight:bold;}	
+	.print_c{ display:block;}
+	.print_c td{font-size:12px;}
+	.borders{ border-bottom:#333333 1px double}
+	.pad{ padding:5px 0}
+	@page { margin: 0.5cm 0.1cm; }
+	</style>
+
+	 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="print_c">
+	  <tr>
+		<td class="title modal-title">
+		欢迎光临{$Config.sitename}在线支付<br />
+		=======================		</td>
+	  </tr>
+	  <tr>
+		<td class="borders pad">
+		单号：<span class="text">{$objInfo.number}</span></td>
+	  </tr>
+	  <tr>
+		<td class="pad">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+				<td>名称-单价</td>
+				<td>数量</td>
+				<td>金额</td>
+			  </tr>
+              <volist name="objInfo['goods_info']" id="vo">
+                  <tr>
+                    <td colspan="3">{$vo.title}</td>
+                  </tr>
+                  <tr>
+                    <td>{$vo.price}</td>
+                    <td>{$vo.quantity}</td>
+                    <td>{$vo.item_price}</td>
+                  </tr>
+              </volist>
+			   <tr>
+				<td colspan="3" class="borders"></td>
+			  </tr>
+			  <tr >
+				<td class="pad">合　　计：</td>
+				<td>{$objInfo.goods_total_item}</td>
+				<td>{$objInfo.goods_total_price}</td>
+			  </tr>	
+			  <tr>
+				<td class="">积分抵扣：</td>
+				<td></td>
+				<td>{$objInfo.gold}</td>
+			  </tr>	
+			  <tr >
+				<td class="pad">实际支付：</td>
+				<td></td>
+				<td>{$objInfo.money}</td>
+			  </tr>			  
+			   <tr>
+				<td colspan="3" class="borders"></td>
+			  </tr>		
+			</table>
+
+		</td>
+	  </tr>
+	  <tr>
+		<td>您本次消费获得{$objInfo.goods_total_gold}积分，账户总积分{$objInfo.user_gold}，账户积分可以直接用来支付抵现。
+			<!-- <br />点餐微信：mmhefan<br /> -->
+			<br />购买网址：yiyaob2c.hqdemo.cn<br />     
+			客服热线：{$Config.tel}<br />    
+			官方QQ：{$Config.qq}<br />
+		  </td>
+	  </tr>
+	  <tr>
+		<td class="title modal-title">======================= <br />
+		  {$Config.sitename}订单配送签收单<br />
+		  ======================= </td>
+	  </tr>
+	  <tr>
+		<td>单号：<span class="text">{$objInfo.number}</span><br />                    
+            配送时间：<span class="text">{$objInfo.delivery_time}</span><br />
+            顾客姓名：<span class="text">{$objInfo.name}</span><br />                       
+            联系电话：<span class="text">{$objInfo.mobile}</span><br />
+            送货地址：<span class="text">{$objInfo.cbd_0} {$objInfo.cbd_1} {$objInfo.address}</span><br />
+            <div class="borders pad"></div> 
+            顾客签名：<br />      <br />                                    
+            送货员签名：<br /><br />
+
+        </td>
+	  </tr>
+	  
+	</table>
+
+	 </div>
+	
+
+<button class="btn yellow noprint" onclick="javascript:printHTML('pirnt_content')">打印订单<i class="icon-print"></i></button>
+</div>
+<script type="text/javascript">
+//打印局部方法
+function printHTML(id){
+	$("#"+id).printArea({modes:'popup'});
+}
+</script>

@@ -1,0 +1,150 @@
+<?php
+/**
+ * 用户服务接口
+ *
+ */
+namespace Api\Controller;
+
+class UserFwxmController extends BaseController {
+
+	/**
+	 * 新增服务
+	 */
+	public function newUserFwxm(){
+		
+		//服务项目
+		$service_item = I('request.service_item');
+		//公司名称
+		$company_name = I('request.company_name');
+		//公司地址
+		$company_address = I('request.company_address');
+		//联系人
+		$contact_name = I('request.contact_name');
+		//联系电话
+		$contact_tel = I('request.contact_tel');
+		//用户申请表主键
+		$user_fwxm_id = I('request.user_fwxm_id');
+		//方便联系时间
+		$contact_time = I('request.contact_time');
+		//催促标识
+		$urge_flg = "0";
+		
+		$json['service_item'] = $service_item;
+		$json['company_name'] = $company_name;
+		$json['company_address'] = $company_address;
+		$json['contact_name'] = $contact_name;
+		$json['contact_tel'] = $contact_tel;
+		$json['user_fwxm_id'] = $user_fwxm_id;
+		$json['service_item'] = $service_item;
+		$json['contact_time'] = $contact_time;
+		$json['urge_flg'] = $urge_flg;
+		
+		//JSON_UNESCAPED_UNICODE 汉字不转码
+		$md5str = md5(json_encode($json,JSON_UNESCAPED_UNICODE));
+		$json['md5str'] = $md5str;
+		
+		//RSA加密
+		import("Api.Util.RSA");
+		$rsa = new \RSA();
+		$rs = $rsa->encrypted(json_encode($json));
+		
+		$url = C("SHOUTAN_API/ecmServiceApply");
+		
+		$receive_json = https_request($url,array("jsonstr"=>$rs));
+		
+		$array = json_decode($receive_json,true);
+		
+		if(empty($array) || $array['rs'] != 0){
+			\Think\Log::write('新增申请服务失败'.json_encode($json,JSON_UNESCAPED_UNICODE),'ERR');
+		}
+		
+	}
+	
+	
+	/**
+	 * 发送申请服务提醒
+	 */
+	public function remindUserFwxm(){
+	
+		//用户申请表主键
+		$user_fwxm_id = I('request.user_fwxm_id');
+		
+		$json['user_fwxm_id'] = $user_fwxm_id;
+	
+		$md5str = md5(json_encode($json));
+		$json['md5str'] = $md5str;
+	
+		//RSA加密
+		import("Api.Util.RSA");
+		$rsa = new \RSA();
+		$rs = $rsa->encrypted(json_encode($json));
+		
+		$url = C("SHOUTAN_API/ecmServiceApplyRem");
+	
+		$receive_json = https_request($url,array("jsonstr"=>$rs));
+	
+		$array = json_decode($receive_json,true);
+	
+		if(empty($array) || $array['rs'] != 0){
+			\Think\Log::write('发送申请服务提醒失败'.json_encode($json),'ERR');
+		}else{
+			$data = array(
+					"remind_time" => time(),
+					"tstamp" => time(),
+			);
+			M("user_fwxm")->where(array("id"=>$user_fwxm_id))->save($data);
+		}
+	
+	}
+	
+	
+	/**
+	 * 更新用户服务的联系状态
+	 */
+	public function updateUserFwxm(){
+		
+		//获取参数
+		$jsonstr = I('request.jsonstr');
+		
+		//RSA解密
+		import("Api.Util.RSA");
+		$rsa = new \RSA();
+		$rs = $rsa->decrypt($jsonstr);
+		
+		$data_str = $rs['data_str'];
+		$MD5encrypt = $rs['MD5encrypt'];
+		
+		$data_map = json_decode($data_str,true);
+		//用户申请表主键
+		$user_fwxm_id = $data_map['user_fwxm_id'];
+		//联系状态
+		$contact_status  = $data_map['contact_status'];
+		$md5str = $data_map['md5str'];
+		
+		$check_map['user_fwxm_id'] = $data_map['user_fwxm_id'];
+		$check_map['contact_status'] = $data_map['contact_status'];
+		//md5校验
+		$md5_check = '';
+		if($MD5encrypt == 1){
+			$md5_check = md5(json_encode($check_map));
+		}
+		
+		if($md5str != $md5_check){
+			$return_data = $rsa->Status(10002,'E');
+			$rsa->ajaxReturn($return_data,JSON);
+		}
+		
+		$data = array(
+    		"contact_status" => $contact_status,
+			"contact_status_time" => time(),
+			"tstamp" => time(),
+    	);
+    	M("user_fwxm")->where(array("id"=>$user_fwxm_id))->save($data);
+    	$return_data = $rsa->Status(0,'E','更新用户服务的联系状态成功');
+    	$rsa->ajaxReturn($return_data,JSON);
+	}
+	
+	
+}
+
+?>

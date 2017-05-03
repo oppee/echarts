@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <include file="Public:meta"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <div id="portlet-config" class="modal hide">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"></button>
+                <h3>portlet Settings</h3>
+            </div>
+            <div class="modal-body">
+                <p>Here will be a configuration form</p>
+            </div>
+        </div>
+        <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>{$Think.MODULE_NAME}</small>
+                    </h3>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-plus"></i>{$PageName}</div>
+                        </div>
+                        <div class="portlet-body form">
+                            <form action="" class="form-horizontal" method="post">
+                                <div class="control-group">
+                                    <label class="control-label">用户名</label>
+
+                                    <div class="controls">
+                                        <input type="text" class="m-wrap span3" value="{$info.username}" name="username"
+                                               data-required="1" <notempty name="info[username]">disabled</notempty> autocomplete="off" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">密码</label>
+
+                                    <div class="controls">
+                                        <input type="password" class="m-wrap span3" name="password" data-required="1"/>
+                                        <span class="help-inline">长度6-28位</span>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">用户组</label>
+
+                                    <div class="controls">
+                                        <select data-placeholder="请选择用户组" class="select2 span3" tabindex="-1"
+                                                name="usergroup" id="usergroup">
+                                            <option value=""></option>
+                                            <foreach name="groupList" item="vo">
+                                                <eq name="info.usergroup" value="$vo.id">
+                                                    <option value="{$vo.id}" selected="selected">{$vo.title}</option>
+                                                    <else/>
+                                                    <option value="{$vo.id}">{$vo.title}</option>
+                                                </eq>
+                                            </foreach>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">名字</label>
+
+                                    <div class="controls">
+                                        <input type="text" class="m-wrap span3" name="name" value="{$info.name}"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">邮箱<span class="required">*</span></label>
+
+                                    <div class="controls">
+                                        <div class="input-icon left">
+                                            <i class="icon-envelope"></i>
+                                            <input class="m-wrap span3" type="text" placeholder="Email Address"
+                                                   name="email" value="{$info.email}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">显示</label>
+
+                                    <div class="controls">
+                                        <div class="success-toggle-button">
+                                            <eq name="info.hidden" value="0">
+                                                <input type="checkbox" class="toggle" checked="checked" name="hidden"
+                                                       value="0"/>
+                                                <else/>
+                                                <input type="checkbox" class="toggle" name="hidden" value="0"/>
+                                            </eq>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">备注</label>
+
+                                    <div class="controls">
+                                        <textarea class="span6 m-wrap" rows="3" name="remark">{$info.remark}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn blue">保存数据 <i class="icon-save"></i></button>
+									<a href="{:U(CONTROLLER_NAME . '/index', 'kept=1')}" class="btn">返回列表 <i class="icon-share-alt"></i></a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<include file="Public:footer"/>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

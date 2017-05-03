@@ -1,0 +1,921 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>我的账本</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <link rel="stylesheet" href="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/css/weui.min.css">
+    <link rel="stylesheet" href="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/css/iconfont.css">
+    <link rel="stylesheet" href="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/css/global_v2.css">
+    <link rel="stylesheet" href="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/css/font-awesome.min.css">
+	
+	<script src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/js/jquery-2.1.4.js"></script>
+	<script src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/js/jquery-weui.min.js"></script>
+</head>
+
+<body ontouchstart>
+<!--header-->
+<header class='weui-header'>
+    <a href="javascript:history.back(-1);" class="turn" title=""><i class="iconfont">&#xe601;</i>订阅号</a>
+    <h1 class="weui-title">我的账本</h1>
+</header>
+
+<!--account-->
+<div class="account_item">
+    <a class="filter" href="http://shoutan.damankj.com/Dasboard/search.html">筛选</a>
+    <div class="account_user">
+        <div class="account_head"><a href=""><img src=""/></a></div>
+        <h2></h2>
+        <p><small>总余额(元)</small></p>
+        <h1>294300</h1>
+    </div>
+    <div class="weui-row">
+        <div class="weui-col-33"><span>900</span><p class="black_color">昨日收入</p></div>
+        <div class="weui-col-33"><span>131400</span><p class="black_color">7日收入</p></div>
+        <div class="weui-col-33"><span>131400</span><p class="black_color">月收入</p></div>
+    </div>
+</div>
+<div class="account_tab weui_tab">
+    <div class="weui_navbar">
+        <a class="weui_navbar_item weui_bar_item_on" href="#tab1"><span>明细</span></a>
+        <a id="tab2-btn" class="weui_navbar_item" href="#tab2"><span>按月统计</span></a>
+        <a id="tab3-btn" class="weui_navbar_item" href="#tab3"><span>按周统计</span></a>
+    </div>
+    <div class="weui_tab_bd">
+        <div id="tab1" class="weui_tab_bd_item weui_tab_bd_item_active">
+            <div class="weui_cell_title">
+                <span><b class="blue">94500</b>/<b class="green">9000</b>/<b class="gay">27000</b></span><span class="cdate">2016-08-28</span>
+				<div class="clear"></div>
+            </div>
+            <div class="weui_cells weui_cells_access">
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/unionpay.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 14:25:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 30000                        <p class="org">-3000</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 13:17:38</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 10000                        <p class="org">-1000</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-07-07 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1500                        <p class="org">-150</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/unionpay.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-07-07 08:32:50</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 2000                        <p class="org">-200</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-06-06 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 6000                        <p class="org">-600</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/unionpay.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易失败</p>
+                        <small>2016-06-16 08:32:50</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 3500                        <p class="org">-350</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/unionpay.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 14:25:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 30000                        <p class="org">-3000</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 13:17:38</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 10000                        <p class="org">-1000</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-07-07 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1500                        <p class="org">-150</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/unionpay.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-07-07 08:32:50</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 2000                        <p class="org">-200</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-06-06 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 6000                        <p class="org">-600</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/unionpay.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易失败</p>
+                        <small>2015-06-16 08:32:50</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 3500                        <p class="org">-350</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-27 14:23:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1000                        <p class="org">-100</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-07-07 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 3000                        <p class="org">-300</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-06-26 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 5000                        <p class="org">-500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-27 14:23:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1000                        <p class="org">-100</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-07-07 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 3000                        <p class="org">-300</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-06-26 00:00:00</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 5000                        <p class="org">-500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2016-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a><a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont"><img src="http://shoutan.damankj.com/Application/Mobile/View/shoutan/Public/images/weixin.png"/></i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>交易成功</p>
+                        <small>2015-08-28 12:19:42</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 15000                        <p class="org">-1500</p>
+                    </div>
+                </a>            </div>
+
+        </div>
+        <div id="tab2" class="weui_tab_bd_item">
+            <div class="mychart_box">
+                <div class="mychart">
+                    <div id="main" style="height: 250px;width: 100%;"></div>
+                </div>
+            </div>
+            <div class="mychart_content">
+                <dl>
+                    <dt class="title_box">月份</dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span class="bor_non">线下支付</span></dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span class="bor_non">线下支付</span></dt>
+                </dl>
+                <dl>
+                    <dd class="title_box">8月</dd>
+                    <dd class="tips_items"><span><b class="blue">94500</b>/<b class="green">9900</b>/<b class="gay">27000</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">7</b>/<b class="green">2</b>/<b class="gay">1</b></span></dd>
+                </dl><dl>
+                    <dd class="title_box">7月</dd>
+                    <dd class="tips_items"><span><b class="blue">1350</b>/<b class="green">2700</b>/<b class="gay">1800</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">1</b>/<b class="green">1</b>/<b class="gay">1</b></span></dd>
+                </dl><dl>
+                    <dd class="title_box">6月</dd>
+                    <dd class="tips_items"><span><b class="blue">5400</b>/<b class="green">4500</b>/<b class="gay">3150</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">1</b>/<b class="green">1</b>/<b class="gay">1</b></span></dd>
+                </dl>            </div>
+        </div>
+        <div id="tab3" class="weui_tab_bd_item">
+            <div class="mychart_box">
+                <div class="mychart">
+                    <div id="main2" style="height: 250px;width: 80%;"></div>
+                </div>
+            </div>
+            <div class="mychart_content">
+                <dl>
+                    <dt class="title_box">月份</dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span>线下支付</span></dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span>线下支付</span></dt>
+                </dl>
+                
+                <dl>
+                    <dd class="title_box">08/01</dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                </dl><dl>
+                    <dd class="title_box">08/08</dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                </dl><dl>
+                    <dd class="title_box">08/15</dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                </dl><dl>
+                    <dd class="title_box">08/22</dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">900</b>/<b class="gay">0</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">1</b>/<b class="gay">0</b></span></dd>
+                </dl><dl>
+                    <dd class="title_box">08/29</dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">0</b>/<b class="green">0</b>/<b class="gay">0</b></span></dd>
+                </dl>               <!--  <dl>
+                    <dd class="title_box">7月</dd>
+                    <dd class="tips_items"><span><b class="blue">630</b>/<b class="green">399</b>/<b class="gay">100</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">5</b>/<b class="green">3</b>/<b class="gay">4</b></span></dd>
+                </dl>
+                <dl>
+                    <dd class="title_box">7月</dd>
+                    <dd class="tips_items"><span><b class="blue">630</b>/<b class="green">399</b>/<b class="gay">100</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">5</b>/<b class="green">3</b>/<b class="gay">4</b></span></dd>
+                </dl> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>
+<!--<script src="http://shoutan.damankj.com/Application/Mobile/View/shoutan//Public/js/echarts.min.js"></script>-->
+<script src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js?_v_=1471406922963"></script>
+<script src="http://shoutan.damankj.com/Application/Mobile/View/shoutan//Public/js/touch.min.js"></script>
+<script>
+    touch.on('#main2', 'touchstart', function(ev){
+        ev.preventDefault();
+        alert(ev);
+    });
+
+    var target = document.getElementById("main");
+    //target.style.webkitTransition = 'all ease 0.2s';
+    touch.on('#main', 'swipeleft', function(ev){
+        //this.style.webkitTransform = "translate3d(" + rt + "px,0,0)";
+        //alert("月统计向右滑动.");
+        cmonth++;
+        var url = "http://shoutan.damankj.com/Dasboard/mothorJson.html";
+    	var datas = [];
+   	
+        $.post(url,datas,function(msg){
+        	setzinfo(cmonth,msg);
+        })
+    });
+
+    touch.on('#main', 'swiperight', function(ev){
+        //alert("月统计向左滑动.");
+        cmonth--;
+        var url = "http://shoutan.damankj.com/Dasboard/mothorJson.html";
+       	var datas = [];
+       	
+        $.post(url,datas,function(msg){
+        	setzinfo(cmonth,msg);
+        });
+        //this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+    });
+
+    touch.on('#main', 'touchstart', function(ev){
+        ev.preventDefault();
+    });
+
+    var mtarget = document.getElementById("main2");
+    //target.style.webkitTransition = 'all ease 0.2s';
+
+    touch.on('#main2', 'swipeleft', function(ev){
+        //this.style.webkitTransform = "translate3d(" + rt + "px,0,0)";
+        //alert("周统计向右滑动.");
+        setminfo(0);
+    });
+
+    touch.on('#main2', 'swiperight', function(ev){
+        //alert("周统计向左滑动.");
+        setminfo(1);
+        //this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+    });
+
+</script>
+<script type="text/javascript">
+    var body_width = $(document.body).width();
+    //console.log($('.mychart_box:eq(0)').width());
+    $("#main").width(390);
+    $("#main2").width(390);
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    function returnwdata(l){
+        if(l==1){  //左滑动
+            return ['08/01','08/07','08/14'];
+        }else{  //右滑动
+            return ['08/07','08/14','08/21'];
+        }
+    }
+
+    var option = {
+//        tooltip : {
+//            trigger: 'axis',
+//            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//                type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+//            }
+//        },
+        legend: {
+            bottom:5,
+            data:['支付宝','微信','银联']
+        },
+        color:['#00a0e9','#0dc91a','#006a65'],
+        xAxis : [
+            {
+                type : 'category',
+                data : returnwdata(0)
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'支付宝',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                data:[100, 396, 158]
+            },
+            {
+                name:'微信',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                data:[96, 296, 198]
+            },
+            {
+                name:'银联',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                data:[26, 182, 40]
+            },
+            {
+                name:'支付宝',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                data:[186, 286, 150]
+            },
+            {
+                name:'微信',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                data:[196, 188, 126]
+            },
+            {
+                name:'银联',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                data:[36, 88, 166]
+            }
+        ]
+    };
+
+    var cmonth=8;
+    function returnmonth(cm){
+        var mdata=new Array();
+        for(var i=cm-2;i<=cm;i++){
+            mdata.push(i+'月');
+        }
+        return mdata;
+    }
+    var option2 = {
+//        tooltip : {
+//            trigger: 'axis',
+//            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//                type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+//            }
+//        },
+        legend: {
+            bottom:5,
+            data:['支付宝','微信','银联']
+        },
+		color:['#00a0e9', '#0dc91a','#006a65'],
+        xAxis : [
+            {
+                type : 'category',
+                data : returnmonth(cmonth)
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [{"name":"支付宝","type":"bar","stack":"今年","barWidth":20,"data":[94500,1350,5400]},{"name":"微信","type":"bar","stack":"今年","barWidth":20,"data":[9900,2700,4500]},{"name":"银联","type":"bar","stack":"今年","barWidth":20,"data":[27000,1800,3150]},{"name":"支付宝","type":"bar","stack":"去年","barWidth":20,"data":[0,0,0]},{"name":"微信","type":"bar","stack":"去年","barWidth":20,"data":[0,0,0]},{"name":"银联","type":"bar","stack":"去年","barWidth":20,"data":[0,0,0]}] /* [
+            {
+                name:'支付宝',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                data:[100, 396, 158]
+            },
+            {
+                name:'微信',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                data:[96, 296, 198]
+            },
+            {
+                name:'银联',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                data:[26, 182, 40]
+            },
+            {
+                name:'支付宝',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                data:[186, 286, 150]
+            },
+            {
+                name:'微信',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                data:[196, 188, 126]
+            },
+            {
+                name:'银联',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                data:[36, 88, 166]
+            }
+        ] */
+    };
+
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option2);
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart2 = echarts.init(document.getElementById('main2'));
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart2.setOption(option);
+
+    function setminfo(t){
+        option={
+//            tooltip : {
+//                trigger: 'axis',
+//                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//                    type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+//                }
+//            },
+            legend: {
+                bottom:5,
+                data:['支付宝','微信','银联']
+            },
+			color:['#00a0e9', '#0dc91a','#006a65'],
+            xAxis : [
+                {
+                    type : 'category',
+                    data : returnwdata(t)
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [{"name":"支付宝","type":"bar","stack":"今年","barWidth":20,"data":[94500,1350,5400]},{"name":"微信","type":"bar","stack":"今年","barWidth":20,"data":[9900,2700,4500]},{"name":"银联","type":"bar","stack":"今年","barWidth":20,"data":[27000,1800,3150]},{"name":"支付宝","type":"bar","stack":"去年","barWidth":20,"data":[0,0,0]},{"name":"微信","type":"bar","stack":"去年","barWidth":20,"data":[0,0,0]},{"name":"银联","type":"bar","stack":"去年","barWidth":20,"data":[0,0,0]}]/* [
+                {
+                    name:'支付宝',
+                    type:'bar',
+                    stack: '去年',
+                    barWidth : 20,
+                    data:[150, 280, 120]
+                },
+                {
+                    name:'微信',
+                    type:'bar',
+                    stack: '去年',
+                    barWidth : 20,
+                    data:[96, 296, 198]
+                },
+                {
+                    name:'银联',
+                    type:'bar',
+                    stack: '去年',
+                    barWidth : 20,
+                    data:[26, 182, 40]
+                },
+                {
+                    name:'支付宝',
+                    type:'bar',
+                    stack: '今年',
+                    barWidth : 20,
+                    data:[186, 286, 150]
+                },
+                {
+                    name:'微信',
+                    type:'bar',
+                    stack: '今年',
+                    barWidth : 20,
+                    data:[196, 188, 126]
+                },
+                {
+                    name:'银联',
+                    type:'bar',
+                    stack: '今年',
+                    barWidth : 20,
+                    data:[36, 88, 166]
+                }
+            ] */
+        };
+        myChart2.setOption(option);
+    }
+
+    function setzinfo(cmonth,jsonData){
+        if(cmonth>12){
+            cmonth=8;
+        }else if(cmonth<3){
+            cmonth=3;
+        }
+        option2 = {
+//            tooltip : {
+//                trigger: 'axis',
+//                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//                    type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+//                }
+//            },
+            legend: {
+                bottom:5,
+                data:['支付宝','微信','银联']
+            },
+			color:['#00a0e9', '#0dc91a','#006a65'],
+            xAxis : [
+                {
+                    type : 'category',
+                    data : returnmonth(cmonth)
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series :jsonData/*  [
+                {
+                    name:'支付宝',
+                    type:'bar',
+                    stack: '去年',
+                    barWidth : 20,
+                    data:[100, 396, 158]
+                },
+                {
+                    name:'微信',
+                    type:'bar',
+                    stack: '去年',
+                    barWidth : 20,
+                    data:[96, 296, 198]
+                },
+                {
+                    name:'银联',
+                    type:'bar',
+                    stack: '去年',
+                    barWidth : 20,
+                    data:[26, 182, 40]
+                },
+                {
+                    name:'支付宝',
+                    type:'bar',
+                    stack: '今年',
+                    barWidth : 20,
+                    data:[186, 286, 150]
+                },
+                {
+                    name:'微信',
+                    type:'bar',
+                    stack: '今年',
+                    barWidth : 20,
+                    data:[196, 188, 126]
+                },
+                {
+                    name:'银联',
+                    type:'bar',
+                    stack: '今年',
+                    barWidth : 20,
+                    data:[36, 88, 166]
+                }
+            ] */
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option2);
+    }
+</script>
+
+<script type="text/javascript">
+function setTop(type,m){
+	var type = arguments[0] ? arguments[0] : 1;
+	alert(type);
+	var _wh=$(window).height(); //当前窗口可视区域高度
+	var _dh=$(document).height(); //当前窗口文档的高度
+	if(_wh<_dh){
+		if(type==1){
+			//向上
+			document.body.scrollTop =0;
+		}else{
+			//向下
+			var scrolltop = document.getElementById(m).offsetTop;
+			document.body.scrollTop =_wh-30;
+		}
+	}
+}
+
+//单指向上滑动
+touch.on('#main', 'swipeup', function(ev){
+	setTop(2,'main');
+	//this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+});
+
+//单指向下滑动
+touch.on('#main', 'swipedown', function(ev){
+	setTop(1,'main');
+});
+//单指向上滑动
+touch.on('#main2', 'swipeup', function(ev){
+	setTop(2,'main2');
+	//this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+});
+
+//单指向下滑动
+touch.on('#main2', 'swipedown', function(ev){
+	setTop(1,'main2');
+});
+
+//筛选回到原页
+$(".filter").click(function(){
+	var url = $(".weui_tab_bd_item_active").data("url");
+	location.href = url;
+})
+
+//筛选回来
+var tab = "{$tab}";
+$('#'+tab).addClass("weui_tab_bd_item_active");
+$('#'+tab).siblings("div").removeClass("weui_tab_bd_item_active");
+
+$('#'+tab+'-btn').addClass("weui_bar_item_on");
+$('#'+tab+'-btn').siblings("a").removeClass("weui_bar_item_on");
+</script>

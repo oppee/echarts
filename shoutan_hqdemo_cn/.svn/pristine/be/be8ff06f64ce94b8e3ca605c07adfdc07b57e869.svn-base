@@ -1,0 +1,21 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}<if condition="$tca['required'] eq true">*</if></label>
+
+    <div class="controls">
+	
+	<notempty name='tca.icon'><div class="input-icon left"><i class="{$tca.icon}"></i></notempty>
+	<notempty name='tca.prefix'><div class="input-icon left"><i>{$tca.prefix}</i></notempty>
+	
+        <if condition="$tca['disabled'] eq true">
+            <input type="text" class="span6 m-wrap {$tca.class}" name="{$name}" value="{$info[$name]}" disabled="disabled"/>
+            <elseif condition="$tca['readonly'] eq true"/>
+            <input type="text" class="span6 m-wrap {$tca.class} {$tca.format}" name="{$name}" value="{$info[$name]}" readonly="readonly"/>
+            <else/>
+            <input type="text" class="span6 m-wrap {$tca.class}" name="{$name}" value="{$info[$name]}"/>
+        </if>
+        <span class="help-inline">{$tca.help}</span>
+		
+    <notempty name='tca.prefix'></div></notempty>
+    <notempty name='tca.icon'></div></notempty>
+    </div>
+</div>

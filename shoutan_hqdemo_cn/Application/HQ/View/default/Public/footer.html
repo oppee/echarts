@@ -1,0 +1,143 @@
+<!-- BEGIN FOOTER -->
+<div class="footer">
+    <div class="footer-inner">
+       <!-- Powered by HQCMS &copy; <?php echo date('Y');?>.-->
+    </div>
+    <div class="footer-tools">
+        <span class="go-top">
+            <i class="icon-angle-up"></i>
+        </span>
+    </div>
+</div>
+<!-- END FOOTER -->
+
+<!-- BEGIN ALERT -->
+<div id="custom_alert" class="modal hide fade" tabindex="-1" data-keyboard="false" data-backdrop="static">
+    <div class="modal-body">
+        <p id="error_content"></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn green">确 定</button>
+    </div>
+</div>
+<!-- END ALERT -->
+
+<!-- BEGIN CONFIRM -->
+<div id="custom_confirm" class="modal hide fade" tabindex="-1" data-keyboard="false" data-backdrop="static">
+    <div class="modal-body"></div>
+    <div class="modal-footer">
+        <div class="saved">
+            <button type="button" data-dismiss="modal" class="btn" id="custom_confirm_cancel">取消</button>
+            <button type="button" data-dismiss="modal" class="btn green" id="custom_confirm_ok">确定</button>
+        </div>
+    </div>
+</div>
+<!-- END CONFIRM -->
+
+<!-- BEGIN SHOWPIC -->
+<div id="show_pic" data-backdrop="static" class="modal hide fade show_pic_modal">
+    <div class="image_auto">
+        <div class="modal-header">
+            <a href="javascript:void(0);" class="closed pull-right" data-dismiss="modal" aria-hidden="true"></a>
+        </div>
+        <div class="modal-body"><img src="" /></div>
+    </div>
+</div>
+<!-- END SHOWPIC -->
+
+<div id="ajax-modal" class="modal hide fade modal-common" tabindex="-1" data-backdrop="static" ></div>
+
+<!-- Public BEGIN -->
+<script src="__TMPL__Public/plugins/jquery-1.10.1.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+<!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+<script src="__TMPL__Public/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="__TMPL__Public/plugins/excanvas.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/respond.min.js" type="text/javascript"></script>
+<![endif]-->
+<script src="__TMPL__Public/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/jquery.cookie.min.js" type="text/javascript"></script>
+
+<script src="__TMPL__Public/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+
+<script src="./Application/Common/Util/ueditor/ueditor.config.js" type="text/javascript"></script>
+<script src="./Application/Common/Util/ueditor/ueditor.all.js" type="text/javascript"></script>
+<script src="./Application/Common/Util/ueditor/lang/zh-cn/zh-cn.js" type="text/javascript"></script>
+
+<script src="__TMPL__Public/plugins/chosen-bootstrap/chosen/chosen.jquery.min.js" type="text/javascript"><!-- select--></script>
+<script src="__TMPL__Public/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/select2/select2.min.js" type="text/javascript"><!-- 下拉框--></script>
+
+<script src="__TMPL__Public/scripts/jquery.form.js" type="text/javascript"><!-- 下拉框--></script>
+
+<!-- toggle_select -->
+<script src="__TMPL__Public/plugins/toggleselect/jquery.multi-select.js" type="text/javascript"></script>
+<!--inputmask-->
+<script src="__TMPL__Public/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js" type="text/javascript"></script>
+<!--add-tags-->
+<script src="__TMPL__Public/plugins/jquery-tags-input/jquery.tagsinput.min.js" type="text/javascript"></script>
+<!-- Public END -->
+
+<script src="__TMPL__Public/plugins/flot/jquery.flot.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/flot/jquery.flot.resize.js" type="text/javascript"></script>
+
+<script src="__TMPL__Public/plugins/jquery.pulsate.min.js" type="text/javascript"></script>
+
+<script src="__TMPL__Public/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/jquery-validation/dist/jquery.validate.min.js" type="text/javascript"></script>
+<script src="__TMPL__Public/plugins/bootstrap-toggle-buttons/static/js/jquery.toggle.buttons.js"
+type="text/javascript"></script>
+
+<script src="__TMPL__Public/scripts/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
+<script src="__TMPL__Public/scripts/jquery-ui-timepicker-zh-CN.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<notempty name="Menu">
+    <!-- BEGIN Menu -->
+    <script src="__TMPL__Public/plugins/jquery-nestable/jquery.nestable.js" type="text/javascript"><!-- 拖动表格--></script>
+    <!-- END Menu -->
+</notempty>
+
+<notempty name="Multiple">
+    <script type="text/javascript" src="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/vendor/tmpl.min.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/vendor/load-image.min.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/jquery.fileupload-fp.js"></script>
+    <script type="text/javascript" src="__TMPL__Public/plugins/jquery-file-upload/js/jquery.fileupload-ui.js"></script>
+</notempty>
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="__TMPL__Public/scripts/app.js" type="text/javascript"></script>
+<script src="__TMPL__Public/scripts/common.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL SCRIPTS -->
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        App.init(); // initlayout and core plugins
+        $.fn.modalmanager.defaults.resize = true;
+        $.fn.modalmanager.defaults.spinner = '<div class="loading-spinner fade" style="width: 200px; margin-left: -100px;"><img src="__TMPL__Public/img/ajax-modal-loading.gif" align="middle">&nbsp;<span style="font-weight:300; color: #eee; font-size: 18px; font-family:Open Sans;">&nbsp;正在努力加载中...</div>';
+
+    });
+</script>
+
+<script type="text/javascript">
+	var pages = $("input[name='p']").val();
+	if(pages){
+		var total_pages = $(".total").html().split("/");
+		total_page = total_pages[1].split("页");
+		total_page = Number(total_page[0]);
+		if(pages > total_page){
+			$("input[name='p']").val(total_page);
+		}
+	}
+	
+</script>
+<!-- END JAVASCRIPTS -->

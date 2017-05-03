@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+	<style>
+		body{ padding:0px; margin:0px; width:160px;}
+      *{margin:0;padding:0;font-family: arial, Helvetica, sans-serif;color:#000; font-size:12px}
+      .table{font-size: 14px;margin:0 auto;border-collapse:collapse;}
+      .table th{background:#f1f1f1;padding:5px;text-align:left;border:1px solid #ddd;}
+      .table td{background:#fff;padding:5px;border:1px solid #ddd;}
+      .table .even td{background:#f9f9f9;}
+	  .modal-header{ text-align:center; padding:5px 0;}
+	  .modal-title{ text-align:center; font-weight:bold;}	
+	  .borders{ border-bottom:#333333 1px double}
+	  .pad{ padding:5px 0}
+	  .modal-body{ width:160px;}
+	  #pirnt_content{ font-size:12px;}
+	  @page { margin: 0.5cm 0.1cm; }
+    </style>
+	<style type="text/css" media="print">
+	.noprint{ display:none}
+	</style>
+</head>
+
+<body>
+<script type="text/javascript">
+    function printFunction(){
+        self.print();
+    }
+    self.print();
+</script>
+
+<div class="modal-header noprint">
+	 
+	<input type="button" onclick="printFunction();" class="buttonStyle" id="printOut" value="打印列表">
+</div>				
+<div class="modal-body" id="pirnt_content">
+    <volist name="objList" id="objInfo">
+        <table width="400" border="0" cellspacing="0" cellpadding="0" class="print_c">
+            <tr>
+                <td class="title modal-title">
+                欢迎光临医药B2C在线订单<br />
+                =======================		</td>
+            </tr>
+            <tr>
+                <td class="borders pad">
+                单号：<span class="text">{$objInfo.number}</span></td>
+            </tr>
+            <tr>
+                <td class="pad">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>名称-单价</td>
+                        <td>数量</td>
+                        <td>金额</td>
+                      </tr>
+                      <volist name="objInfo['goods_info']" id="vo">
+                          <tr>
+                            <td colspan="3">{$vo.title}</td>
+                          </tr>
+                          <tr>
+                            <td>{$vo.price}</td>
+                            <td>{$vo.quantity}</td>
+                            <td>{$vo.item_price}</td>
+                          </tr>
+                      </volist>
+                       <tr>
+                        <td colspan="4" class="borders"></td>
+                      </tr>		
+                      <tr>
+                        <td class="pad">合计：</td>
+                        <td>{$objInfo.goods_total_item}</td>
+                        <td>{$objInfo.goods_total_price}</td>
+                      </tr>		
+					  <tr>
+						<td class="">积分抵扣：</td>
+						<td></td>
+						<td>{$objInfo.gold}</td>
+					  </tr>	
+					  <tr >
+						<td class="pad">实际支付：</td>
+						<td></td>
+						<td>{$objInfo.money}</td>
+					  </tr>			  
+                       <tr>
+                        <td colspan="3" class="borders"></td>
+                      </tr>		
+                    </table>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    您本次消费获得{$objInfo.goods_total_gold}积分，账户总积分{$objInfo.user_gold}，账户积分可以直接用来支付抵现。<br />
+                    点餐微信：mmhefan<br />
+                    点餐网址：mmhefan.com<br />     
+                    客服热线：{$Config.tel}<br />    
+                    官方QQ：{$Config.qq}<br />
+                </td>
+            </tr>
+            <tr>
+                <td class="title modal-title">
+                    ======================= <br />
+                    医药订单配送签收单<br />
+                    ======================= </td>
+            </tr>
+            <tr>
+                <td>
+                    单号：<span class="text">{$objInfo.number}</span><br />                    
+                    配送时间：<span class="text">{$objInfo.delivery_time}</span><br />
+                    顾客姓名：<span class="text">{$objInfo.name}</span><br />                       
+                    联系电话：<span class="text">{$objInfo.mobile}</span><br />
+                    送餐地址：<span class="text">{$objInfo.cbd_0} {$objInfo.cbd_1} {$objInfo.address}</span>
+                    <div class="borders" style="margin-bottom:5px;">&nbsp;</div>
+                    贵客签名：<br />       <br />                                     
+                    配送员签名：<br />
+                    <br />
+                </td>
+            </tr>
+          
+        </table>
+    </volist>
+</div>
+
+</body>
+</html>
+
+

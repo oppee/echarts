@@ -1,0 +1,242 @@
+<?php
+
+/**
+ * Author: HeQI
+ * Date: 17.12.13
+ * Time: 14:55
+ * Notice: BeUsers is backend user, Member is frontend user.
+ */
+namespace HQ\Controller;
+
+class BeusersController extends BaseController {
+    /*
+     * 后台用户列表
+     */
+
+    public function index() {
+        //实例化后台用户
+        $BeUser = D('BeUsers');
+        $BeGroup = D('BeGroups');
+
+        //处理ajax请求
+        if (IS_AJAX) {
+            switch (I('request.cmd')) {
+                //加载列表
+                case 'user_list':
+                    //条件处理
+                    $where = "deleted=0";
+                    $sortingArray = array('id', '', 'usergroup', '', '', '', 'hidden', '');
+                    $ascDesc = I('post.sSortDir_0');
+                    $sortColumn = $sortingArray[I('post.iSortCol_0')];
+                    if (I('post.sSearch')) {
+                        $sSearch = mysql_real_escape_string(I('post.sSearch'));
+                        $where .= " and (username like '%{$sSearch}%' or email like '%{$sSearch}%')";
+                    }
+
+                    //main res
+                    $dataArray = array();
+                    $total = $BeUser->where($where)->count();
+                    $list = $BeUser->where($where)->order($sortColumn . ' ' . $ascDesc)->limit(I('post.iDisplayStart') . ',' . I('post.iDisplayLength'))->select();
+                    if ($list) {
+                        foreach ($list as $row) {
+                        	$row['username'] = mb_substr($row['username'], 0, 16, 'utf-8');
+                        	$title = M('BeGroups')->where(array('id' => $row['usergroup']))->getField('title');
+                        	$title = mb_substr($title, 0, 16, 'utf-8');
+                            $dataArray[] = array(
+                                $row['id'],
+                                $row['username'],
+                                $title,
+                                $row['lastloginip'] ? $row['lastloginip'] : '-',
+                                $row['lastlogin'] ? date('Y-m-d H:i:s', $row['lastlogin']) : '-',
+                                $row['email'],
+                                $row['hidden'] ? '<span class="label label-inverse">隐藏</span>' : '<span class="label label-success">显示</span>',
+                                '<div class="action_btn"><a href="' . U('Beusers/user_save', array('id' => $row['id'])) . '" class="btn green-stripe mini">编辑</a><a href="' . U('Beusers/del', array('id' => $row['id'], 'type' => 'users')) . '" class="btn red-stripe mini del">删除</a></div>'
+                            );
+                        }
+                    }
+
+                    //json数据
+                    $outputArray = array(
+                        'sEcho' => I('post.sEcho'),
+                        'iTotalRecords' => $total,
+                        'iTotalDisplayRecords' => $total,
+                        'aaData' => $dataArray
+                    );
+                    echo json_encode($outputArray);
+                    break;
+                //加载组列表
+                case 'group_list':
+                    //条件处理
+                    $where = "deleted=0";
+                    $sortingArray = array('id', 'title', '', 'hidden', '');
+                    $ascDesc = I('post.sSortDir_0');
+                    $sortColumn = $sortingArray[I('post.iSortCol_0')];
+                    if (I('post.sSearch')) {
+                        $sSearch = mysql_real_escape_string(I('post.sSearch'));
+                        $where .= " and (title like '%{$sSearch}%' or remark like '%{$sSearch}%')";
+                    }
+
+                    //main res
+                    $dataArray = array();
+                    $total = $BeGroup->where($where)->count();
+                    $list = $BeGroup->where($where)->order($sortColumn . ' ' . $ascDesc)->limit(I('post.iDisplayStart') . ',' . I('post.iDisplayLength'))->select();
+                    if ($list) {
+                        foreach ($list as $row) {
+                        	$row['title'] = mb_substr($row['title'], 0, 16, 'utf-8');
+                            $dataArray[] = array(
+                                $row['id'],
+                                $row['title'],
+                                $row['remark'],
+                                $row['hidden'] ? '<span class="label label-inverse">隐藏</span>' : '<span class="label label-success">显示</span>',
+                                '<div class="action_btn"><a href="' . U('Beusers/group_save', array('id' => $row['id'])) . '" class="btn green-stripe mini">编辑</a><a href="' . U('Beusers/del', array('id' => $row['id'], 'type' => 'groups')) . '" class="btn red-stripe mini del">删除</a></div>'
+                            );
+                        }
+                    }
+
+                    //json数据
+                    $outputArray = array(
+                        'sEcho' => I('post.sEcho'),
+                        'iTotalRecords' => $total,
+                        'iTotalDisplayRecords' => $total,
+                        'aaData' => $dataArray
+                    );
+                    echo json_encode($outputArray);
+                    break;
+                default:
+                    break;
+            }
+            exit;
+        }
+
+        $this->display();
+    }
+
+    /**
+     * 添加后台用户
+     */
+    public function user_save() {
+        $id = I('get.id') ? I('get.id') : null;
+        if (IS_POST) {
+            $BeUsers = D('BeUsers');
+            $result = $BeUsers->create('', $id ? \Think\Model::MODEL_UPDATE : \Think\Model::MODEL_INSERT);
+            if (!$result) {
+                $this->error($BeUsers->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $BeUsers->hidden = 1;
+                }
+                if ($BeUsers->password) {
+                    $BeUsers->password = parent::encryption_backend($BeUsers->password);
+                } else {
+                    unset($BeUsers->password);
+                }
+
+                if ($id) {
+                    $BeUsers->tstamp = time();
+                    $BeUsers->where(array('id' => $id))->save();
+                    //修改是当前用户，更新session的值
+                    if($id == $_SESSION['BEUSER']["id"]){
+                    	$userInfo = M('be_users')->where(array('id' => $id))->find();
+                    	$_SESSION["BEUSER"] = $userInfo;
+                    }
+                    $message = '编辑成功!';
+                } else {
+                    $BeUsers->crdate = time();
+                    $BeUsers->tstamp = time();
+                    $BeUsers->add();
+                    $message = '添加成功!';
+                }
+                $this->success($message, U('Beusers/index'));
+                exit;
+            }
+        }
+
+        $this->assign('groupList', M('BeGroups')->where(array('deleted' => 0))->select());
+        $this->assign('info', D('BeUsers')->where(array('id' => $id))->find());
+        $this->display('info');
+    }
+
+    /**
+     * 编辑后台用户组
+     */
+    public function group_save() {
+        import("@.Util.Tree");
+        $id = I('get.id') ? I('get.id') : null;
+        $Access = M('Access');
+
+        if (IS_POST) {
+            $BeGroups = D('BeGroups');
+            $result = $BeGroups->create();
+            if (!$result) {
+                $this->error($BeGroups->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $BeGroups->hidden = 1;
+                }
+                //处理权限分配
+                if (I('post.access')) {
+                    $Access->where(array('group_id' => I('get.id')))->delete(); //删除目录权限配置，等待进行新权限分配
+                    foreach (I('post.access') as $menu_id) {
+                        $Access->add(array(
+                            'group_id' => I('get.id'),
+                            'menu_id' => $menu_id
+                        ));
+                    }
+                }
+                
+                if ($id) {
+                    $BeGroups->tstamp = time();
+                    $BeGroups->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+                } else {
+                    $BeGroups->crdate = time();
+                    $BeGroups->tstamp = time();
+                    $BeGroups->add();
+                    $message = '添加成功!';
+                }
+
+                $this->success($message, U('Beusers/index'));
+                exit;
+            }
+        }
+
+        $accessRows = $Access->where(array('group_id' => I('get.id')))->select();
+        //Role tree
+        $ids = array(); //全选反选
+        $accessArray = array();
+        if ($accessRows) {
+            foreach ($accessRows as $row) {
+                $accessArray[] = $row['menu_id'];
+            }
+        }
+        $array = M('Menu')->where("id>1 and deleted=0 and hidden=0 and app='Admin'")->select();
+        foreach ($array as $key => $val) {
+            $array[$key]['checked'] = in_array($val['id'], $accessArray) ? 'checked="checked"' : '';
+        }
+        foreach($array as $v){
+            $ids['role'][$v['id']]=$v['parent_id'];
+        }
+        $tree = new \Tree();
+        $tree->init($array);
+        $this->assign('role_tree', $tree->get_tree(0, "<li>\$spacer <input type='checkbox' id='role_\$id' name='access[]' value='\$id' \$checked /><label for='role_\$id'>\$title</label></li>"));
+
+        $this->assign('info', D('BeGroups')->where(array('id' => I('get.id')))->find());
+        $this->assign('ids',json_encode($ids));
+        $this->display('group_info');
+    }
+
+    /**
+     * 删除后台用户组
+     */
+    public function group_del() {
+        D('BeGroups')->where(array('id' => I('get.id')))->save(array(
+            'deleted' => 1
+        ));
+        $this->success('删除成功!', U('Beusers/index'));
+        exit;
+    }
+    
+
+}
+
+?>

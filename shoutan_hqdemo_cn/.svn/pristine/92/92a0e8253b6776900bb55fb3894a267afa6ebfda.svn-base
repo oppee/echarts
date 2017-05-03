@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{:L('jump-tipe')}</title>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background: #fff;
+            font-family: '微软雅黑';
+            color: #333;
+            font-size: 16px;
+        }
+
+        .system-message {width:820px; height:220px; margin-left: -410px; left: 50%; position: absolute; margin-top: -110px; top:50%;}
+        .system-message img{width: 240px; float: left; margin-right: 10px;}
+        .system-message h1 {
+            font-size: 100px;
+            font-weight: normal;
+            line-height: 120px;
+            margin-bottom: 12px;
+        }
+
+        .system-message .jump {
+            padding-top: 10px; float: left; font-size: 18px;
+        }
+
+        .system-message .jump a {
+            color: #ee4d5d;
+        }
+
+        .system-message .success, .system-message .error {
+            line-height: 1.8em;
+            font-size: 32px; padding-top:50px; color: #0b7ad0;
+        }
+
+        .system-message .detail {
+            font-size: 12px;
+            line-height: 20px;
+            margin-top: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="system-message">
+    <img src="__TMPL__Public/images/errorImg.jpg"/>
+    <present name="message">
+        <p class="success"><?php echo($message); ?></p>
+        <else/>
+        <p class="error"><?php echo($error); ?></p>
+    </present>
+    <p class="detail"></p>
+
+    <p class="jump">
+        {:L('page-auto')} <a id="href" href="<?php echo($jumpUrl); ?>">{:L('jump')}</a> {:L('wait-time')}： <b id="wait"><?php echo($waitSecond); ?></b>
+    </p>
+</div>
+<script type="text/javascript">
+    (function () {
+        var wait = document.getElementById('wait'), href = document.getElementById('href').href;
+        var interval = setInterval(function () {
+            var time = --wait.innerHTML;
+            if (time <= 0) {
+                location.href = href;
+                clearInterval(interval);
+            }
+            ;
+        }, 1000);
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<include file="Public:header"/>
+<!--修改用户资料-->
+<div class="weui_cells userinfo">
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>头像</p>
+        </div>
+        <div class="weui_cell_ft">
+            <a class="camera" href=""><i class="fa fa-camera"></i></a>
+            <span><img src="http://img.ycg.qq.com/201832/0/ba6eb6cd-7f46-48f8-920d-064fdcacd897/preview"/></span>
+        </div>
+    </div>
+
+    <div class="weui_cell">
+            <div class="weui_cell_hd"><label>手机号</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="tel" placeholder="请输入手机号">
+            </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label>用户名</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input" type="tel" placeholder="请输入手机号">
+        </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label>昵称</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input" type="tel" placeholder="请输入手机号">
+        </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label>性别</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <span class="check active"><i class="fa fa-mars"></i>男</span>
+            <span class="check"><i class="fa fa-venus"></i>女</span>
+        </div>
+    </div>
+</div>
+<script>
+    $(".check").click(function(){
+        $(this).addClass("active").siblings(".check").removeClass("active");
+    })
+</script>
+
+<include file="Public:footer"/>

@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <include file="Public:meta"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/jquery-nestable/jquery.nestable.css"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.css"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/bootstrap-modal/css/bootstrap-modal.css"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <div id="portlet-config" class="modal hide">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"></button>
+                <h3>portlet Settings</h3>
+            </div>
+            <div class="modal-body">
+                <p>Here will be a configuration form</p>
+            </div>
+        </div>
+        <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>Menu</small>
+                    </h3>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid profile">
+                <div class="span12">
+                    <!--BEGIN TABS-->
+                    <switch name="Think.request.app">
+                        <case value="Home">
+                            <assign name="tab1" value="active"/>
+                        </case>
+                        <case value="Admin">
+                            <assign name="tab2" value="active"/>
+                        </case>
+                        <default/>
+                        <assign name="tab1" value="active"/>
+                    </switch>
+                    <div class="tabbable tabbable-custom tabbable-full-width">
+                        <ul class="nav nav-tabs">
+                            <li class="{$tab1}"><a href="#tab_1_1" data-toggle="tab">前台菜单</a></li>
+                            <li class="{$tab2}"><a href="#tab_1_2" data-toggle="tab">后台菜单</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane row-fluid {$tab1}" id="tab_1_1">
+                                <p style="width:70px;float:left;"><a href="{:U('Index/menu', array('app'=>'Home', 'cmd'=>'menu_save'))}"
+                                                                     class="btn green" data-toggle="modal"><i class="icon-plus"></i>添加</a></p>
+                                <form id="search_form" action="{:U(MODULE_NAME.'/menu', array('app'=>'Home'))}" class="form-search pull-right" method="get" style="float:right;">
+                                    <div class="input-append">
+                                        <input class="m-wrap" type="text" placeholder="搜索..." name="keyword" value="{$Think.get.keyword}"/>
+                                        <input name="m" type="hidden" value="{$Think.MODULE_NAME}">
+                                        <input name="c" type="hidden" value="{$Think.CONTROLLER_NAME}">
+                                        <input name="a" type="hidden" value="menu">
+                                        <input name="app" type="hidden" value="Home">
+                                        <input class="btn green" id="search" type="submit" value="搜索" />
+                                        <if condition="(isset($_GET['keyword']) AND $Think.get.keyword neq '') OR (isset($_GET['rootMenu1']) AND $_GET['rootMenu1'] neq '') OR (isset($_GET['rootMenu2']) AND $_GET['rootMenu2'] neq '')"><a href="{:U(CONTROLLER_NAME.'/menu', array('app'=>'Home'))}" class="btn">返回 <i class="icon-share-alt"></i></a></if>
+                                    </div>
+                                </form>
+
+
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <div class="portlet">
+                                            <div class="portlet-title">
+                                                <div class="caption"><i class="icon-comments"></i>设置</div>
+                                            </div>
+                                            <div class="portlet-body">
+                                                <div class="dd" id="fe_menu_list">
+                                                    {$homeMenuTree}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end tab-pane-->
+                            <div class="tab-pane profile-classic row-fluid {$tab2}" id="tab_1_2">
+                                <p style="width:70px;float:left;"><a href="{:U('Index/menu', array('app'=>'Admin', 'cmd'=>'menu_save'))}"
+                                                                     class="btn green" data-toggle="modal"><i class="icon-plus"></i>添加</a></p>
+                                <form id="search_form" action="{:U(MODULE_NAME.'/menu', array('app'=>'Admin'))}" class="form-search pull-right" method="get" style="float:right;">
+                                    <div class="input-append">
+                                        <select name="rootMenu2" id="rootMenu2">
+                                            <option value="">==请选择一级菜单==</option>
+                                            <volist name="rootMenu2" id="vo">
+                                                <option value="{$vo[0]}" <if condition="$Think.get.rootMenu2 eq $vo[0]">selected="selected"</if>>{$vo[1]}</option>
+                                            </volist>
+                                        </select>
+                                        <input class="m-wrap" type="text" placeholder="搜索..." name="keyword" value="{$Think.get.keyword}"/>
+                                        <input name="m" type="hidden" value="{$Think.MODULE_NAME}">
+                                        <input name="c" type="hidden" value="{$Think.CONTROLLER_NAME}">
+                                        <input name="a" type="hidden" value="menu">
+                                        <input name="app" type="hidden" value="Admin">
+                                        <input class="btn green" id="search" type="submit" value="搜索" />
+                                        <if condition="(isset($_GET['keyword']) AND $Think.get.keyword neq '') OR (isset($_GET['rootMenu1']) AND $_GET['rootMenu1'] neq '') OR (isset($_GET['rootMenu2']) AND $_GET['rootMenu2'] neq '')"><a href="{:U(CONTROLLER_NAME.'/menu', array('app'=>'Admin'))}" class="btn">返回 <i class="icon-share-alt"></i></a></if>
+                                    </div>
+                                </form>
+
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <div class="portlet">
+                                            <div class="portlet-title">
+                                                <div class="caption"><i class="icon-comments"></i>设置</div>
+                                            </div>
+                                            <div class="portlet-body">
+                                                <div class="dd" id="be_menu_list">
+                                                    {$adminMenuTree}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab_1_2-->
+                            <!--end tab-pane-->
+                        </div>
+                    </div>
+                    <!--END TABS-->
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<include file="Public:footer"/>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+
+        $('#fe_menu_list,#be_menu_list').nestable().on('change', function () {
+            $('#fe_menu_list .popover,#be_menu_list .popover').remove();
+            App.blockUI($('.portlet-body'), false); //添加loading效果
+            $.post(window.location.href, {
+                cmd: 'menu_sort',
+                sort: $(this).nestable('serialize')
+            }, function () {
+                App.unblockUI($('.portlet-body'));
+            }, 'json');
+        });
+
+        $('#fe_menu_list,#be_menu_list').nestable('collapseAll');
+
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

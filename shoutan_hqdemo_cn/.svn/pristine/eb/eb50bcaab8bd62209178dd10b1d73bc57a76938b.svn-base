@@ -1,0 +1,109 @@
+<include file="Public:header"/>
+<link rel="stylesheet" type="text/css" href="__TMPL__Public/css/webuploader.css"/>
+<script type="text/javascript" src="__TMPL__Public/js/webuploader.js"></script>
+<script type="text/javascript" src="__TMPL__Public/js/uploadhead.js"></script>
+<style>
+.wrapper{position:absolute;left:0;bottom:4px}
+.uploader{width:30px;height:30px;line-height:30px}
+.uploader .queueList{margin:0}
+.webuploader-pick{background:0 0;padding:15px}
+.webuploader-pick-hover{background:0 0;padding:15px}
+.camera{position:absolute;width:23px;height:23px;left:0;bottom:2px;text-align:center;border-radius:100px;background:#2791dc;line-height:21px}
+#imgHead{height:64px;width:64px}
+</style>
+<!--修改用户资料-->
+<div class="weui_cells userinfo">
+    <input type="hidden" id="imgurl" name="imgurl" value="{$info.image}" />
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>头像</p>
+        </div>
+        <div class="weui_cell_ft">
+           <div id="wrapper" class="wrapper" data-url="{:U('headImgUpload')}" >
+               <div id="uploader" class="uploader">
+                   <div class="queueList wap-uppic">
+                       <div id="filePicker"></div>
+                   </div>
+               </div>
+           </div>
+           <span><img id="imgHead" src="{$info.image|default='http://img.ycg.qq.com/201832/0/ba6eb6cd-7f46-48f8-920d-064fdcacd897/preview'}"/></span>
+        </div>
+    </div>
+    <div class="weui_cell">
+            <div class="weui_cell_hd"><label>手机号</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="tel" placeholder="请输入手机号" name="phone" id="txtphone" value="{$info.mobile}" readonly="readonly">
+            </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label>用户名</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input in_input" type="text" placeholder="请输入用户名" name="username" id="username" value="{$info.username}" >
+        </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label>昵称</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input in_input" type="text" id="nickname" placeholder="请输入昵称" value="{$info.nickname}" >
+        </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_hd"><label>性别</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <span class="check <if condition='$info.gender eq 1'>active</if>" data-id="1"><i class="fa fa-mars"></i>男</span>
+            <span class="check <if condition='$info.gender eq 2'>active</if>" data-id="2"><i class="fa fa-venus"></i>女</span>
+        </div>
+    </div>
+    <p class="weui_btn_area userinfo_btn">
+        <a href="javascript:;" class="weui_btn weui_btn_warn" title="确定" id="btnCommit">确定</a>
+    </p>
+</div>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+wx.config({
+	debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+	appId: "{$jssdk.appId}", // 必填，公众号的唯一标识
+	timestamp: {$jssdk.timestamp}, // 必填，生成签名的时间戳
+	nonceStr: "{$jssdk.nonceStr}", // 必填，生成签名的随机串
+	signature: "{$jssdk.signature}",// 必填，签名，见附录1
+	jsApiList: ['closeWindow'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+</script>
+<script>
+    $(".check").click(function(){
+        $(this).addClass("active").siblings(".check").removeClass("active");
+    });
+    
+    $('#btnCommit').click(function(){
+		var _imgurl=$('#imgurl').val();
+		var _uname=$('#username').val();
+		var _name=$('#nickname').val();
+		var _sex=$('.active').attr('data-id');
+		$('#btnCommit').attr({"disabled":"disabled"});
+		$.ajax({
+			url:"{:U('updateInfo')}",
+			method:"POST",
+			data: { img:_imgurl,uname: _uname,name: _name,sex: _sex },
+			dataType:"json",
+			success:function(data){
+				if(data.status==1){
+					$.alert(data.info,function(){
+						wx.closeWindow();
+						//window.location.href="{:U('userinfo')}";	
+					});		
+				}else{
+					$('#btnCommit').removeAttr("disabled");
+					$.alert(data.info);
+					return false;
+				}
+			},
+			error:function(){
+				$('#btnCommit').removeAttr("disabled");
+				$.alert("网络不给力哦，请稍后再试。。。");
+				return false;
+			},
+			async:false
+		});
+    });
+</script>
+<include file="Public:footer"/>

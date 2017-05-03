@@ -1,0 +1,24 @@
+<!--<html>-->
+	<!--<head>-->
+		<!--<title>开户列表</title>-->
+	<!--</head>-->
+	<!---->
+	<!--<body>-->
+		<!--<h2 style="text-align:center;">开户列表</h2>-->
+	<!--</body>-->
+<!--</html>-->
+<include file="Public:header"/>
+<!--账户列表-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/account.jpg"/>
+</div>
+
+<div class="weui_cells account_list">
+	<div class="weui_cell">
+		<p>上海首坦金融信息有限公司<span class="fr">正常</span></p>
+		<h2>18621109875</h2>
+		<div class="list_link"><span>POS查询</span><span>微社区</span><a class="blue fr" href="">解绑</a> </div>
+	</div>
+</div>
+
+<include file="Public:footer"/>

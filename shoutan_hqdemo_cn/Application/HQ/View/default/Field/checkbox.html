@@ -1,0 +1,16 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+    <div class="controls">
+        <volist name="tca.data" id="vo">
+            <label class="checkbox">
+                <in name="vo[0]" value="$info[$name]" >
+                    <input type="checkbox" name="{$name}[]" value="{$vo[0]}" checked="checked"/>
+                    <else/>
+                    <input type="checkbox" name="{$name}[]" value="{$vo[0]}"/>
+                </in>
+                {$vo[1]}
+            </label>
+        </volist>
+        <span class="help-block">{$tca.help}</span>
+    </div>
+</div>

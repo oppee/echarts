@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>一皆通</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.min.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/global.css">
+
+</head>
+<body ontouchstart>
+<!--header-->
+<header class='weui-header'>
+    <a href="login.html" class="turn" title=""><i class="iconfont">&#xe601;</i>一皆通</a>
+    <h1 class="weui-title">绑定账号</h1>
+</header>
+
+<!--logo-->
+<div class="logo">
+    <a href=""><img src="images/login_logo.png"/></a>
+</div>
+
+<!--表单-->
+<div class="weui_cells_form">
+    <div class="form_box">
+        <ul class="form_tab clearfix">
+            <li class="active"><a href="javascript:;">已有账户</a></li>
+            <li><a href="javascript:;">无账户</a></li>
+        </ul>
+        <form class="login content">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label" for="zhanghao"><i class="iconfont">&#xe606;</i></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="zhanghao" class="weui_input" type="tel" placeholder="用户名">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="pass"><i class="iconfont">&#xe603;</i></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="pass" class="weui_input" type="password" placeholder="密码">
+                </div>
+            </div>
+        </form>
+        <form class="login content" style="display: none;">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label" for="zhanghao"><i class="iconfont">&#xe606;</i></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input" type="tel" placeholder="用户名">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="pass"><i class="iconfont">&#xe603;</i></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input  class="weui_input" type="password" placeholder="密码">
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label pass-label" for="pass"><i class="iconfont">&#xe603;</i></label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input" type="password" placeholder="确认密码">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <p class="weui_btn_area">
+        <a href="javascript:;" class="weui_btn weui_btn_warn" title="绑定">绑定</a>
+    </p>
+    <p class="code_link"><a href="">忘记密码</a></p>
+</div>
+
+<script src="js/jquery-2.1.4.js"></script>
+<script src="js/jquery-weui.min.js"></script>
+<script>
+    $(".form_tab li a").click(function(){
+        $(this).parents("li").addClass("active").siblings("li").removeClass("active");
+        $(this).parents(".form_tab").siblings(".content").eq($(this).index()).show().siblings(".content").hide();
+    })
+
+
+</script>
+</body>
+</html>

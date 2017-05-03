@@ -1,0 +1,182 @@
+<?php
+namespace HQ\Controller;
+/**
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+class SystemsendController extends BaseController
+{
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = 'system_send';
+    //高级筛选
+    public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse'),
+        array('status'=>'send_type', 'value'=>1, 'title'=>'购买赠送', 'class'=>'important'),
+        array('status'=>'send_type', 'value'=>2, 'title'=>'推荐购送', 'class'=>'warning'),
+        array('status'=>'send_type', 'value'=>3, 'title'=>'积分抵现', 'class'=>'success')
+    );
+    public $send_type = array(
+        array(1, '购买赠送'),
+        array(2, '推荐购送'),
+        array(3, '积分抵现')
+    );
+
+    protected function init() {
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+
+        $user=M('User')->order("id DESC")->field('id as "0",concat_ws("-",id,username,mobile) as "1"')->select();
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            'user_id' => array(
+                'label' => '用户',
+                'type' => 'select2',
+                'data' => $user,
+                'required' => true
+            ),
+            'gold' => array(
+                'label' => '积分',
+                'type' => 'text',
+                'data'=>'0',
+                'required' => true
+            ),
+            'send_type' => array(
+                'label' => '类型',
+                'type' => 'radio',
+                'data' => $this->send_type,
+                'required' => true
+            ),
+            'remark' => array(
+                'label' => '内容描述',
+                'type' => 'textarea'
+            )
+        );
+        if(ACTION_NAME=='edit'){
+            $this->tca['gold']['readonly'] = true;
+        }
+    }
+
+    /*
+     * 列表页面
+     */
+    public function index()
+    {
+        $this->init();		//初始化数据
+        $Obj = D($this->tbName); //实例化对象
+        $Where = "deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or `".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+        if (I('request.keyword')!='') {
+            $I_keyword = trim(I('request.keyword'));
+            $whereUser="username like '%".$I_keyword."%' ";
+            $subSql=M('user')->field('id')->where($whereUser)->buildSql();
+            $Where .= " and (id like '%".$I_keyword."%' or remark like '%" .$I_keyword."%' or user_id in ".$subSql." ) ";
+        }
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+        $Page = new \HQ\Util\Page($Obj->where($Where)->count(), $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj->where($Where)->order($sorting.' '.$order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+
+        foreach($list as $k =>$v){
+            $list[$k]['user_name']=($user=M('User')->where(array('id'=>$v['user_id']))->getField("username"))?$user:'未知用户';
+        }
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 编辑数据
+     */
+     public function edit(){
+        $this->save();
+     }
+    /**
+     * 保存数据
+     */
+    public function save() {
+        $this->init();		//初始化数据
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+        $info = M($this->tbName)->where('id = ' . $id)->find();
+				
+        if (IS_POST) {
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    $_POST[$key] = implode(",", $val);
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+
+            if(ACTION_NAME=='edit'){
+                unset($_POST['user_id']);
+            }
+
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {$Obj->hidden = 1;}
+								
+                $Obj->tstamp = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+                } else {
+                    $Obj->crdate = time();
+                    $id = $Obj->add();
+                    if (trim($_POST['sorting']) == '') {
+                        $Obj->where(array('id' => $id))->save(array('sorting' => $id));
+                    }
+                    if($_POST['send_type']==2){
+                        M('User')->where('deleted=0 and hidden=0 and id='.$_POST['user_id'])->setInc('gold', $_POST['gold']);
+                    }
+                    $message = '添加成功!';
+                }
+
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+        //自动渲染字段
+        $this->init();
+        parent::autoFields($this->tca, $info);
+        $this->display('info');
+    }
+		
+
+}
+
+?>

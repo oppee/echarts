@@ -1,0 +1,81 @@
+<if condition="$action eq 'topic'">
+	<volist name="lists" id="vo">
+		<div class="order-item tiyu">
+			<div class="weui_cells">
+				<div class="weui_cell">
+					<div class="weui_cell_hd">
+						<img onerror="this.src='__TMPL__Public/images/tiyu_07.png'" alt="头像" src="{$vo.image}" style="width:40px;border-radius: 40px;margin-right:10px;display:block;">
+					</div>
+					<div class="weui_cell_bd weui_cell_primary">
+						{$vo.nickname|default="匿名"}
+						<div><span class="gray">{:graydate($vo['crdate'])}</span></div>
+					</div>
+					<div class="weui_cell_ft gray">
+						<img src="__TMPL__Public/images/tiyu_22.png" alt="">
+						{$vo.hit}
+					</div>
+				</div>
+			</div>
+			<div class="weui_cells pl">
+				<a class="weui_cell" href="{:U('info',array('id'=>$vo['id']))}">
+					<div class="weui_cell_bd">
+						<h4>{$vo.title}</h4>
+						<p>{$vo.remark}</p>
+					</div>
+				</a>
+			</div>
+			<div class="weui-row weui-no-gutter dd">
+				<a class="weui-col-33 mode_link" data-id="{$vo.id}" href="javascript:;">
+					<i class="fa fa-commenting-o"></i> <span>{$vo.comments}</span>
+				</a>
+				<a class="weui-col-33 likes iconfont" data="{$vo.id}">
+					<i class="fa fa-thumbs-o-up"></i> <span>{$vo.likes}</span>
+				</a>
+				<a class="weui-col-33 favorite add_icon <if condition="$vo[is_favorite] eq true">add</if>" data="{$vo.id}">
+					<i class="fa fa-heart"></i> <span>{$vo.favorite}</span>
+				</a>
+			</div>
+		</div>
+	</volist>
+<else/>
+	<volist name="lists" id="vo">
+		<div class="order-item">
+			<div class="weui_cells">
+				<div class="weui_cell">
+					<div class="weui_cell_hd" style="margin-top: -5px;">
+						<img onerror="this.src='__TMPL__Public/images/tiyu_07.png'" alt="头像" src="{$vo.image}" style="width:30px;border-radius: 30px;margin-right:10px;display:block">
+					</div>
+					<div class="weui_cell_bd weui_cell_primary" style="color:#9d9d9d;">
+						{$vo.nickname|default="匿名"} <!--<span style="padding:0px 7px;margin-left:5px;font-size: 12px; background:#f8bf4d;color:#fff;display: inline-block;">LV<b style="font-weight: normal;">1</b></span>-->
+						<div style="margin-top: 10px;"><span class="gray" style="font-size: 14px;color:#777;">{$vo.remark}</span></div>
+						<notempty name="vo[reply_remark]">
+							<div style="margin-top: 10px;">
+								<span class="gray" style="font-size: 14px;color:#777;margin-right: 3px;">|</span>
+								<span class="gray" style="font-size: 14px;color:#777;">{$vo.reply_nickname|default="匿名"}：{$vo.reply_remark}</span>
+							</div>
+						</notempty>
+					</div>
+					<div class="weui_cell_ft gray">
+						<san>{$i+1+$pagelimit}楼</san>
+					</div>
+				</div>
+			</div>
+			<div class="weui_cells dj">
+				<a class="weui_cell" href="javascript:;">
+					<div class="weui_cell_bd weui_cell_primary">
+						<p style="color:#d3d3d3;">{$vo.datestr}</p>
+					</div>
+				</a>
+				<style>.weui_cell_ft .gray{color: #bdbdbd;font-weight: normal;}</style>
+				<div class="weui_cell_ft">
+					<a class="gray weui-col-33 mode_link" data-topicid="{$vo.topic_id}" data-replyid="{$vo.id}" href="javascript:;">
+						<i class="fa fa-commenting-o"></i> <span>{$vo.comments}</span>
+					</a>
+					<a class="gray weui-col-33 reply_likes iconfont" data="{$vo.id}">
+						<i class="fa fa-thumbs-o-up"></i> <span>{$vo.likes}</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</volist>
+</if>

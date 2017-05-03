@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+	<style>
+		body{ padding:0px; margin:0px; width:820px;overflow: hidden;padding:0 20px;}
+      *{margin:0;padding:0;font-family: arial, Helvetica, sans-serif;color:#000; font-size:12px}
+      .table{font-size: 14px;margin:0 auto;border:solid #ddd; border-width:1px 0px 0px 1px;}
+      .table th{background:#f1f1f1;padding:5px;text-align:left;border:1px solid #ddd;}
+      .table td{background:#fff;padding:5px;border:solid #ddd; border-width:0px 1px 1px 0px;}
+      .table .even td{background:#f9f9f9;}
+	    .modal-header{ text-align:center; padding:5px 0;}
+	    .modal-title{ text-align:center; font-weight:bold;}	
+	    .borders{ border-bottom:#333333 1px double}
+	    .pad{ padding:5px 0}
+	    .modal-body{ width:860px;}
+	    #pirnt_content{ font-size:12px;}
+	    @page { margin: 0.5cm 0.1cm; }
+      .dh{float: right;margin-right:20px;}
+      .name-deatil .one-span{float: left;width:200px;overflow: hidden;display: inline-block;}
+      em{font-style: normal;}
+      .name-deatil{width:700px;overflow: hidden;}
+      .print_c{width:85%;border:1px solid #ddd;margin:10px 200px 0 0;}
+      .foot-fp{margin-top:10px;}
+      .foot-fp ul li{float: left;margin-right: 20px;}
+      li{list-style-type:none;}
+      .tb-adress{padding-bottom:20px;margin-top:10px;}
+      .tb-adress ul li{float: left;width:33%;overflow: hidden;}
+      #pirnt_content h2{text-align: center;width:85%;line-height: 40px;}
+    </style>
+	<style type="text/css" media="print">
+	.noprint{ display:none}
+
+	</style>
+</head>
+
+<body>
+<script type="text/javascript">
+    function printFunction(){
+        self.print();
+    }
+    self.print();
+</script>
+
+<div class="modal-header noprint">
+	 
+	<input type="button" onclick="printFunction();" class="buttonStyle" id="printOut" value="打印列表">
+</div>				
+<div class="modal-body" id="pirnt_content">
+  <h2>欢迎光临{$Config.sitename}</h2>
+    <volist name="objList" id="objInfo">
+        <div class="name-deatil" style="margin-top: 20px;">
+            <span class="one-span"> 顾客姓名：<em>{$objInfo.name}</em></span>
+            <div class="dh">
+                单号：<span class="text">{$objInfo.number}</span>
+            </div>
+        </div>
+        <div class="tb-adress">
+            <ul>
+                <li>顾客地址：{$objInfo.provincename} {$objInfo.cityname} {$objInfo.areaname} {$objInfo.address}</li>
+                <li>顾客电话：{$objInfo.mobile}</li>
+                <li>日期：<em>{$vo.tstamp|date="Y-m-d H:i",###}</em></li>
+            </ul>
+        </div>
+        <table   cellspacing="0" cellpadding="0" class="print_c table" >
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>产品名称</th>
+                    <th>规格</th>
+                    <th>单位</th>
+                    <th>数量</th>
+                    <th>单价</th>
+                    <th>金额</th>
+                </tr>
+            </thead>
+            <tbody>
+                <volist name="objInfo['goods_info']" id="goodInfo">
+                    <tr>
+                        <td>{$i}</td>
+                        <td>{$goodInfo.title}</td>
+                        <td><empty name="goodInfo['weight_des']">/<else/>{$goodInfo.weight_des}</empty></td>
+                        <td>{$goodInfo.weight}</td>
+                        <td>{$goodInfo.quantity}</td>
+                        <td>{$goodInfo.price}</td>
+                        <td>{$goodInfo.item_price}</td>
+                    </tr>
+                </volist>
+               <tr>
+                    <td colpspan="2">配送方式:</td>
+                    <td colpspan="2">公司配送</td>
+                    <td colpspan="2">合计（大写）{$objInfo.goods_total_price_ch}</td>
+                    <td colpspan="2">合计（小写）{$objInfo.goods_total_price}</td>
+              </tr>
+            </tbody>
+                                             
+<!--             <tr>
+                <td>
+                    您本次消费获得{$objInfo.goods_total_gold}积分，账户总积分{$objInfo.user_gold}，账户积分可以直接用来支付抵现。<br />
+                    客服热线：{$Config.tel}<br />    
+                    官方QQ：{$Config.qq}<br />
+                </td>
+            </tr>
+            <tr>
+                <td class="title modal-title">
+                    ======================= <br />
+                    {$Config.sitename}订单配送签收单<br />
+                    ======================= </td>
+            </tr>
+            <tr>
+                <td>
+                    单号：<span class="text">{$objInfo.number}</span><br />                    
+                    配送时间：<span class="text">{$objInfo.delivery_time}</span><br />
+                    顾客姓名：<span class="text">{$objInfo.name}</span><br />                       
+                    联系电话：<span class="text">{$objInfo.mobile}</span><br />
+                    送餐地址：<span class="text">{$objInfo.cbd_0} {$objInfo.cbd_1} {$objInfo.address}</span>
+                    <div class="borders" style="margin-bottom:5px;">&nbsp;</div>
+                    贵客签名：<br />       <br />                                     
+                    配送员签名：<br />
+                    <br />
+                </td>
+            </tr> -->
+        </table>
+    </volist>
+    <div class="foot-fp">
+      <ul>
+        <li> 开票：系统管理员</li>
+        <li>业务员：</li>
+        <li>电话：</li>
+        <li>库管：</li>
+        <li>合计：{$objInfo.goods_total_price}元</li>
+      </ul>
+    </div>
+</div>
+
+</body>
+</html>
+
+

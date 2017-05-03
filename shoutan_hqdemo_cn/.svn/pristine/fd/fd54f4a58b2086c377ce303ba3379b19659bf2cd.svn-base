@@ -1,0 +1,255 @@
+<include file="Public/header" />
+<!--header-->
+<header class='weui-header'>
+    <a href="javascript:history.back(-1);" class="turn" title=""><i class="iconfont">&#xe601;</i>订阅号</a>
+    <h1 class="weui-title">我的账本</h1>
+</header>
+<!--search-->
+<div class="weui_search_bar weui_search_focusing search_focus">
+    <form class="weui_search_outer">
+        <div class="weui_search_inner">
+            <i class="weui_icon_search"></i>
+            <input type="search" class="weui_search_input" id="search_input" placeholder="搜索" value="{$_SESSION.data_keyword}" name="keyword"/>
+            <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+        </div>
+
+    </form>
+     
+</div>
+
+<!--btn_group-->
+<div class="weui_panel btn_group">
+    <div class="btn_items check_op">
+        <div class="weui_panel_hd">名下企业</div>
+        <div class="weui_panel_bd">
+           
+			<volist name="storeList" id="vo">
+				<a href="javascript:;" data-store="{$vo.0}" class="weui_btn weui_btn_plain_default black_bor store <eq name='_SESSION.data_search' value='1'><in name='vo.0' value='$_SESSION.data_store'>blue_bor</in><else />blue_bor</eq>">{$vo.1}</a>
+				<!-- <input type="hidden" name="store[]" value="{$vo.0}"> -->
+			</volist>
+			
+        </div>
+    </div>
+    <div class="btn_items btn_sm check_op clearfix">
+        <div class="weui_panel_hd">机具</div>
+        <div class="weui_panel_bd machine clearfix">
+    
+            <volist name="deviceList" id="vo">
+				<a href="javascript:;" data-store="{$vo.store}" data-device="{$vo.device_no}" class="weui_btn weui_btn_plain_default black_bor device <eq name='_SESSION.data_search' value='1'><in name='vo.device_no' value='$_SESSION.data_device_no'>blue_bor<else /><in name='vo.store' value='$_SESSION.data_store'><else />black_bg</in></in><else />blue_bor</eq>">{$vo.device_no}</a>
+				<input type="hidden" name="device[]" value="{$vo.device_no}">
+			</volist>
+            
+        </div>
+    </div>
+    <div class="btn_items btn_sm check_op clearfix">
+        <div class="weui_panel_hd">支付方式</div>
+        <div class="weui_panel_bd machine clearfix">
+			<volist name="transaction_type" id="vo">
+				<a href="javascript:;" data-types="{$vo.0}" class="weui_btn weui_btn_plain_default black_bor types <eq name='_SESSION.data_search' value='1'><in name='vo.0' value='$_SESSION.data_types'>blue_bor</in><else />blue_bor</eq>">{$vo.1}</a>
+				<input type="hidden" name="types[]" value="{$vo.0}">
+			</volist>
+	
+        </div>
+    </div>
+    <div class="btn_items btn_sm clearfix">
+        <div class="weui_panel_hd">交易日期</div>
+        <div class="weui_panel_bd machine clearfix">
+            <input type="text" class="black_bor" id="transaction_begindate" placeholder="{$transaction_begindate}" value="<eq name='_SESSION.data_search' value='1'>{$_SESSION.data_begindate}</eq>" data-toggle='date'>
+            <input type="text" class="black_bor" id="transaction_enddate" placeholder="{$transaction_enddate}"  value="<eq name='_SESSION.data_search' value='1'>{$_SESSION.data_enddate}</eq>" data-toggle='date'>
+        </div>
+    </div>
+    <eq name="tab" value="tab1">
+    <div class="btn_items btn_sm check_op">
+        <div class="weui_panel_hd">交易状态</div>
+        <div class="weui_panel_bd machine clearfix">
+			<volist name="transaction_status" id="vo">
+				<a href="javascript:;" data-status="{$vo.0}" class="weui_btn weui_btn_plain_default black_bor status <eq name='_SESSION.data_search' value='1'><in name='vo.0' value='$_SESSION.data_status'>blue_bor</in><else />blue_bor</eq>">{$vo.1}</a>
+				<input type="hidden" name="status[]" value="{$vo.0}">
+			</volist>
+        </div>
+    </div>
+    </eq>
+</div>
+
+<!--booton_bar-->
+<div class="botton_btn">
+    <div class="weui-row weui-no-gutter">
+        <div class="weui-col-50">
+            <a href="javascript:;" class="weui_btn reset_btn">重置</a>
+        </div>
+        <div class="weui-col-50">
+            <a href="javascript:;" class="weui_btn success_btn">完成</a>
+        </div>
+    </div>
+</div>
+<script>
+    $(".check_op .weui_panel_bd a").click(function(){
+//        $(this).addClass("blue_bor");
+		if($(this).hasClass("black_bg"))
+			return false;
+        if($(this).hasClass("blue_bor")){
+            $(this).removeClass("blue_bor");
+        } else $(this).addClass("blue_bor");
+    })
+
+//    日历
+//    $("#date,#date2").calendar({
+//        onChange: function (p, values, displayValues) {
+//            console.log(values, displayValues);
+//        }
+//    });
+
+    var data_begindate = "{$_SESSION['data_begindate']}"?"{$_SESSION['data_begindate']}":0;
+    var data_enddate = "{$_SESSION['data_enddate']}"?"{$_SESSION['data_enddate']}":0;
+    if(data_begindate){
+    	$("#transaction_begindate").calendar({
+            value: ['{$_SESSION["data_begindate"]}'],
+            dateFormat: 'yyyy-mm-dd'
+        });
+    }else{
+    	$("#transaction_begindate").calendar({
+            value: ['{$transaction_begindate}'],
+            dateFormat: 'yyyy-mm-dd'
+        });
+    }
+    
+    if(data_enddate){
+    	$("#transaction_enddate").calendar({
+            value: ['{$_SESSION["data_enddate"]}'],
+            dateFormat: 'yyyy-mm-dd'
+        });
+    }else{
+    	$("#transaction_enddate").calendar({
+            value: [],
+            dateFormat: 'yyyy-mm-dd'
+        });
+    }
+    
+</script>
+
+<script>
+	//选择商户
+	$("body").on("click",".store",function(){
+		var _self = $(this);
+		var store = _self.data('store');
+		$(".device").each(function(){
+			var my_store = $(this).data('store');
+			if(store == my_store){
+				if(_self.hasClass("blue_bor")){
+					$(this).removeClass('black_bg');
+					$(this).addClass('blue_bor');
+				}else{
+					$(this).addClass('black_bg');
+					$(this).removeClass('blue_bor');
+				}
+				
+			}
+		})
+	})
+	
+	//选择机具号
+	$("body").on("click","a.device",function(){
+		if($(this).hasClass("black_bg")){
+			return false;
+		}
+	})
+	
+	//重置
+	$("body").on("click",".reset_btn",function(){
+		
+		$("#search_input").val("");
+		$("#transaction_begindate").val("");
+		$("#transaction_enddate").val("");
+		$(".check_op .weui_panel_bd a").each(function(){
+			if(!$(this).hasClass("blue_bor"))
+	        	$(this).addClass("blue_bor");
+			$(this).hasClass("black_bg")
+				$(this).removeClass("black_bg");
+	    })
+	})
+	
+	//完成
+	$("body").on("click",".success_btn",function(){
+		var url = "{:U('index')}";
+		//搜索框
+		var keyword = $("#search_input").val();
+		//商户
+		var store = '';
+		$(".store").each(function(){
+			if($(this).hasClass("blue_bor")){
+				store += ($(this).data('store'))+',';
+			}
+		})
+		if(store){
+			store = store.substr(0,store.length-1);
+		}
+		//机具号
+		var device = '';
+		$(".device").each(function(){
+			if($(this).hasClass("blue_bor")){
+				device += ($(this).data('device'))+',';
+			}
+		})
+		if(device){
+			device = device.substr(0,device.length-1);
+		}
+		//支付方式
+		var types = '';
+		$(".types").each(function(){
+			if($(this).hasClass("blue_bor")){
+				types += ($(this).data('types'))+',';
+			}
+		})
+		if(types){
+			types = types.substr(0,types.length-1);
+		}
+		//交易日期
+		var begindate = $("#transaction_begindate").val();
+		var enddate = $("#transaction_enddate").val();
+		
+		//支付状态
+		var status = '';
+		$(".status").each(function(){
+			if($(this).hasClass("blue_bor")){
+				status += ($(this).data('status'))+',';
+			}
+		})
+		if(status){
+			status = status.substr(0,status.length-1);
+		}
+		var data = {
+			keyword:keyword,
+			store: store,
+			device:device,
+			types:types,
+			begindate:begindate,
+			enddate:enddate,
+			status:status
+		}
+		$('[name="types"]').val(types);
+		$('[name="keyword"]').val(keyword);
+		$('[name="store"]').val(store);
+		$('[name="begindate"]').val(begindate);
+		$('[name="device_no"]').val(device);
+		$('[name="enddate"]').val(enddate);
+		$('[name="status"]').val(status);
+		$('#myForm').submit();
+		//alert(store);alert(device);alert(types);alert(status);
+		//$.post(url,{data:data},function(msg){
+			//$.toast(msg.info);
+		//}); 
+	})
+	
+	
+</script>
+<form id="myForm" action="{:U('index')}" method="post" > 
+	<input name="tab" type="hidden" value="{$tab}" />
+    <input name="keyword" type="hidden" value="" />
+    <input name="store" type="hidden" value="" />
+    <input name="device_no" type="hidden" value="" />
+    <input name="types" type="hidden" value="" />
+    <input name="begindate" type="hidden" value="" />
+    <input name="enddate" type="hidden" value="" />
+    <input name="status" type="hidden" value="" />
+</form>
+ <include file="Public/footer" />

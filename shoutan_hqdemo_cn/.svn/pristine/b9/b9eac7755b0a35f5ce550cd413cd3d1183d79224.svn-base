@@ -1,0 +1,36 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+    <div class="controls">
+        <div class="span6 fileupload <notempty name="info[$name]">fileupload-exists<else />fileupload-new</notempty>" data-provides="fileupload">
+            <div class="input-append">
+                <div class="uneditable-input">
+                    <i class="icon-file fileupload-exists"></i> 
+                    <span class="fileupload-filename">
+                        <notempty name="info[$name]">
+                            {$info[$name]}
+                        </notempty>
+                    </span>
+                </div>
+                <span class="btn btn-file">
+                    <span class="fileupload-new">选择图片</span>
+                    <span class="fileupload-exists">更改图片</span>
+                    <input type="file" class="default" name="{$name}" />
+                </span>
+            </div>
+            <div class="fileupload-preview thumbnail">
+                <notempty name="info[$name]">
+                    <img src="__ROOT__/{$Config['path_upload']}{$thumb_url}"/>
+                </notempty>
+            </div>
+            <div class="btn-box">
+                <notempty name="info[$name]">
+                    <a class="btn green-stripe mini image_view fileupload-change" href="#show_pic" data-toggle="modal" data-width="auto" rel="__ROOT__/{$Config['path_upload']}{$url}">预览<i class="icon-eye-open"></i></a>
+                </notempty>
+                <div class="clear"></div>
+                <a class="btn red-stripe mini image_delete fileupload-exists" href="javascript:void(0);" data-dismiss="fileupload">删除<i class="icon-trash"></i></a>
+                <input type="hidden" value="0" name="delete_{$name}" class="fileupload-delete" />
+            </div>
+        </div>
+        <span class="help-block">{$tca.help}</span>
+    </div>
+</div>

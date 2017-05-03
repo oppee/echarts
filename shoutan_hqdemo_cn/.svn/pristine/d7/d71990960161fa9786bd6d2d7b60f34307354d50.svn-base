@@ -1,0 +1,82 @@
+<style type="text/css" media="screen">
+	.print_c{ display:block}
+	#pirnt_content{ font-size:12px;}
+	.modal-title{ text-align:center; font-weight:bold;}	
+	.borders{ border-bottom:#333333 1px dotted}
+	.pad{ padding:5px 0}
+	 /*#ajax-modal{width: 900px;}*/
+	</style>
+<div class="modal-header">
+  <a aria-hidden="true" data-dismiss="modal" class="btn closed" href="#">关闭<i class="icon-remove"></i></a>
+  <h3>联系人列表</h3>
+</div>
+<div class="modal-body" >
+<!-- BEGIN PAGE CONTENT-->
+<div class="row-fluid">
+	<div class="span12">
+
+		 
+		<div class="portlet-body">
+			<table class="table table-striped table-hover table-bordered">
+				<thead>
+				<tr>
+					<th>联系人记录ID</th>
+					<th>联系人姓名</th>
+					<th>性别</th>
+					<th>手机</th>
+					<th>电话</th>
+					
+					<th>职务</th>
+					<th>传真</th>
+					<th>电子邮件</th>
+					<!--<th>客户名称</th>-->
+					<th>部门</th>
+					
+					<th>出生日期</th>
+					<!--<th>备注</th>
+					<th>描述</th>
+					<th>上次浏览时间</th>
+					
+					<th>创建人</th>
+					<th>修改时间</th>
+					<th>创建时间</th>
+					<th>上次修改人</th>
+					<th>是否删除</th>	-->				
+					
+				</tr>
+				</thead>
+				<notempty name="objList">
+					<tbody>
+					<volist name="objList" id="vo">
+						<tr>
+							<td>{$vo.crm_lxr_lxrjlID}</td>
+							<td>{$vo.crm_lxr_lxrxm}</td>
+							<td>{$vo.crm_lxr_xb}</td>
+							<td>{$vo.crm_lxr_sj}</td>
+							<td>{$vo.crm_lxr_dh}</td>
+
+							<td>{$vo.crm_lxr_zw}</td>
+							<td>{$vo.crm_lxr_cz}</td>
+							<td>{$vo.crm_lxr_dzyj}</td>
+							<td>{$vo.crm_lxr_bm}</td>
+							<td>{$vo.crm_lxr_csrq}</td>														
+							
+							 
+						</tr>
+					</volist>
+					</tbody>
+				</notempty>
+			</table>
+		</div>
+		 
+	</div>
+</div>
+<!-- END PAGE CONTENT-->
+	 
+	<!--<div class="row-fluid">
+		<div class="span12" style="text-align:center">
+			<a class="btn" data-dismiss="modal" aria-hidden="true">关闭窗口 <i class="icon-remove-sign"></i></a>
+		</div>
+	</div>-->
+</div>
+

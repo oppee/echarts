@@ -1,0 +1,206 @@
+<?php
+namespace HQ\Controller;
+/**
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+class PromotionController extends BaseController
+{
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+		public $tbName = Promotion;
+		private $types=array(
+			array(1,'问'),
+			array(2,'答')
+		);
+        //高级筛选
+        public $status_all = array(
+            array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+            array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse'),
+            array('status'=>'start', 'value'=>0, 'title'=>'启用', 'class'=>'success'),
+            array('status'=>'start', 'value'=>1, 'title'=>'关闭', 'class'=>'inverse'),
+        );
+    protected function init()
+    {  
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+        //获取留言标题
+        $id = I('request.id') ? I('request.id') : null;
+        //获取赠品列表
+        $present = M('Present')->where('deleted=0')->field('id as "0", title as "1"')->select();
+        //Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            'start' => array(
+                'label' => '开启',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            /*'hot' => array(
+                'label' => '是否推荐',
+                'type' => 'toggle_button',
+                'data' => '1'
+            ),
+            'top' => array(
+                'label' => '是否置顶',
+                'type' => 'toggle_button',
+                'data' => '1'
+            ),*/
+            'title' => array(
+                'label' => '规则名称',
+                'type' => 'text',
+                'help' => '满100送红花油'
+            ),
+            'money' => array(
+                'label' => '金额下限',
+                'type' => 'text',
+                'help' => '最低购买多少金额可获得赠品'
+            ),
+            'num_gift' => array(
+                'label' => '赠品上限',
+                'type' => 'text',
+                'help' => '最多获取多少赠品'
+            ),
+            'gift' => array(
+                'label' => '全部赠品',
+                'type' => 'select_toggle',
+                'data' => $present,
+            ),
+            'content' => array(
+                'label' => '备注',
+                'type' => 'textarea',
+                'help' => '最多填写200字',
+            ),
+        );
+    }
+
+  /*
+     * 列表页面
+     */
+    public function index()
+    {
+        $this->init();	//加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = D($this->tbName); //实例化对象
+        $Where = "deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or `".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+				
+        if (I('request.keyword')!='') {
+            $I_keyword = trim(I('request.keyword'));
+            $Where .= " and title like '%" . $I_keyword . "%'";
+        }
+				
+        if(I('request.type')!=""){
+            $Where .= " and type = " . I('request.type') . " ";
+        }
+				
+			
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;	
+		$this->assign('types',$this->types);
+        $Page = new \HQ\Util\Page($Obj->where($Where)->count(), $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj->where($Where)->order($sorting.' '.$order)->limit($Page->firstRow . ',' . $Page->listRows)->select();
+        foreach ($list as $k => $v) {
+            $list[$k]['gift'] = M('Present')->where(array('deleted'=>0,'id' => array('in', $v['gift'])))->field('title')->select();
+            foreach($list[$k]['gift'] as $key => $value){
+                $list[$k]['gift2'][] = $value['title'];
+            }
+        }
+        foreach($list as $k2 => $v2){
+            $list[$k2]['gift'] =  implode(',',$v2['gift2']);
+        }
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 编辑数据
+     */
+    public function edit() {
+        $this->save();
+    }
+
+    /**
+     * 保存数据
+     */
+    public function save() {
+    	$this->init();
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+        $info = M($this->tbName)->where('id = ' . $id)->find();
+        //P($info);
+        if (IS_POST) {
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    $_POST[$key] = implode(",", $val);
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+ 
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $Obj->hidden = 1;
+                }
+                if (!isset($_POST['start'])) {
+                    $Obj->start = 1;
+                }
+                 
+                $Obj->tstamp = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+                } else {
+                    $Obj->crdate = time();
+                    $id = $Obj->add();
+                    if (trim($_POST['sorting']) == '') {
+                        $Obj->where(array('id' => $id))->save(array('sorting' => $id));
+                    }
+                    $message = '添加成功!';
+                }
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+        //自动渲染字段
+        parent::autoFields($this->tca, $info);
+        $this->display('info');
+    }
+
+}
+
+?>

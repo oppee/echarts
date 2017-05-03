@@ -1,0 +1,252 @@
+<include file="Public:header"/>
+
+<div class="weui_panel btn_group bind_list">
+	<div class="btn_items btn_sm clearfix">
+		<div class="weui_panel_hd">选择服务项目(可多选)</div>
+		<div class="weui_panel_bd machine cl_i clearfix">
+			<volist name="fwxmList" id="fvo">
+				<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor serviceclass" data-id="{$fvo.crm_fwxm_jlID}">{$fvo.crm_fwxm_mc}</a>
+			</volist>
+		</div>
+	</div>
+	<div class="btn_items btn_sm clearfix">
+		<div class="weui_panel_hd">选择方便的联系时间</div>
+		<div class="weui_panel_bd machine clearfix">
+			<a href="javascript:;" class="weui_btn weui_btn_plain_default blue_bor time_sec"><span id="timestr"> 随 时 </span></a>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="txtService" />
+<input type="hidden" id="txtServiceKey" />
+<input type="hidden" id="txtTime" value="随时"/>
+<div class="weui_cells userinfo bind_cell">
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>公司名称</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="text" id="txtCompany" placeholder="请输入公司名称">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>公司地址</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="text" id="txtAddress" placeholder="请输入公司地址">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>联系人</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="text" id="txtContact" placeholder="请输入联系人">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>联系电话</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" id="txtTel" placeholder="请输入联系电话">
+		</div>
+	</div>
+</div>
+<div style="height:90px;">&nbsp;</div>
+<div class="weui_btn_area fixed_weui_btn">
+	<a href="javascript:;" class="weui_btn weui_btn_warn" title="确定" id="btnSubmit">提交申请</a>
+</div>
+<!--弹出层-->
+<div class="modal_bind" id="modal_time" style="display: none;">
+	<div id="weui_mask_visible" class="weui_mask weui_mask_visible"></div>
+	<div class="modal_bind_content">
+		<div class="weui_cells weui_cells_checkbox">
+			<label class="weui_cell weui_check_label labSum" for="s11" id="labSum">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>随时</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" class="weui_check" name="checkbox1" id="s11">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label labTime" for="s12">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>9:00-11:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check input_c" id="s12">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label labTime" for="s13">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>11:00-13:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check input_c" id="s13">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label labTime" for="s14">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>13:00-16:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check input_c" id="s14">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label labTime" for="s15">
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>18:00-20:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check input_c" id="s15">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+		</div>
+		<div class="weui_cells_btn">
+			<div class="weui-row weui-no-gutter">
+				<div class="weui-col-50"><a class="wite_bg" href="javascript:;" id="btnReset">重置</a></div>
+				<div class="weui-col-50"><a class="blue_bg" href="javascript:;" id="btnSubmitTime">确认</a></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(".cl_i a").click(function(){
+		if($(this).hasClass("blue_bor")){
+			$(this).removeClass("blue_bor");
+		} else { 
+			$(this).addClass("blue_bor");		
+		}
+	});
+
+	//	弹出层
+	$(".weui_mask_visible").click(function(){
+		$('#modal_time').hide();
+		//$(this).parents(".modal_bind").hide();
+	});
+	
+	$('#btnReset').click(function(){
+		$('.input_c').attr("checked",false);
+		$('#s11').attr("checked",true);
+	});
+	
+	$('#btnSubmitTime').click(function(){
+		$('#modal_time').hide();
+		//$(this).parents(".modal_bind").hide();
+	});
+
+	$(".time_sec").click(function(){
+		if(!$('#weui_mask_visible').hasClass("weui_mask_visible")){
+			$('#weui_mask_visible').addClass('weui_mask_visible');
+		}		
+		if($('#timestr').text()==" 随 时 "){
+			$('#s11').attr("checked",true);
+		}
+		$('#modal_time').show();
+		//$(this).parents(".bind_list").siblings(".modal_bind").show();
+	});
+	
+	$('#labSum').click(function(){
+		$('.input_c').attr("checked",false);
+	});
+	
+	$('.labTime').click(function(){
+		$('#s11').attr("checked",false);
+	});
+	
+	$('#btnSubmitTime').click(function(){
+		var _check=$("input[name='checkbox1']:checked");
+		if(_check.length<1){
+			$.alert("请选择方便的联系时间");
+			return false;
+		}else if(_check.length>1){
+			$('#timestr').html(_check.length+"个时间段");
+			var _txt="";
+			_check.each(function(){
+				_txt+=$(this).parents(".weui_cell_hd").siblings(".weui_cell_primary").find('p').text()+",";	
+			});
+			$('#txtTime').val(_txt);
+		}else if(_check.length==1){
+			if($("#s11:checked").length==1){
+				$('#timestr').html(" 随 时 ");
+				$('#txtTime').val("随时");
+			}else{
+				var _txt=$(_check).parents(".weui_cell_hd").siblings(".weui_cell_primary").find('p').text();
+				$('#timestr').html(_txt);
+				$('#txtTime').val(_txt);
+			}
+		}
+		$('#modal_time').hide();
+	});
+	
+	$('#btnSubmit').click(function(){
+		$('#txtService').val("");
+		var _service=$('.serviceclass');		
+		var _txt="";
+		var _txtkey="";
+		_service.each(function(){
+			if($(this).hasClass("blue_bor")){
+				_txt+=$(this).text()+",";
+				_txtkey+=$(this).attr('data-id')+",";
+			}
+		});
+		$('#txtService').val(_txt);
+		$('#txtServiceKey').val(_txtkey);
+		var _otxt=$('#txtService').val();
+		if(_otxt.length<1){
+			$.alert("请选择服务项目");
+			return false;
+		}
+		var _okey=$('#txtServiceKey').val();
+		var _time=$('#txtTime').val();
+		if(_time.length<1){
+			$.alert("请选择方便的联系时间");
+			return false;
+		}
+		var _name=$('#txtCompany').val();
+		if(_name.length<1){
+			$.alert("请输入公司名称");
+			return false;
+		}
+		var _address=$('#txtAddress').val();
+		if(_address.length<1){
+			$.alert("请输入公司地址");
+			return false;
+		}
+		var _contact=$('#txtContact').val();
+		if(_contact.length<1){
+			$.alert("请输入联系人");
+			return false;
+		}
+		var _tel=$('#txtTel').val();
+		if(_tel.length<1){
+			$.alert("请输入联系电话");
+			return false;
+		}else if(!(/^1[3|4|5|7|8][0-9]\d{8,8}$/).test(_tel)){
+			$.alert('请输入有效的手机号码！');
+			return false;
+		}
+		$('#btnSubmit').attr({"disabled":"disabled"});
+		$.ajax({
+			url:"{:U('addService')}",
+			method:"POST",
+			data: { servicekey:_okey,service: _otxt,time: _time,name: _name,address: _address,contact: _contact,tel: _tel },
+			dataType:"json",
+			success:function(data){
+				if(data.status==1){
+					window.location.href="{:U('index')}";
+				}else{
+					$('#btnSubmit').removeAttr("disabled");
+					$.alert(data.info);
+					return false;
+				}
+			},
+			error:function(){
+				$('#btnSubmit').removeAttr("disabled");
+				$.alert("网络不给力哦，请稍后再试。。。");
+				return false;
+			},
+			async:false
+		});
+	});
+</script>
+<include file="Public:footer"/>

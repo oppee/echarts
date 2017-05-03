@@ -1,0 +1,136 @@
+<!--<html>-->
+	<!--<head>-->
+		<!--<title>绑定列表</title>-->
+	<!--</head>-->
+	<!---->
+	<!--<body>-->
+		<!--<h2 style="text-align:center;">绑定列表</h2>-->
+	<!--</body>-->
+<!--</html>-->
+
+<include file="Public:header"/>
+
+<div class="weui_panel btn_group bind_list">
+	<div class="btn_items btn_sm clearfix">
+	<div class="weui_panel_hd">选择服务项目(可多选)</div>
+	<div class="weui_panel_bd machine cl_i clearfix">
+		<a href="javascript:;" class="weui_btn weui_btn_plain_default blue_bor black_bor">云POS</a>
+		<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor black_bg">扫码支付</a>
+		<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor">免费WiFi</a>
+	</div>
+</div>
+	<div class="btn_items btn_sm clearfix">
+		<div class="weui_panel_hd">选择方便的联系时间</div>
+		<div class="weui_panel_bd machine clearfix">
+			<a href="javascript:;" class="weui_btn weui_btn_plain_default blue_bor"><span>2个时间段</span></a>
+		</div>
+	</div>
+</div>
+
+<div class="weui_cells userinfo bind_cell">
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>公司名称</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入手机号">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>公司地址</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入用户名">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>联系人</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入昵称">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd"><label>联系电话</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" placeholder="请输入昵称">
+		</div>
+	</div>
+
+	<p class="weui_btn_area">
+		<a href="javascript:;" class="weui_btn weui_btn_warn" title="确定">提交申请</a>
+	</p>
+</div>
+
+
+
+<div class="modal_bind">
+	<div class="weui_mask weui_mask_visible"></div>
+	<div class="modal_bind_content">
+		<div class="weui_cells weui_cells_checkbox">
+			<label class="weui_cell weui_check_label" for="s11">
+
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>随时</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" class="weui_check" name="checkbox1" id="s11" checked="checked">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label" for="s12">
+
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>9:00-11:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check" id="s12">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label" for="s13">
+
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>9:00-11:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check" id="s13">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label" for="s14">
+
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>11:00-13:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check" id="s14">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+			<label class="weui_cell weui_check_label" for="s15">
+
+				<div class="weui_cell_bd weui_cell_primary">
+					<p>13:00-16:00</p>
+				</div>
+				<div class="weui_cell_hd">
+					<input type="checkbox" name="checkbox1" class="weui_check" id="s15">
+					<i class="weui_icon_checked"></i>
+				</div>
+			</label>
+		</div>
+		<div class="weui_cells_btn">
+			<div class="weui-row weui-no-gutter">
+				<div class="weui-col-50"><a class="wite_bg" href="">重置</a></div>
+				<div class="weui-col-50"><a class="blue_bg" href="">确认</a></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script>
+	$(".cl_i a").click(function(){
+		if($(this).hasClass("blue_bor")){
+			$(this).removeClass("blue_bor");
+		} else $(this).addClass("blue_bor");
+	})
+</script>
+<include file="Public:footer"/>

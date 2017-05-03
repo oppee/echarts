@@ -1,0 +1,69 @@
+
+
+模板
+/Application/Home/View/shoutan/Index/bindList.html  绑定列表【已做】
+
+/Application/Home/View/shoutan/Index/loginCheck.html  用户名验证码登陆
+
+/Application/Home/View/shoutan/Account/index.html  开户列表【已做】
+
+/Application/Home/View/shoutan/Account/createAccount.html 创建账户【已做】
+
+/Application/Home/View/shoutan/User/userinfo.html  修改用户资料【已做】
+
+/Application/Home/View/shoutan/User/editPassword  修改用户密码【已做】
+
+
+----------------------------------
+
+
+
+注册页面：
+http://shoutan.damankj.com/Index/register.html 【375已完成】
+
+注册同意页面
+http://shoutan.damankj.com/Index/agree.html 【375已完成】
+
+登录页面：
+http://shoutan.damankj.com/Index/login.html 【375已完成】
+
+忘记密码：
+http://shoutan.damankj.com/Index/forgotpwd.html 【375已完成】
+
+
+绑定列表
+http://localhost/Shop/shoutan/Index/bindList.html【375已完成】
+
+
+绑定页面：
+http://shoutan.damankj.com/Index/bind.html 【375已完成】
+
+账本页面(明细，月图，周图)
+http://shoutan.damankj.com/Dasboard/ 【375已完成】
+
+搜索页面：
+http://shoutan.damankj.com/Dasboard/search/tab/tab1.html 【375已完成】
+
+
+修改用户资料
+shoutan.hqdemo.cn/User/userinfo.html【375已完成】
+
+修改密码
+shoutan.hqdemo.cn/User/editPassword.html【375已完成】
+
+
+开通下属账户列表
+shoutan.hqdemo.cn/Account/index.html【375已完成】
+
+开通下属账户完成
+shoutan.hqdemo.cn/Account/createAccount.html【375已完成】
+
+
+申请列表
+shoutan.hqdemo.cn/Apply/index.html【375已完成】
+
+申请服务
+shoutan.hqdemo.cn/Apply/service.html【375已完成】
+
+
+

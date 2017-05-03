@@ -1,0 +1,151 @@
+<?php
+/*
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+namespace HQ\Controller;
+class MailtogroupController extends BaseController
+{
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    public $tbName = 'mailbox';
+
+    public function index()
+    {
+        //获得会员等级
+        $UserLevel = M('UserLevel');
+        $level = $UserLevel->where('deleted=0 and hidden=0')->field('id, name')->select();
+//        $levels[0] = array(0, '全部会员');
+        foreach($level as $k=>$v){
+            $levels[] = array($v['id'], $v['id'].'.'.$v['name']);
+        }
+        $this->assign('levels', $levels);
+        if (IS_POST) {
+            $is_level = I('is_level');
+            $level_id = I('level_id');
+            $recipient = I('recipient');
+            $addData['crdate'] = $addData['tstamp'] = time();
+            $addData['sender'] = I('sender');
+            $addData['subject'] = I('subject');
+            $addData['content'] = I('content');
+            //处理会员等级 形成会员名数组
+            $User = M('User');
+            $level_user_list = array();
+            if($is_level){
+                if($level_id!=''){
+                    $Where_level = $level_id ? ' and level='.$level_id : '';
+                    $user = $User->where('deleted=0 and hidden=0'.$Where_level)->field('id, username')->select();
+                    $user_count = $User->where('deleted=0 and hidden=0'.$Where_level)->count();
+                    $user_count = $user_count ? $user_count : 0;
+                    $level_name = $UserLevel->where('deleted=0 and hidden=0 and id='.$level_id)->getField('name');
+                    $msg .= $level_id ? '会员等级为<strong style="color:green">'.$level_name.'</strong>的会员共有<strong style="color:green">'.$user_count.'</strong>个，包括：<br />':'<strong style="color:red">你选择了全部会员，共有'.$user_count.'个，包括：</strong><br />';
+                    foreach($user as $k=>$v){
+                        $level_user_list[(string)$v['username']] = $v['username'];
+                        $msg .= '<strong style="color:green">ID：'.$v['id'].'，用户名：'.$v['username'].'</strong><br />';
+                    }
+                }else{
+                    $json['status'] = 0;
+                    $json['info'] = '<strong style="color:red">如果选择按组群发，会员等级是必选项！</strong><br />'.$msg;
+                    $this->ajaxReturn($json, 'json');
+                }
+            }
+            //处理收信人 形成用户名数组
+            $recipient_list = array();
+            if($recipient){
+                $recipient = $this->transRecipient($recipient);
+                $msg .= '以下是<strong style="color:blue">自定义</strong>输入的收信人：<br />';
+                foreach($recipient as $k=>$v){
+                    //检验用户名是否存在
+                    $exist = $User->where("deleted=0 and hidden=0 and username='".$v."'")->find();
+                    if(!$exist){
+                        unset($recipient[$k]);
+                        $msg .= '<strong style="color:red">用户名为'.$v.'的会员不存在，请检查是否输入正确</strong><br />';
+                    }else{
+                        $recipient_list[(string)$v] = $v;
+                        $user_info = $User->where("deleted=0 and hidden=0 and username='".$v."'")->field('id, level')->find();
+                        $user_level = $UserLevel->where("deleted=0 and hidden=0 and id=".$user_info['level'])->getField('name');
+                        $msg .= '<strong style="color:blue">ID：'.$user_info['id'].'，用户名：'.$v.'，等级：'.$user_level.'</strong><br />';
+                    }
+                }
+            }
+            if(I('check')==='check'){
+                $json['status'] = 1;
+                $json['info'] = '<strong style="color:orange">验证收信人的结果如下：</strong><br />'.$msg;
+                $this->ajaxReturn($json, 'json');
+            }
+            //防止重复发送，合并数组的规则（必须是字符串键名）
+            $_recipient = array_merge($recipient_list, $level_user_list);
+            $recipient = array_values($_recipient);
+            $msg_recipient = implode(',',$recipient);
+            $msg_num = count($recipient);
+            $suc_num = 0;
+            //Where条件 检验是否重复发送
+            $Where = array(
+                'deleted'=>0,
+                'hidden'=>0,
+                'sender'=>$addData['sender'],
+                'subject'=>$addData['subject'],
+                'content'=>$addData['content'],
+            );
+            
+            $User=M('User');
+            $Mail=M($this->tbName);
+            foreach($recipient as $k=>$v){
+                $tmp_id = $User->where("hidden=0 and deleted=0 and username='".$v."'")->getField('id');
+                if($tmp_id){
+                    $Where['recipient'] = $tmp_id;
+                    $is_send = $Mail->where($Where)->find();
+                    if($is_send){
+                        $is_view = $Mail->where($Where)->setField('is_view',0);
+                        $msg_list .= '&nbsp;&nbsp;<strong style="color:orange">'.($k+1).'. ID为'.$tmp_id.'的会员：'.$v.' 接收信息重复，已覆盖原信息，编号：'.$is_send['id'].'</strong><br />';//获取详细列表
+                        $suc_num++;
+                    }else{
+                        $addData['recipient'] = $tmp_id;
+                        $add_id = $Mail->add($addData);
+                        if($add_id){
+                            $msg_list .= '&nbsp;&nbsp;'.($k+1).'. ID为'.$tmp_id.'的会员：'.$v.' 已接收此信息，信息编号：'.$add_id.'<br />';//获取详细列表
+                            $suc_num++;
+                        }else{
+                            $msg_list .= '&nbsp;&nbsp;<strong style="color:orange">'.($k+1).'. ID为'.$tmp_id.'的会员：'.$v.' 未能接收此信息...</strong><br />';//获取详细列表
+                        }
+                    }
+                }else{
+                    $msg_list .= '&nbsp;&nbsp;<strong style="color:red">'.($k+1).'. 会员：'.$v.' 不存在...</strong><br />';//获取详细列表
+                }
+            }
+            
+            //判断上传是否成功
+            if ($suc_num == $msg_num && $msg_num!=0) {
+                $message = '<strong>状态如下：</strong><br />';
+                $message .= '&nbsp;&nbsp;发信人：'.I('sender').'<br />';
+                $message .= '&nbsp;&nbsp;收信人：'.$msg_recipient.'<br />';
+                $message .= '<strong style="color:green">'.$msg_num." 条站内信，全部发送成功！</strong><br />";
+                $message .= $msg_list;
+                $this->success($message);
+            }else{
+                $message = '<strong>状态如下：</strong><br />';
+                $message .= '&nbsp;&nbsp;发信人：'.I('sender').'<br />';
+                $message .= '&nbsp;&nbsp;收信人：'.$msg_recipient.'<br />';
+                $message .= '<strong style="color:red">'.$msg_num." 条站内信，发送成功 ".$suc_num." 条，失败 ".($msg_num-$suc_num)." 条：</strong><br />";
+                $message .= $msg_list;
+                $message .= '（提示：如果会员名已更改，请确认无误后重试！）';
+                $this->success($message);
+            }
+        }
+        $this->display(); // 输出模板
+    }
+
+    //处理收信人
+    public function transRecipient($str){
+        if(gettype($str)!='string')return false;
+        $str = trim($str);
+        if(!(strpos($str,'，')===false))$str = str_replace('，',',',$str);
+        if(!(strpos($str,'；')===false))$str = str_replace('；',',',$str);
+        if(!(strpos($str,';')===false))$str = str_replace(';',',',$str);
+        $arr = explode(',',$str);
+        return $arr;
+    }
+
+}
+
+?>

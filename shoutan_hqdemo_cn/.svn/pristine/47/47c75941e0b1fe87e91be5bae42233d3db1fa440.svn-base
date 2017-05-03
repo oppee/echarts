@@ -1,0 +1,271 @@
+ <include file="Public/header" />
+    <header class='weui-header'>
+        <a href="javascript:;" class="turn" title=""><i class="iconfont">&#xe601;</i></a>
+        <h1 class="weui-title">{$category.name}商户圈</h1>
+        <a href="#" class="convert-btn"><img src="__TMPL__Public/images/tiyu_03.png" alt=""></a>
+    </header>
+
+    <div class="weui_panel weui_panel_access tiyu">
+        <div class="weui_panel_bd">
+            <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg">
+                <div class="weui_media_hd">
+					<notempty name="category.image"><php>$category['image'] = "__ROOT__/Uploads/Topiccategory/".$category['image'];</php></notempty>
+                    <img class="weui_media_appmsg_thumb" src="{$category.image|default='__TMPL__Public/images/default.png'}" alt="">
+                </div>
+                <div class="weui_media_bd">
+                    <h4 class="weui_media_title">{$category.name}</h4>
+                    <p class="weui_media_desc">{$category.remark}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="weui-row weui-no-gutter fwl">
+        <div class="weui-col-33">
+                访问
+                <p>{$category.hit|default="0"}</p>
+        </div>
+        <div class="weui-col-33">
+                主题
+                <p>{$count_num|default="0"}</p>
+        </div>
+        <div class="weui-col-33">
+                今日
+                <p>{$today_num|default="0"}</p>
+        </div>
+    </div>
+
+    <!-----------用户留言----------->
+    <div class="message" id="list">
+	    <volist name="lists" id="vo">
+	        <div class="order-item tiyu">
+	            <div class="weui_cells">
+	                <div class="weui_cell">
+	                    <div class="weui_cell_hd">
+	                        <img src="__TMPL__Public/images/tiyu_07.png" alt="icon" style="width:40px;margin-right:10px;display:block">
+	                    </div>
+	                    <div class="weui_cell_bd weui_cell_primary">
+	                        {$vo.nickname|default="匿名"}
+	                        <div><span class="gray">{:graydate($vo['crdate'])}</span></div>
+	                    </div>
+	                    <div class="weui_cell_ft gray">
+	                        <img src="__TMPL__Public/images/tiyu_22.png" alt="">
+	                        {$vo.hit}
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="weui_cells pl">
+	                <a class="weui_cell" href="{:U('info',array('id'=>$vo['id']))}">
+	                    <div class="weui_cell_bd">
+	                        <h4>{$vo.title}</h4>
+	                        <p>{$vo.remark}</p>
+	                    </div>
+	                </a>
+	            </div>
+	            <div class="weui-row weui-no-gutter dd">
+	                <a class="weui-col-33 mode_link" data-id="{$vo.id}" href="javascript:;">
+						<i class="fa fa-commenting-o"></i> <span>{$vo.comments}</span>
+	                </a>
+	                <a class="weui-col-33 likes iconfont" data="{$vo.id}">
+						<i class="fa fa-thumbs-o-up"></i> <span>{$vo.likes}</span>
+	                </a>
+	                <a class="weui-col-33 favorite add_icon <if condition="$vo[is_favorite] eq true">add</if>" data="{$vo.id}">
+						<i class="fa fa-heart"></i> <span>{$vo.favorite}</span>
+	                </a>
+	            </div>
+	        </div>
+	    </volist>
+    </div>
+ 	<input id="lists_page" value="1" type="hidden"/>
+ 	<input type="hidden" id="is_ajax" value="{$is_ajax}"/>
+    <div class="weui-infinite-scroll page-down" style="display: none;">
+        <div class="infinite-preloader"></div><!-- 菊花 -->
+		正在加载... <!-- 文案，可以自行修改 -->
+    </div>
+
+    <!----------留言进入-------->
+    <div class="liuyanban">
+        <a href="{:U('fabiao',array('category'=>$category['id']))}"><img src="__TMPL__Public/images/tiyu_30.png" alt=""></a>
+    </div>
+ 
+    <script>
+    $(function(){
+    	$.extend({
+  		    tipsBox: function (options) {
+  		      options = $.extend({
+  		        obj: null, //jq对象，要在那个html标签上显示
+  		        str: "+1", //字符串，要显示的内容;也可以传一段html，如: "<b style='font-family:Microsoft YaHei;'>+1</b>"
+  		        startSize: "12px", //动画开始的文字大小
+  		        endSize: "30px", //动画结束的文字大小
+  		        interval: 600, //动画时间间隔
+  		        color: "red", //文字颜色
+  		        callback: function () { } //回调函数
+  		      }, options);
+  		      $("body").append("<span class='num'>" + options.str + "</span>");
+  		      var box = $(".num");
+  		      var left = options.obj.offset().left + options.obj.width() / 2;
+  		      var top = options.obj.offset().top - options.obj.height();
+  		      box.css({
+  		        "position": "absolute",
+  		        "left": left + "px",
+  		        "top": top + "px",
+  		        "z-index": 9999,
+  		        "font-size": options.startSize,
+  		        "line-height": options.endSize,
+  		        "color": options.color
+  		      });
+  		      box.animate({
+  		        "font-size": options.endSize,
+  		        "opacity": "0",
+  		        "top": top - parseInt(options.endSize) + "px"
+  		      }, options.interval, function () {
+  		        box.remove();
+  		        options.callback();
+  		      });
+  		    }
+  		  });
+    	function niceIn(prop){
+   		  prop.find('i').addClass('niceIn');
+   		  setTimeout(function(){
+   		    prop.find('i').removeClass('niceIn');  
+   		  },1000);    
+   		}
+    	$('.likes').on('click',function(){
+    		var _this = $(this);
+    		var url = "{:U('Mobile/Business/topiclinks')}";
+    		var data = "id=" + $(this).attr('data');
+    		$.post(url,data,function(data){
+				if(data.code==1){
+					$.tipsBox({
+						obj: $(_this),
+						str: "+1",
+						callback: function () {
+						}
+					});
+					niceIn($(_this));
+					_this.find('span').text(data.likes);
+				}else{
+					$.toast(data.info,'cancel');
+				}
+    		});
+    	});
+		$('.favorite').on('click',function(){
+			var _this = $(this);
+			var url = "{:U('Mobile/Business/topicfavorite')}";
+			var action = 'des';
+			var pic = '';
+			if(_this.hasClass('add')){
+				action = 'inc';
+				pic = '<i class="fa fa-heart"></i>';
+			}
+			$.post(url,{id:$(this).attr('data'),action:action},function(data){
+				if(data.code==1){
+					$.tipsBox({
+						obj: $(_this),
+						str: pic,
+						callback: function () {
+						}
+					});
+					niceIn($(_this));
+					_this.find('span').text(data.favorite);
+				}else{
+					$.toast(data.info,'cancel');
+				}
+			});
+		});
+    });
+        $('#list .weui-row.weui-no-gutter.dd .weui-col-33:first-child').on('click',function() {
+            sessionStorage.setItem("from","pageA");
+        })
+
+		$(".add_icon").click(function(){
+			if($(this).hasClass("add")){
+				$(this).removeClass("add");
+			} else $(this).addClass("add");
+		})
+    </script>
+
+ <include file="Public/footer" />
+
+ <div class="modal_box" style="display:none;">
+	 <div class="modal_mask"></div>
+	 <div class="modal_dialog">
+		 <div class="modal_content" style="top: 50%;position: relative;">
+			 <div class="modal_text">
+				 <textarea name="remark" placeholder="内容，2-700个字"></textarea>
+			 </div>
+			 <input name="topic_id" value="" type="hidden"/>
+		 	<div class="weui_dialog_footer">
+			 <a class="cancel_btn reply_cancel" href="javascript:;">取消</a>
+			 <a class="publish_btn reply_submit" href="javascript:;">发表</a>
+		 </div>
+		 </div>
+	 </div>
+ </div>
+ <script>
+	 $(".mode_link").click(function(){
+		 $(this).parents(".message").siblings(".modal_box").show();
+		 $("input[name=topic_id]").val($(this).data('id'));
+	 });
+	 $(".reply_submit").click(function(){
+		 var remark = $("textarea[name=remark]").val();
+		 if(remark.length<2||remark.length>700){
+			 $.alert('内容必须为4~25个字！');
+			 return false;
+		 }
+		 var topic_id = $("input[name=topic_id]").val();
+		 $.post("{:U('reply')}",{remark:remark,topic_id:topic_id},function(data){
+			 $(".modal_mask").parents(".modal_box").hide();
+			 if(data.status==1){
+				 $("textarea[name=remark]").val('');
+				 $.alert('回复成功！',function(){
+					 location.href = data.url;
+				 })
+			 }else{
+				 $.alert(data.info);
+			 }
+		 });
+	 });
+	 $(".modal_mask,.reply_cancel").click(function(){
+		 $("textarea[name=remark]").val('');
+		 $(this).parents(".modal_box").hide();
+	 });
+	 $(function(){
+		 function ajax_post() {
+			 var page = $("#lists_page").val();
+			 var pagesize = '{$pagesize}';
+			 var action = 'topic';
+			 $.ajax({
+				 type:"post",
+				 url:"{:U('getListPage',array('category'=>$category['id']))}",
+				 data:{page:parseInt(page)+1,pagesize:pagesize,action:action},
+				 dataType:"html",
+				 success:function (data) {
+					 if(data!=false){
+						 $("#list").append(data);
+						 $("#lists_page").val(parseInt(page)+1);
+						 $(".page-down").hide().html('<div class="infinite-preloader"></div>正在加载...');
+					 }else{
+						 $(".page-down").show().html('亲，看完了');
+						 setTimeout(function () {
+							 $(".page-down").hide().html('<div class="infinite-preloader"></div>正在加载...');
+						 },2000);
+					 }
+					 $("#is_ajax").val('0');
+				 }
+			 });
+		 }
+		 function whenScroll() {
+			 if($("#is_ajax").val()=='0'){
+				 var bot = 10;
+				 if((bot+$(window).scrollTop())>=($(document).height()-$(window).height())){
+					 $("#is_ajax").val('1');
+					 $(".page-down").show().html('<div class="infinite-preloader"></div>正在加载...');
+					 setTimeout(function () {
+						 ajax_post();
+					 },2000);
+				 }
+			 }
+		 }
+		 $(document).scroll(whenScroll);
+	 });
+ </script>

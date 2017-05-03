@@ -1,0 +1,97 @@
+<?php
+/**
+ * Dasboard Count
+ * @author zhaojie
+ *
+ */
+namespace Mobile\Controller;
+use Mobile\Controller\BaseController;
+
+class DasboardController extends BaseController{
+	//Test OpenId
+	private  $openid = "TESTOPENID";
+	/**
+	 * 我的账本
+	 */	
+	public function index(){
+		$this->assign('title',"我的账本");
+		//授权获得用户信息
+		$openid = session('openid');
+		//测试openid
+		$openid = $this->openid;
+		if(empty($openid)){
+			$openid = I('request.openid');
+		}
+		/* if(empty($openid) || $openid == '-1'){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Dasboard/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		}
+		if(session('access_token')){
+			$access_token = session("access_token");
+		}
+		$wechat_info = $this->getWechatUserinfo($openid,$access_token);
+		$this->assign('wechat_info',$wechat_info); */
+		//获取用户信息
+		$where_u = array("openid"=>$openid);
+		$user_info = M('User')->where($where_u)->find();
+
+		//获取用户所包含商户信息
+		$where_store = array("users"=>$user_info['id']);
+		$user_store_list = M('user_store')->where($where_store)->select();
+		
+		//获取用户对应商户机具信息
+		$device_data_tmp = array();
+		foreach ($user_store_list as $k =>$v){
+			$device_where = array("merchant_no" => $v['store'],"del_flag" => 0);
+			$device_data_tmp[] = M('tbl_device_data')->where($device_where)->select();
+		}
+		$device_data = array_format($device_data_tmp);
+		//获取用户交易记录信息
+		$tmp_salse = array();
+		foreach($device_data as $key => $val){
+			$where_salse = array("merchant_no" => $val['merchant_no'],"device_no" => $val['device_no'],"del_flag" => 0);
+			$tmp_list =  M('tbl_transaction_data')->where($where_salse)->select();
+			if(!empty($tmp_list)){
+				$tmp_salse[] =$tmp_list;
+			}
+		}
+		$salse_data = array_format($tmp_salse);
+		
+		//交易记录统计
+		$count_price = 0; //总收入
+		foreach($salse_data as $key => $val){
+			//日统计
+			
+			//七日统计
+			
+			//月统计
+			
+			//总金额
+			$count_price = $count_price + $val['transaction_amount'];
+		}
+		
+		//传值前台
+		$this->assign("count_price",$count_price);		
+		$this->assign("userinfo",$user_info);
+		$this->assign("salse_data",$salse_data);
+		$this->display();
+	}
+	
+	/**
+	 * 搜索
+	 */
+	public function search(){
+		$this->assign('title',"我的账本");
+		$this->display();
+	}
+}

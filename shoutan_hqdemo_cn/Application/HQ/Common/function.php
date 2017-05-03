@@ -1,0 +1,180 @@
+<?php
+/**
+ * Created by JetBrains PhpStorm.
+ * Author: HeQI
+ * Date: 24.11.13
+ * Time: 17:11
+ */
+
+/*
+ * 权限控制
+ */
+function checkAccess($module_name = '', $action_name = '', $mid = 0)
+{
+    if (!$mid) {
+        $mid = M('Menu')->where(array('deleted' => 0, 'model' => $module_name, 'action' => $action_name))->getField('id');
+    }
+    //检查用户权限
+    $User = session('BEUSER');
+    //Admin
+    if ($User['usergroup']) {
+        if ($User['usergroup'] == 1) { //Admin
+            return true;
+        } else {
+            if ($mid > 1 && !M('Access')->where(array('group_id' => $User['usergroup'], 'menu_id' => $mid))->count()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    } else {
+        return false;
+    }
+}
+
+
+function getStatus($id, $tbName = CONTROLLER_NAME,$field = 'name', $where="")
+{
+    $str = M("$tbName")->where("code ='$id' and id ='$where'")->getField($field);
+	return $str;
+}
+
+
+/**
+ * 获取数据的分类名称
+ * @param $pid 位置ID
+ */
+function getTitle($id, $tbName = CONTROLLER_NAME, $field = 'name')
+{
+    if (!$str = M("$tbName")->where("id =$id ")->getField($field)) {
+    	$special = array("News_category","Banner_position","Goods_category");
+    	if(in_array($tbName,$special))
+        $str = '==顶级==';
+    }
+
+    return $str;
+}
+
+
+function isImage($file_name){
+    $ext = array_pop(explode('.', $file_name));
+
+    if (in_array($ext, array('jpg', 'png', 'bmp', 'gif'))){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+/**
+ * 字符串截取，支持中文和其他编码
+ * @static
+ * @access public
+ * @param string $str 需要转换的字符串
+ * @param string $start 开始位置
+ * @param string $length 截取长度
+ * @param string $charset 编码格式
+ * @param string $suffix 截断显示字符
+ * @return string
+ */
+function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true){
+    if(function_exists("mb_substr")){
+        if($suffix && mb_strlen($str,$charset)>$length){
+            return mb_substr($str, $start, $length, $charset)."...";
+        }else{
+            return mb_substr($str, $start, $length, $charset);
+        }
+    }elseif(function_exists('iconv_substr')) {
+        if($suffix && mb_strlen($str,$charset)>$length){
+            return iconv_substr($str,$start,$length,$charset)."...";
+        }else{
+            return iconv_substr($str,$start,$length,$charset);
+        }
+    }
+    $re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
+    $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
+    $re['gbk']    = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
+    $re['big5']   = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
+    preg_match_all($re[$charset], $str, $match);
+    $slice = join("",array_slice($match[0], $start, $length));
+    if($suffix && mb_strlen($str,$charset)>$length){
+        return $slice."...";
+    }else{
+        return $slice;
+    }
+}
+/**
+ * 二维数组去掉重复值
+ * @param array $array2D
+ * @return multitype:
+ */
+function array_unique_fb($array2D){
+	foreach ($array2D as $v){
+		$v=join(',',$v);//降维,也可以用implode,将一维数组转换为用逗号连接的字符串
+		$temp[]=$v;
+	}
+	$temp=array_unique($temp);//去掉重复的字符串,也就是重复的一维数组
+	foreach ($temp as $k => $v){
+		$temp[$k]=explode(',',$v);//再将拆开的数组重新组装
+	}
+	return $temp;
+}
+
+/**
+ * 生成number
+ * @param       int         $code
+ * @param       int         $max
+ * @param       string      $prefix
+ * @return      string
+ */
+function getNumber($code="",$max=5,$prefix="")
+{
+	$l = '';
+	if($code==''){
+		for($i=1;$i<=$max;$i++)
+		{
+			$l .="0";
+		}
+		$n =  intval("1".$l);
+		$code = rand(1,$n);
+	}
+	$num = $prefix.date('ymd').sprintf('%0'.$max.'d', $code);
+	return $num;
+}
+
+/**
+ * 发送短信验证码
+ */
+function sendSMS($phone,$code,$sms_code,$SmsParam){
+	// 	include "TopSdk.php";
+	import("Common.Util.Alsms.TopSdk");
+	date_default_timezone_set('Asia/Shanghai');
+
+	$c = new TopClient;
+	$c->appkey = C('SMS_APPKEY');
+	$c->secretKey = C('SMS_SECRETKEY');
+	$req = new AlibabaAliqinFcSmsNumSendRequest;
+	$req->setExtend("123456");
+	$req->setSmsType("normal");
+	$req->setSmsFreeSignName(C('SMS_SIGN'));//签名
+	$req->setSmsParam($SmsParam);//参数
+	$req->setRecNum($phone);//手机号 多个用，号隔开
+	$req->setSmsTemplateCode($sms_code);//模板ID
+	$resp = $c->execute($req);
+	return $resp;
+	// 	var_dump($resp);
+}
+
+//对象转数组
+function object_to_array($d)
+{
+	if (is_object($d)) $d = get_object_vars($d);
+	if (is_array($d)){
+		return array_map('object_to_array', $d);
+	}else{
+		return $d;
+	}
+}
+
+?>

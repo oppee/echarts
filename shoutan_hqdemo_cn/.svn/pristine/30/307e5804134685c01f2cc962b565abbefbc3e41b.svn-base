@@ -1,0 +1,538 @@
+<include file="Public/header" />
+<!-- <div class="weui-pull-to-refresh-layer">
+    <div class='pull-to-refresh-arrow'></div>
+    <div class='pull-to-refresh-preloader'></div>
+    <div class="down">下拉刷新</div>
+    <div class="up">释放刷新</div>
+    <div class="refresh">正在刷新</div>
+</div> -->
+
+<!-- <input id="lists_page" value="1" type="hidden"/>
+<input type="hidden" id="is_ajax" value="{$is_ajax}"/> -->
+
+<!--header-->
+<header class='weui-header'>
+    <a href="javascript:history.back(-1);" class="turn" title=""><i class="iconfont">&#xe601;</i>订阅号</a>
+    <h1 class="weui-title">我的账本</h1>
+</header>
+
+<!--account-->
+<div class="account_item">
+    <a class="filter" href="javascript:;"></a>
+    <div class="account_user">
+        <div class="account_head"><a href=""><img src="{$wechat_info.headimgurl}"/></a></div>
+        <h2>{$wechat_info.nickname}</h2>
+        <p><small>总余额(元)</small></p>
+        <h1>{$count_price|default=0}</h1>
+    </div>
+    <div class="weui-row date_menu">
+        <div class="weui-col-33"><p>昨日收入</p><span class="black_color">{$yesterday_count|default=0}</span></div>
+        <div class="weui-col-33"><p>7日收入</p><span class="black_color">{$week_count|default=0}</span></div>
+        <div class="weui-col-33"><p>月收入</p><span class="black_color">{$mothor_count|default=0}</span></div>
+    </div>
+</div>
+<div class="account_tab weui_tab">
+    <div class="weui_navbar">
+        <a id="tab1-btn" class="weui_navbar_item weui_bar_item_on" href="#tab1"><span>收入明细</span></a>
+        <a id="tab2-btn" class="weui_navbar_item" href="#tab2"><span>按月统计</span></a>
+        <a id="tab3-btn" class="weui_navbar_item" href="#tab3"><span>按周统计</span></a>
+    </div>
+    <div class="weui_tab_bd" id="weui_month">
+        <div id="tab1" data-url="{:U('search',array('tab'=>'tab1'))}" class="weui_tab_bd_item weui_tab_bd_item_active">
+            <volist name="today_data" id="vo" >
+            <div class="weui_cell_title {$vo.dates}">
+                <span>
+                  <b class="blue"><i></i>{$vo.alipay_num}</b>
+                  <b class="green"><i></i>{$vo.wechat_num}</b>
+                  <b class="gay"><i></i>{$vo.card_num}</b>
+                </span>
+              <span class="cdate">{$vo.dates}</span>
+				<div class="clear"></div>
+            </div>
+            <div class="weui_cells weui_cells_access" >
+                <volist name="vo.data" id="voo">
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       {:getPayType($voo['transaction_type'])}
+                    </div>
+                    <div class=" weui_cell_primary">
+                        <p>{:transaction_status($voo['transaction_status'])}</p>
+                        <small>{$voo.transaction_datetime}</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + {$voo.transaction_amount}
+                        <p class="org">-{$voo.transaction_commission}</p>
+                    </div>
+                </a>
+                </volist>
+            </div>
+            </volist>
+			<!-- <div class="weui-infinite-scroll page-down" style="display: none;">
+		        <div class="infinite-preloader"></div>菊花
+				正在加载... 文案，可以自行修改
+		    </div> -->
+		    <div class="weui-infinite-scroll page-down">
+		        <div class="infinite-preloader"></div>
+		        正在加载...
+		    </div>
+        </div>
+        <div id="tab2" data-url="{:U('search',array('tab'=>'tab2'))}" class="weui_tab_bd_item">
+            <div class="mychart_box">
+              <p class="center-align">2015年-2016年月数据对比</p>
+                <div class="mychart">
+                    <div id="main" style="height: 190px;width: 100%;"></div>
+                </div>
+            </div>
+            <div class="mychart_content">
+				<div class="weui-row">
+					<div class="weui-col-25 mon">月份</div>
+					<div class="weui-col-25 mon">支付宝</div>
+					<div class="weui-col-25 mon">微信</div>
+					<div class="weui-col-25 mon">线下支付</div>
+				</div>
+				<div id="month_content">
+					<volist name="dataTableMonth" id="vo">
+					<div class="weui-row">
+						<div class="weui-col-25">{$key}</div>
+						<div class="weui-col-25">
+							<span><b class="blue">{$vo['slase_mount'][0]}</b>/12</span>
+						</div>
+						<div class="weui-col-25">
+							<span><b class="green">{$vo['slase_count'][1]}</b>/8</span>
+						</div>
+						<div class="weui-col-25">
+							<span><b class="gay">{$vo['slase_count'][2]}</b>/3</span>
+						</div>
+					</div>
+					</volist>
+				</div>
+				<p class="center-align">注:月收入(元)/单数</p>
+               <!-- <dl>
+                    <dt class="title_box">月份</dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span class="bor_non">线下支付</span></dt>
+                </dl>
+                <volist name="dataTableMonth" id="vo">
+                <dl>
+                    <dd class="title_box">{$key}</dd>
+                    <dd class="tips_items"><span><b class="blue">{$vo['slase_mount'][0]}</b>/<b class="green">{$vo['slase_mount'][1]}</b>/<b class="gay">{$vo['slase_mount'][2]}</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">{$vo['slase_count'][0]}</b>/<b class="green">{$vo['slase_count'][1]}</b>/<b class="gay">{$vo['slase_count'][2]}</b></span></dd>
+                </dl>
+                </volist> -->
+            </div>
+        </div>
+        <div id="tab3" data-url="{:U('search',array('tab'=>'tab3'))}" class="weui_tab_bd_item">
+            <div class="mychart_box">
+              <p class="center-align">2015年-2016年月数据对比</p>
+                <div class="mychart">
+                    <div id="main2" style="height: 190px;width: 80%;"></div>
+                </div>
+            </div>
+            <div class="mychart_content">
+              <div class="weui-row">
+                <div class="weui-col-25 mon">周</div>
+                <div class="weui-col-25 mon">支付宝</div>
+                <div class="weui-col-25 mon">微信</div>
+                <div class="weui-col-25 mon">线下支付</div>
+              </div>
+              <div id="week_content">
+              <volist name="dataTableWeek" id="vo">
+                <div class="weui-row">
+                  <div class="weui-col-25">{$key}</div>
+                  <div class="weui-col-25"><span><b class="blue">{$vo['slase_mount'][0]}</b>/12</span></div>
+                  <div class="weui-col-25"><span><b class="green">{$vo['slase_count'][1]}</b>/8</span></div>
+                  <div class="weui-col-25"><span><b class="gay">{$vo['slase_count'][2]}</b>/3</span></div>
+                </div>
+              </volist>
+              </div>
+
+              <p class="center-align">注:周收入(元)/单数</p>
+               <!-- <dl>
+                    <dt class="title_box">周</dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span>线下支付</span></dt>
+                    <dt class="title_items"><span>支付宝</span><span>微信</span><span>线下支付</span></dt>
+                </dl>
+                
+                <volist name="dataTableWeek" id="vo">
+                <dl>
+                    <dd class="title_box">{$key}</dd>
+                    <dd class="tips_items"><span><b class="blue">{$vo['slase_mount'][0]}</b>/<b class="green">{$vo['slase_mount'][1]}</b>/<b class="gay">{$vo['slase_mount'][2]}</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">{$vo['slase_count'][0]}</b>/<b class="green">{$vo['slase_count'][1]}</b>/<b class="gay">{$vo['slase_count'][2]}</b></span></dd>
+                </dl>
+                </volist>-->
+               <!--  <dl>
+                    <dd class="title_box">7月</dd>
+                    <dd class="tips_items"><span><b class="blue">630</b>/<b class="green">399</b>/<b class="gay">100</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">5</b>/<b class="green">3</b>/<b class="gay">4</b></span></dd>
+                </dl>
+                <dl>
+                    <dd class="title_box">7月</dd>
+                    <dd class="tips_items"><span><b class="blue">630</b>/<b class="green">399</b>/<b class="gay">100</b></span></dd>
+                    <dd class="tips_items"><span><b class="blue">5</b>/<b class="green">3</b>/<b class="gay">4</b></span></dd>
+                </dl> -->
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="{$weekJson1}" id="weekwhere" />
+<input type="hidden" value="<?php echo date('Y-m-d'); ?>" id="weekstr" />
+<input type="hidden" value="<?php echo date('W'); ?>" id="weekWNum" />
+<input type="hidden" value="<?php echo date('W'); ?>" id="weekCNum" />
+
+ <input id="searchData" name="searchData" type="hidden" value='<?php echo $searchData; ?>' />
+
+<include file="Public/footer" />
+<!--<script src="__TMPL__/Public/js/echarts.min.js"></script>-->
+<script src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js?_v_=1471406922963"></script>
+<script src="__TMPL__/Public/js/touch.min.js"></script>
+<script>
+var _bodyw=$('body').width();
+$("#main").width(_bodyw-40);
+$("#main2").width(_bodyw-40);
+</script>
+<script src="__TMPL__/Public/js/chart.js"></script>
+<script>
+	var cmonth={$m};
+	
+	function strToJson(str){
+	    var json = eval('(' + str + ')');    
+	    return json;    
+	}
+		
+	function setTop(type,m){
+		var type = arguments[0] ? arguments[0] : 1;
+		var _wh=$(window).height(); //当前窗口可视区域高度
+		var _dh=$(document).height(); //当前窗口文档的高度
+		if(_wh<_dh){
+			if(type==1){
+				//向上
+				document.body.scrollTop =0;
+			}else{
+				//向下
+				var scrolltop = document.getElementById(m).offsetTop;
+				document.body.scrollTop =_wh-30;
+			}
+		}
+	}
+	
+	function setWeekChart(msg){
+    	if(msg == false){
+   			return false;
+   		}else{
+   			$('#weekCNum').val(msg.cWeekNum);
+   			$('#weekstr').val(msg.lastTime);
+   			var t=msg.weekinfo;
+	   		var weekJson = msg.series;
+	   		setWeekInfo(t,weekJson);
+	   		if(msg.table){
+   				setContentInfo('week_content',msg.table);
+   			}
+   		}
+    }
+	
+	function loadMonthData(){
+		var url = "{:U('getMothorJson')}";
+   	    //var data = 'm='+cmonth;
+   	    var data=$('#searchData').val();
+   	    if(data){
+   	    	data=JSON.parse(data);
+   	    }else{
+   	    	data=new Object();
+   	    	data['loadNum']=3;
+   	    }
+   	    data['m']=cmonth;
+        $.post(url,data,function(msg){
+        	if(msg){
+       			if(msg.series){
+       				setMonthInfo(cmonth,msg.series);
+       			}
+       			if(msg.table){
+       				setContentInfo('month_content',msg.table);
+       			}
+       		}
+        });
+	}
+	
+	function loadWeekData(){
+		var url = "{:U('getWeekJsonByChart')}";
+		var data=$('#searchData').val();
+		if(data){
+   	    	data=JSON.parse(data);
+   	    }else{
+   	    	data=new Object();
+   	    	data['loadNum']=3;
+   	    }
+		var _str=$('#weekstr').val();
+   	    data['w']=3;
+   	 	data['str']=_str;
+   	    
+    	//var _str=$('#weekstr').val();
+   	    //var data = 'w=3&str='+_str;
+    	
+	   	$.post(url,data,function(msg){
+	   		if(msg == false){
+	   			return false;
+	   		}else{
+	   			setWeekChart(msg);
+	   		}
+	    });
+	}
+	
+	$(function(){
+		var body_width = $(document.body).width();
+		
+		loadMonthData();
+		
+		loadWeekData();
+	});
+   
+    touch.on('#main', 'touchstart', function(ev){
+        ev.preventDefault();
+    });
+    
+  	//单指向上滑动
+    touch.on('#main', 'swipeup', function(ev){
+    	setTop(2,'main');
+    	//this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+    });
+
+    //单指向下滑动
+    touch.on('#main', 'swipedown', function(ev){
+    	setTop(1,'main');
+    });
+    
+    //月统计向右滑动，数据左更新
+    touch.on('#main', 'swipeleft', function(ev){
+        //this.style.webkitTransform = "translate3d(" + rt + "px,0,0)";
+        //alert("月统计向右滑动.");
+        var m = {$m};
+   	    if(cmonth == m){
+   	    	return false;
+   	    }
+   	    cmonth++;
+   	    if(cmonth > 12){
+   	    	cmonth = cmonth-12;
+   	    }
+       
+        var url = "{:U('getMothorJson')}";
+   	 	var data=$('#searchData').val();
+   	 	if(data){
+	    	data=JSON.parse(data);
+	    }else{
+   	    	data=new Object();
+   	    }
+	    data['m']=cmonth;
+   	    //var json = strToJson(data);
+        $.post(url,data,function(msg){
+        	if(msg){
+       			if(msg.series){
+       				setMonthInfo(cmonth,msg.series);
+       			}
+       			if(msg.table){
+       				setContentInfo('month_content',msg.table);
+       			}
+       		}
+        })
+    });
+
+    //月统计向左滑动，数据右更新
+    touch.on('#main', 'swiperight', function(ev){
+        //alert("月统计向左滑动.");
+        cmonth--;
+        var url = "{:U('getMothorJson')}";
+   	    var data=$('#searchData').val();
+   	 	if(data){
+	    	data=JSON.parse(data);
+	    }else{
+   	    	data=new Object();
+   	    }
+	    data['m']=cmonth;
+       	$.post(url,data,function(msg){
+       		if(msg){
+       			if(msg.series){
+       				setMonthInfo(cmonth,msg.series);
+       			}
+       			if(msg.table){
+       				setContentInfo('month_content',msg.table);
+       			}
+       		}
+        });
+        //this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+    });
+
+    touch.on('#main2', 'touchstart', function(ev){
+        ev.preventDefault();
+    });
+
+    touch.on('#main2', 'swipeleft', function(ev){
+    	if(parseInt($('#weekCNum').val())>=parseInt($('#weekWNum').val())){
+    		return false;
+    	}
+        //this.style.webkitTransform = "translate3d(" + rt + "px,0,0)";
+        //alert("周统计向右滑动.");
+        var oDate = new Date();
+        
+		var week = oDate.getMonth()+1;//月
+		if(week < 10){
+			var str = "0"+week;
+		}
+		var day =  oDate.getDate();
+		str += "/"+day;
+
+		var url = "{:U('getWeekJsonByChart')}";
+    	var _str=$('#weekstr').val();
+   		var data=$('#searchData').val();
+   		if(data){
+   			data=JSON.parse(data);	
+   		}else{
+   	    	data=new Object();
+   	    }
+	    data['w']=2;
+	 	data['str']=_str;
+	   	$.post(url,data,function(msg){
+	   		setWeekChart(msg);
+	    });
+    });
+    
+    touch.on('#main2', 'swiperight', function(ev){
+        //alert("周统计向左滑动.");
+        //setminfo(1);
+    	 var oDate = new Date();
+         
+ 		var week = oDate.getMonth()+1;//月
+ 		if(week < 10){
+ 			var str = "0"+week;
+ 		}
+ 		var day =  oDate.getDate();
+ 		str += "/"+day;
+
+		var url = "{:U('getWeekJsonByChart')}";
+   	 	var _str=$('#weekstr').val();
+		var data=$('#searchData').val();
+		if(data){
+			data=JSON.parse(data);	
+		}else{
+   	    	data=new Object();
+   	    }
+	    data['w']=1;
+	 	data['str']=_str;
+	   	$.post(url,data,function(msg){
+	   		setWeekChart(msg);
+	    });
+        //this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+    });
+
+    // 基于准备好的dom，初始化echarts实例
+    
+    function returnwdata(l){
+        if(l==1){  //左滑动
+            return ['08/01','08/07','08/14'];
+        }else{  //右滑动
+            return ['08/07','08/14','08/21'];
+        }
+    }
+ 
+    function returnmonth(cm){
+        var mdata=new Array();
+        for(var i=cm-2;i<=cm;i++){
+            mdata.push(i+'月');
+        }
+        return mdata;
+    }
+   
+    //修改统计计数内容
+    function setContentInfo(id,data){
+    	if(data){
+    		var _html='';
+    		for(var key in data) {
+    			_html+='<div class="weui-row">';
+        		_html+='<div class="weui-col-25">'+key+'</div>';
+        		_html+='<div class="weui-col-25">';
+        		_html+='<span><b class="blue">'+data[key]['slase_mount'][0]+'</b>/'+data[key]['slase_count'][0]+'</span>';
+        		_html+='</div>';
+        		_html+='<div class="weui-col-25">';
+        		_html+='<span><b class="green">'+data[key]['slase_mount'][1]+'</b>/'+data[key]['slase_count'][1]+'</span>';
+        		_html+='</div>';
+        		_html+='<div class="weui-col-25">';
+        		_html+='<span><b class="gay">'+data[key]['slase_mount'][2]+'</b>/'+data[key]['slase_count'][2]+'</span>';
+        		_html+='</div>';
+        		_html+='</div>';
+    		}
+    		$('#'+id).html(_html);
+    	}
+    }
+</script>
+
+<script type="text/javascript">
+//单指向上滑动
+touch.on('#main2', 'swipeup', function(ev){
+	setTop(2,'main2');
+	//this.style.webkitTransform = "translate3d(-" + this.offsetLeft + "px,0,0)";
+});
+
+//单指向下滑动
+touch.on('#main2', 'swipedown', function(ev){
+	setTop(1,'main2');
+});
+
+//筛选回到原页
+$(".filter").click(function(){
+	var url = $(".weui_tab_bd_item_active").data("url");
+	location.href = url;
+})
+
+//筛选回来
+var tab = "{$tab}";
+if(tab==""){
+	tab=location.href.substr(location.href.indexOf("#")+1);
+}
+$('#'+tab).addClass("weui_tab_bd_item_active");
+$('#'+tab).siblings("div").removeClass("weui_tab_bd_item_active");
+
+$('#'+tab+'-btn').addClass("weui_bar_item_on");
+$('#'+tab+'-btn').siblings("a").removeClass("weui_bar_item_on");
+
+$(".page-down").hide().html('<div class="infinite-preloader"></div>正在加载...');
+var p = 1;
+var loading = false;
+if("{$noMore}" == true){
+	var loading = true;
+	$(".page-down").show().html('亲，没有更多了');
+}
+$(document.body).infinite(50).on("infinite", function() {
+    if (loading){
+    	return;
+    }
+    loading = true;
+    
+    $(".page-down").show().html('<div class="infinite-preloader"></div>正在加载...');
+    p++;
+    var postUrl = window.location.href + "?p="+p;
+	 $.ajax({
+		 type:"post",
+		 url:postUrl,
+		 data:{p:p},
+		 dataType:"json",
+		 success:function (data) {
+			 loading = false;
+			 
+			 if(data.status == '1'){
+				 $(".page-down").before(data.data);
+				 $(".page-down").hide().html('<div class="infinite-preloader"></div>正在加载...');
+				 if(data.noMore == true){
+					 loading = true;
+					 $(".page-down").show().html('亲，没有更多了');
+				 }
+				 //已存在的日期删除
+				 for(var i=0;i<data.dates.length;i++){
+					 if($("#tab1 ."+data.dates[i]).length > 1){
+						 $("#tab1 ."+data.dates[i]+":last").remove();
+					 }
+				 }
+			 }else{
+				 $(".page-down").show().html('亲，看完了');
+				 
+			 }
+		 }
+	 });
+});
+</script>

@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <include file="Public:meta"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <div id="portlet-config" class="modal hide">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"></button>
+                <h3>portlet Settings</h3>
+            </div>
+            <div class="modal-body">
+                <p>Here will be a configuration form</p>
+            </div>
+        </div>
+        <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>{$Think.MODULE_NAME}</small>
+                    </h3>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-plus"></i>{$PageName}</div>
+
+                        </div>
+                        <div class="portlet-body form">
+                            <form action="" class="form-horizontal" method="post">
+                                <div class="control-group">
+                                    <label class="control-label">用户名</label>
+
+                                    <div class="controls">
+                                        <input type="text" class="m-wrap span3" name="title" value="{$info.title}" data-required="1"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">显示</label>
+
+                                    <div class="controls">
+                                        <div class="success-toggle-button">
+                                            <eq name="info.hidden" value="0">
+                                                <input type="checkbox" class="toggle" checked="checked" name="hidden" value="0"/>
+                                                <else/>
+                                                <input type="checkbox" class="toggle" name="hidden" value="0"/>
+                                            </eq>
+                                        </div>
+                                    </div>
+                                </div>
+                                <gt name="Think.request.id" value="1">
+                                    <div class="control-group">
+                                        <label class="control-label">权限设置</label>
+
+                                        <div class="controls">
+                                            <ul class="unstyled role_tree">
+                                                {$role_tree}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </gt>
+                                <div class="control-group">
+                                    <label class="control-label">备注</label>
+
+                                    <div class="controls">
+                                        <textarea class="span6 m-wrap" rows="3" name="remark">{$info.remark}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn blue">保存数据 <i class="icon-save"></i></button>
+                                    <a href="javascript:history.go(-1);" class="btn">返回列表 <i class="icon-share-alt"></i></a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<include file="Public:footer"/>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        eval('ids={$ids};');
+        sonIds={};
+        parentIds={};
+        brotherIds={};
+        function getIdSon(id,idAry){ //获取所有子元素
+            for(var i in idAry){
+                if(idAry[i]==id){sonIds[i]=true;getIdSon(i,idAry);}
+            }
+        }
+        function getIdParent(id,idAry){ //获取所有直系父元素
+            for(var i in idAry){
+                if(i==id){parentIds[idAry[i]]=true;getIdParent(idAry[i],idAry);break;}
+            }
+        }
+        function getIdBrother(id,idAry,curPart){ //获取所有兄弟元素
+            for(var i in idAry){
+                if(idAry[i]==idAry[id]){brotherIds[i]=($('#'+curPart+'_'+i).attr("checked")?true:false);}
+            }
+        }
+
+        function setChecked(id,curPart,curIsChecked){
+            if(typeof(id)=='undefined' || !id) return;
+            $('#'+curPart+'_'+id).attr("checked", curIsChecked);
+            if(curIsChecked) $('#'+curPart+'_'+id).parent().addClass('checked');
+            else $('#'+curPart+'_'+id).parent().removeClass('checked');
+        }
+
+        $('ul.role_tree>li').click(function(){
+            curId=$(this).find('input').val();
+            curIsChecked=($(this).find('input').attr("checked")?true:false);
+            curPart=$(this).find('input').attr("id").split('_')[0];
+
+            sonIds={};
+            parentIds={};
+            getIdSon(curId,ids[curPart]);
+            getIdParent(curId,ids[curPart]);
+
+
+            for(var i in sonIds){ //选中/不选所有子元素
+                setChecked(i,curPart,curIsChecked);
+            }
+
+            if(curIsChecked){ //选中上级父元素
+                for(var i in parentIds){
+                    setChecked(i,curPart,curIsChecked)
+                }
+            }
+
+            pId=curId;
+            while(true){  //兄弟全未选时取消选择直系父元素的选择
+                if(pId==0) break;
+                if(ids[curPart][pId]==0) break;
+                brotherIds={};
+                getIdBrother(pId,ids[curPart],curPart);
+                broderNotNull=false;
+                for(var i in brotherIds){
+                    if(brotherIds[i]){broderNotNull=true;break;}
+                }
+                if(!broderNotNull){
+                    pId=ids[curPart][pId];
+                    setChecked(pId,curPart,false);
+                }
+                else break;
+            }
+
+
+        });
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

@@ -1,0 +1,24 @@
+<!--<html>-->
+	<!--<head>-->
+		<!--<title>绑定列表</title>-->
+	<!--</head>-->
+	<!---->
+	<!--<body>-->
+		<!--<h2 style="text-align:center;">绑定列表</h2>-->
+	<!--</body>-->
+<!--</html>-->
+
+<include file="Public:header"/>
+
+<div class="weui_panel btn_group">
+	<div class="btn_items btn_sm clearfix">
+		<div class="weui_panel_hd">选择服务项目(可多选)</div>
+		<div class="weui_panel_bd machine clearfix">
+			<a href="javascript:;" class="weui_btn weui_btn_plain_default blue_bor">云POS</a>
+			<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor black_bg">扫码支付</a>
+			<a href="javascript:;" class="weui_btn weui_btn_plain_default black_bor">免费WiFi</a>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer"/>

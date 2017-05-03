@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>一皆通</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/weui.min.css">
+    <link rel="stylesheet" href="css/jquery-weui.min.css">
+    <link rel="stylesheet" href="css/iconfont.css">
+    <link rel="stylesheet" href="css/global.css">
+
+</head>
+<body ontouchstart>
+<!--header-->
+<header class='weui-header'>
+    <a href="javascript:;" class="turn" title=""><i class="iconfont">&#xe601;</i>订阅号</a>
+    <h1 class="weui-title">我的账本</h1>
+</header>
+
+<!--account-->
+<div class="account_item">
+    <a class="filter" href="">筛选</a>
+    <div class="account_user">
+        <div class="account_head"><a href=""><img src="http://img.ycg.qq.com/201832/0/df03acb1-728f-495d-b636-40603f99a8f1/preview"/></a></div>
+        <h2>Andy.chen</h2>
+        <p><small>总余额(元)</small></p>
+        <h1>2,508.89</h1>
+    </div>
+    <div class="weui-row">
+        <div class="weui-col-33"><a href=""><span>405.20</span><p class="black_color">昨日收入</p></a></div>
+        <div class="weui-col-33"><a href=""><span>405.20</span><p class="black_color">7日收入</p></a></div>
+        <div class="weui-col-33"><a href=""><span>405.20</span><p class="black_color">月日收入</p></a></div>
+    </div>
+</div>
+<div class="account_tab weui_tab">
+    <div class="weui_navbar">
+        <a class="weui_navbar_item weui_bar_item_on" href="#tab1"><span>明细</span></a>
+        <a id="tab2-btn" class="weui_navbar_item" href="#tab2"><span>按月统计</span></a>
+        <a class="weui_navbar_item" href="#tab3"><span>按周统计</span></a>
+    </div>
+    <div class="weui_tab_bd">
+        <div id="tab1" class="weui_tab_bd_item weui_tab_bd_item_active">
+            <div class="weui_cell_title">
+                <p>2016.08.12<span><b class="blue">630</b>/<b class="green">399</b>/<b class="gay">100</b></span></p>
+            </div>
+            <div class="weui_cells weui_cells_access">
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                       <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>支付成功</p>
+                        <small>19 : 35 :43</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1,260.00
+                        <p class="org">-0.65</p>
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>支付成功</p>
+                        <small>19 : 35 :43</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1,260.00
+                        <p class="org">-0.65</p>
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>支付成功</p>
+                        <small>19 : 35 :43</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1,260.00
+                        <p class="org">-0.65</p>
+                    </div>
+                </a>
+                <a class="weui_cell" href="javascript:;">
+                    <div class="weui_cell_hd">
+                        <i class="iconfont">&#xe605;</i>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>支付成功</p>
+                        <small>19 : 35 :43</small>
+                    </div>
+                    <div class="weui_cell_ft">
+                        + 1,260.00
+                        <p class="org">-0.65</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div id="tab2" class="weui_tab_bd_item">
+            <!--<div class="echart_box">-->
+            <div id="main" style=""></div>
+            <!--</div>-->
+        </div>
+        <div id="tab3" class="weui_tab_bd_item">345</div>
+    </div>
+</div>
+
+<script src="js/jquery-2.1.4.js"></script>
+<!--<script src="js/jquery-weui.min.js"></script>-->
+<script src="js/echarts.min.js"></script>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    var option = {
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        legend: {
+            bottom:5,
+            data:['支付宝','微信','银联']
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : ['7月','8月','9月']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'支付宝',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                itemStyle:{normal:{color:['#00a0e9']}},
+                data:[100, 396, 158]
+            },
+            {
+                name:'微信',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                itemStyle:{normal:{color:['#0dc91a']}},
+                data:[96, 296, 198]
+            },
+            {
+                name:'银联',
+                type:'bar',
+                stack: '去年',
+                barWidth : 20,
+                itemStyle:{normal:{color:['#006a65']}},
+                data:[26, 182, 40]
+            },
+            {
+                name:'支付宝',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                itemStyle:{normal:{color:['#00a0e9']}},
+                data:[186, 286, 150]
+            },
+            {
+                name:'微信',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                itemStyle:{normal:{color:['#0dc91a']}},
+                data:[196, 188, 126]
+            },
+            {
+                name:'银联',
+                type:'bar',
+                stack: '今年',
+                barWidth : 20,
+                itemStyle:{normal:{color:['#006a65']}},
+                data:[36, 88, 166]
+            }
+        ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+<script>
+    window.onload = function() {
+        draw();
+        var saveButton = document.getElementById("saveImageBtn");
+        bindButtonEvent(saveButton, "click", saveImageInfo);
+        var dlButton = document.getElementById("downloadImageBtn");
+        bindButtonEvent(dlButton, "click", saveAsLocalImage);
+    };
+    function draw(){
+        var canvas = document.getElementsByTagName("canvas")[0];
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "rgba(125, 46, 138, 0.5)";
+        ctx.fillRect(25,25,100,100);
+        ctx.fillStyle = "rgba( 0, 146, 38, 0.5)";
+        ctx.fillRect(58, 74, 125, 100);
+        ctx.fillStyle = "rgba( 0, 0, 0, 1)"; // black color
+        ctx.fillText("Gloomyfish - Demo", 50, 50);
+    }
+
+    function bindButtonEvent(element, type, handler)
+    {
+        if(element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else {
+            element.attachEvent('on'+type, handler);
+        }
+    }
+
+    function saveImageInfo ()
+    {
+        var mycanvas = document.getElementsByTagName("canvas")[0];
+        var image    = mycanvas.toDataURL("image/png");
+        var w=window.open('about:blank','image from canvas');
+        w.document.write("<img src='"+image+"' alt='from canvas'/>");
+    }
+
+    function saveAsLocalImage () {
+        var myCanvas = document.getElementsByTagName("canvas")[0];
+        // here is the most important part because if you dont replace you will get a DOM 18 exception.
+        // var image = myCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream;Content-Disposition: attachment;filename=foobar.png");
+        var image = myCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        window.location.href=image; // it will save locally
+    }
+</script>
+</body>
+</html>

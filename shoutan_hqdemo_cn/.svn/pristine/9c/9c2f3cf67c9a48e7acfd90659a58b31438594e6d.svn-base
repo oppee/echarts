@@ -1,0 +1,190 @@
+<?php
+namespace HQ\Controller;
+/**
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+class FavoritesController extends BaseController
+{
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = CONTROLLER_NAME;
+    //高级筛选
+    public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse')
+    );
+		 
+    protected function init()
+    {  
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+
+        $id = I('request.id') ? I('request.id') : null;
+		if ($id != '') {
+			$user_id = M($this->tbName)->where(array('deleted' => 0, 'id' => $id))->getField('user_id');
+			$users = M('User')->where(array('deleted' => 0, 'id' => $user_id))->getField('username');
+			$users = array(array(0, $users));
+		} else {
+        //分类关联
+			$users = M('User')->where(array('deleted' => 0))->select();
+			foreach ($users as $key3 => $val3) {
+				$users[$key3] = array($val3['id'], $val3['id'] . "." . $val3['username']);
+			}
+		}
+				
+        //Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+			'info_type' => array(
+                'label' => '数据类型',
+                'type' => 'radio',
+                'data' => array(array(0, '商品'), array(1, '文章'))
+            ),	
+            'info_id' => array(
+                'label' => '收藏数据',
+                'type' => 'text',
+               // 'data' => $categories
+            ),
+
+            'user_id' => array(
+                'label' => '所属会员',
+                'type' => 'select2',
+                'data' => $users
+            ),
+        );
+    }
+
+   /*
+     * 列表页面
+     */
+    public function index()
+    {
+		$this->init();	//加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = D($this->tbName.' as f'); //实例化对象
+        $Where = "f.deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or f.`".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+        if (I('request.keyword')!='') {
+            $I_keyword = trim(I('request.keyword'));
+            $Where .= " and (f.id like '%" . $I_keyword . "%' or username like '%" . $I_keyword . "%')";
+        }
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+        $Page = new \HQ\Util\Page($Obj->join(C('DB_PREFIX').'user as u ON u.id = f.user_id')->where($Where)->count(), $limit_num); //实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj->join(C('DB_PREFIX').'user as u ON u.id = f.user_id')
+                    ->field('f.*,u.username as username')
+                    ->where($Where)->order('f.id desc')
+                    ->limit($Page->firstRow . ',' . $Page->listRows)
+                    ->order('f.'.$sorting.' '.$order)
+                    ->select();
+        foreach($list as $k=>$v){
+			if($v['info_type']==1){
+				$list[$k]['info_title'] = M('news')->where('id='.$v['info_id'])->getField('title');
+			}else{
+				$list[$k]['info_title'] = M('goods')->where('id='.$v['info_id'])->getField('title');
+			}
+		}
+		$this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 编辑数据
+     */
+    public function edit() {
+        $this->save();
+    }
+
+    /**
+     * 保存数据
+     */
+    public function save() {
+    	$this->init();
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+        $info = M($this->tbName)->where('id = ' . $id)->find();
+		$info_id = $info['info_id'];
+			if($info['info_type']==1){
+				$info['info_id'] = M('news')->where('id='.$info_id)->getField('title');
+			}else{
+				$info['info_id'] = M('goods')->where('id='.$info_id)->getField('title');
+			}
+        if (IS_POST) {
+			if($id!=''){
+				$_POST['user_id']=M($this->tbName)->where(array('deleted' => 0, 'id' => $id))->getField('user_id');
+				$_POST['info_id']=$info_id;
+			}
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    $_POST[$key] = implode(",", $val);
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+ 
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                if (!isset($_POST['hidden'])) {
+                    $Obj->hidden = 1;
+                }
+                 
+                $Obj->tstamp = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save();
+                    $message = '编辑成功!';
+                } else {
+                    $Obj->crdate = time();
+
+                    $id = $Obj->add();
+                    /*if (trim($_POST['sorting']) == '') {
+                        $Obj->where(array('id' => $id))->save(array('sorting' => $id));
+                    }*/
+                    $message = '添加成功!';
+                }
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+        //自动渲染字段
+				//dump($info);
+        parent::autoFields($this->tca, $info);
+        $this->display('info');
+    }
+
+}
+
+?>

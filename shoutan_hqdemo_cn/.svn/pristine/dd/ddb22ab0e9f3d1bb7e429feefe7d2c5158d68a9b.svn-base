@@ -1,0 +1,174 @@
+<?php
+/**
+ * 个人中心
+ * @author zhaojie
+ *
+ */
+namespace Api\Controller;
+
+class IndexController extends BaseController {
+	private $public_key = '-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCF5creK7pJ1BmsvOJwiMD6cTZz
+M2vh/vU9mkAcaUrJwfNBCt7PTHA7wc3yJBdctwn9kiRfaQpmIitCXew/9EJHiM7Z
+nIHjO6mr0EBZEY0hBj5IuYcr64Xdd2heRsH5wmlWSJeVEJKvnTLdlLtUH7rzFtJy
+VE9iY19qNhMN28Gv6QIDAQAB
+-----END PUBLIC KEY-----';
+	
+	//private $md5str = "4918e2bd3dca31e6f3659a82bb8c2c05";
+	
+	//发送短信验证码
+	public function sendCode(){
+		//获取参数
+		$jsonstr = I('request.jsonstr');
+		if(empty($jsonstr)){
+			$return_data = $this->Status('10001');
+			$this->ajaxReturn($return_data,JSON);
+		}
+		
+		$json_map = json_decode($jsonstr,true);
+		$RSAdecrypt = $json_map['RSAdecrypt'];
+		$MD5encrypt = $json_map['MD5encrypt'];
+		$data = $json_map['data'];
+		
+		$data_str = "";
+		
+		if($RSAdecrypt == 1){
+			$pu_key = openssl_pkey_get_public($this->public_key);
+			openssl_public_decrypt(base64_decode($data),$data_str,$pu_key);
+		}
+// 		var_dump($data_str);
+		$data_map = json_decode($data_str,true);
+		$merchant_no = $data_map['merchant_no'];
+		$merchant_tel = $data_map['merchant_tel'];
+		$md5str = $data_map['md5str'];
+		
+		$check_map['merchant_no'] = $data_map['merchant_no'];
+		$check_map['merchant_tel'] = $data_map['merchant_tel'];
+		//md5校验
+		$md5_check = '';
+		if($MD5encrypt == 1){
+			$md5_check = md5(json_encode($check_map));
+		}
+		
+		if($md5str != $md5_check){
+			$return_data = $this->Status(10002,'E');
+			$this->ajaxReturn($return_data,JSON);
+		}
+		
+		$code = mt_rand("100000", "999999");
+		
+		//根据传过来的crm_kh_khjlID查询crm_kh_hykhID
+		$merchant_no = M("tbl_crm_kh")->where(array('crm_kh_khjlID'=>$merchant_no))->getField("crm_kh_hykhID");
+		
+		
+		//发送商户绑定激活码短信
+		$sms_code = "SMS_13190848";
+		$SmsParam = "{\"code\":\"{$code}\"}";
+		
+		$res_obj = sendSMS($merchant_tel, $code, $sms_code,$SmsParam);//返回对象
+		$res_array = object_to_array($res_obj);
+		if($res_array['result']['success'] == true){
+			//发送成功存入数据库SMSCODE表
+			$addData = array(
+				"code" => $code,
+				"store" => $merchant_no,
+				"mobile" => $merchant_tel,
+				"codetime" => time(),
+				"crdate" => time(),
+				"tstamp" => time()
+			);
+			$res = M('Smscode')->add($addData);
+			$return_data = $this->Status(0,'E');
+			$this->ajaxReturn($return_data,JSON);
+		}else{
+			$return_data = $this->Status(10003,'E');
+			$this->ajaxReturn($return_data,JSON);
+		}
+	}
+	
+	public function encryption(){
+		if(IS_POST){
+			$data = I('request.');
+			$json_tmp = json_encode($data,true);
+			$md5check = md5($json_tmp);
+			$data['md5str'] = $md5check;
+			//RSA加密
+			$tmp_json = json_encode($data,true);
+			$data_str = "";
+			$pu_key = openssl_pkey_get_public($this->public_key);
+			openssl_public_encrypt(base64_encode($tmp_json), $data_str, $this->public_key);
+// 			$data_str = $this->encrypt($tmp_json);
+			$json_data = array(
+				"RSAdecrypt" => 1,
+				"MD5encrypt" => 1,
+				"data" => $data_str,
+			);
+			echo json_encode($json_data,JSON_UNESCAPED_UNICODE);
+		}
+	}
+	
+	/**
+	 * 输出错误类型及说明
+	 * @param integer $code  状态码
+	 * @param text $t  输出HTTP状态信息
+	 */
+	public function Status($code,$t = ''){
+		if($t=='E')$this->send_http_status('422');
+		else $this->send_http_status('200');
+		switch($code){
+			case '10001';
+			return array(
+				'code'=>'10001',
+				'message'=>'Invalid Parame'
+			);
+			break;
+			case '10002';
+			return array(
+				'code'=>'10002',
+				'message'=>'Md5 Check Error'
+			);
+			break;
+			case '10003';
+			return array(
+				'code'=>'10003',
+				'message'=>'Send SMS Error'
+			);
+			break;
+			default :
+				return array(
+				'code'=>'0',
+				'message'=>'Send SMS Success'
+			);
+			break;
+		}
+	}
+	
+	/**
+	 * 输出常见HTTP状态信息
+	 * @author wanghuan
+	 *
+	 * @param integer $code 状态码
+	 */
+	public function send_http_status($code) {
+		$status = array(
+				'200' => 'OK',
+				'301' => 'Moved Permanently',
+				'302' => 'Moved Temporarily ',
+				'400' => 'Bad Request',
+				'401' => 'Unauthorized',
+				'403' => 'Forbidden',
+				'404' => 'Not Found',
+				'422' => 'Unprocessible Entity',
+				'500' => 'Internal Server Error',
+				'503' => 'Service Unavailable',
+		);
+		$str = isset($status[$code]) ? (' ' . $status[$code]) : '';
+		return header("HTTP/1.1 $code$str");
+	}
+	
+	public function demo(){
+		$this->display();
+	}
+}
+
+?>

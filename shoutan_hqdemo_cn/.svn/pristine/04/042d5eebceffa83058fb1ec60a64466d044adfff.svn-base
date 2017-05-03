@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+
+<head>
+    <include file="Public:meta"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <!-- begin BCN -->
+                <div class="row-fluid">
+                    <div class="span12"><ul class="breadcrumb"><li><i class="icon-home"></i><a onfocus="blurLink(this);" href="{:U('Index/index')}">首页</a>&nbsp;<span class="icon-angle-right"></span>&nbsp;</li><li><a onfocus="blurLink(this);" href="{:U(CONTROLLER_NAME.'/index')}">{$ParentPageName|default="未命名"}</a>&nbsp;<span class="icon-angle-right"></span>&nbsp;</li><li>{$PageName|default="未命名"}</li></ul></div>
+                </div>
+                <!-- end BCN -->
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                <!-- begin 高级搜索 -->
+                    <form id="filter_form" class="form-horizontal form-common adv-search-box" method="get" action="">
+                        <input name="m" type="hidden" value="{:(MODULE_NAME)}">
+                        <input name="c" type="hidden" value="{:(CONTROLLER_NAME)}">
+                        <input name="a" type="hidden" value="index">
+                        <input name="filter" type="hidden" value="1">
+                        <div class="portlet box light-grey">
+                            <div class="portlet-title">
+                                <div class="caption"><i class="icon-search"></i>高级搜索</div>
+                                <div class="tools"><a href="javascript:;" class="expand"></a></div>
+                            </div>
+                            <div style="display:none;" class="portlet-body">
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group control-common">
+                                            <label class="control-label"><span>公司名称</span></label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" value="{$Think.get.name}" name="name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group control-common">
+                                            <label class="control-label"><span>手机号</span></label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" value="{$Think.get.mobile}" name="mobile">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="search-actions">
+                                    <button class="btn blue" id="filter" type="submit">筛选<i class="icon-filter"></i></button>
+                                    <a href="{:U(CONTROLLER_NAME.'/index')}" class="btn">重置</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- end 高级搜索 -->
+                    <!-- begin 操作与分页 -->
+                    <div class="row-fluid ">
+                        <div class="dataTables_length pull-left">
+                            <form id="limit_form" name="limit_form" method="post" action="">
+                                <label for="limit_num">
+                                    <select class="limit_num" id="limit_num" name="limit_num">
+                                    <volist name="page_limit_num" id="vo">
+                                        <option <eq name="_SESSION['page_limit_num']" value="$vo"> selected="selected" </eq> value="{$vo}">{$vo}</option>
+                                    </volist>
+                                    </select>
+                                    个记录/每个页面
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- end 操作与分页 -->
+                    <div class="portlet-body">
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th>ID编号</th>
+                                <th>公司名称</th>
+                                <th>联系人</th>
+								<th>联系电话</th>
+								<th>联系状态</th>
+                                <th>服务项目</th>
+                                <th>方便的联系时间</th>
+								<th>公司地址</th>
+                                <th>管理操作</th>
+                            </tr>
+                            </thead>
+                            <notempty name="list">
+                                <tbody>
+                                	<volist name="list" id="vo">
+                                    <tr>
+                                        <td>{$vo.id}</td>
+                                         <td >{$vo.company_name|msubstr=0,20}</td>
+                                         <td >{$vo.contact_name|msubstr=0,20}</td>
+                                        <td >{$vo.contact_tel|msubstr=0,20}</td>
+                                        <td ><if condition="$vo.contact_status eq 1">已联系<else />未联系</if></td>
+                                        <td>{$vo.service_item|msubstr=0,30}</td>
+                                        <td class="hidden-phone">{$vo.contact_time}</td>
+                                        <td class="hidden-phone">{$vo.company_address|msubstr=0,20}</td>
+                                        <td>
+											<div class="action_btn btn5">
+												<a class="btn red-stripe mini del" href="{:U(CONTROLLER_NAME.'/del', array('id'=>$vo['id']))}">删除</a>
+											</div>									 
+                                        </td>
+                                    </tr>
+                                </volist>
+                                </tbody>
+                            </notempty>
+                        </table>
+                    </div>
+                    <div class="pages clearfix">
+                        <include file="Public:page" />
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<include file="Public:footer"/>
+
+<script type="text/javascript">
+jQuery(document).ready(function () {  
+  	//删除
+    $('.del').click(function(){
+    	var url = $(this).attr("href");
+   		custom_confirm("是否确认删除？",function(){
+   			$.ajax({
+   				 type:"post",
+   				 url:url,
+   				 data:'',
+   				 dataType:"json",
+   				 success: function (rs){
+  	                    $('body').modalmanager('loading');
+  	                    if (rs.url != '') {
+  	                        window.location.href = rs.url;
+  	                    } else {
+  	                        custom_alert(rs.info);
+  	                    }
+  	                },
+  	                beforeSend: function (){
+  	                    $('body').modalmanager('loading');
+  	                }
+   			 });
+   		});
+		return false;
+    });
+});
+</script>
+
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

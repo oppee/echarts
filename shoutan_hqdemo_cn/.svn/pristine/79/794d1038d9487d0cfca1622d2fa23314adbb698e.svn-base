@@ -1,0 +1,32 @@
+<div class="control-group {$name} filename-box">
+    <label class="control-label">{$tca.label}</label>
+    <div class="controls">
+        <div class="span4 fileupload <notempty name="info[$name]">fileupload-exists<else />fileupload-new</notempty>" data-provides="fileupload">
+            <div class="input-append">
+                <div class="uneditable-input">
+                    <i class="icon-file fileupload-exists"></i> 
+                    <span class="fileupload-filename">
+                        <notempty name="info[$name]">
+                            {$info[$name]}
+                        </notempty>
+                    </span>
+                </div>
+                <div class="file_btn">
+                    <span class="btn btn-file">
+                        <span class="fileupload-new">选择文件</span>
+                        <span class="fileupload-exists">更改文件</span>
+                        <input type="file" class="default" name="{$name}" />
+                    </span>
+
+                    <div class="btn-box">
+                        <notempty name="info[$name]"><a class="btn green-stripe mini file_view fileupload-change" href="__ROOT__/{$url}" target="_blank">下载 <i class="icon-eye-open"></i></a></notempty>
+                        <a class="btn red-stripe mini file_delete fileupload-exists" href="javascript:void(0);" data-dismiss="fileupload">删除 <i class="icon-trash"></i></a>
+                        <input type="hidden" value="0" name="delete_{$name}" class="fileupload-delete" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <span class="help-block">{$tca.help}</span>
+    </div>
+</div>

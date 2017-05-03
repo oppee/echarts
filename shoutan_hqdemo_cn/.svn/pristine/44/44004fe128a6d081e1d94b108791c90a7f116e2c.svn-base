@@ -1,0 +1,51 @@
+<?php
+/**
+ * Dasboard Count
+ * @author zhaojie
+ *
+ */
+namespace Mobile\Controller;
+use Mobile\Controller\BaseController;
+
+class DasboardController extends BaseController{
+	/**
+	 * 我的账本
+	 */	
+	public function index(){
+		$this->assign('title',"我的账本");
+		//授权获得用户信息
+		$openid = session('openid');
+		if(empty($openid)){
+			$openid = I('request.openid');
+		}
+		/* if(empty($openid) || $openid == '-1'){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Dasboard/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		}
+		if(session('access_token')){
+			$access_token = session("access_token");
+		}
+		$wechat_info = $this->getWechatUserinfo($openid,$access_token);
+		$this->assign('wechat_info',$wechat_info); */
+		
+		$this->display();
+	}
+	
+	/**
+	 * 搜索
+	 */
+	public function search(){
+		$this->assign('title',"我的账本");
+		$this->display();
+	}
+}

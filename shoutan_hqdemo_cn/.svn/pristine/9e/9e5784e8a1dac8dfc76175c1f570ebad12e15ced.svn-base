@@ -1,0 +1,228 @@
+<include file="Public/header" />
+<style>
+.btn_sm .weui_panel_bd input{border-color: #00a0e9;color: #00a0e9;}
+</style>
+<!--header-->
+<header class='weui-header'>
+    <a href="javascript:history.back(-1);" class="turn" title=""><i class="iconfont">&#xe601;</i>订阅号</a>
+    <h1 class="weui-title">我的账本</h1>
+</header>
+<!--search-->
+
+<div class="weui_search_bar weui_search_focusing search_focus">
+    <form class="weui_search_inner">
+            <input type="search" class="weui_search_input" id="search_input" placeholder="搜索" value="{$searchArray.keyword}" name="keyword"/>
+			<i class="weui_icon_search"></i>
+            <!--<a href="javascript:" class="weui_icon_clear" id="search_clear"></a>-->
+    </form>
+</div>
+
+<!--btn_group-->
+<div class="weui_panel btn_group" id="btn_group">
+    <div class="btn_items check_op">
+        <div class="weui_panel_hd">名下企业</div>
+        <div class="weui_panel_bd machine mar_bor clearfix">
+			<volist name="storeList" id="vo">
+				<a href="javascript:;" data-store="{$vo.0}" class="weui_btn weui_btn_plain_default black_bor store <neq name='$searchArray' value='null'><in name='vo.0' value='$searchArray.store'>blue_bor</in><else />blue_bor</neq>">{$vo.1|msubstr=0,10}</a>
+				<!-- <input type="hidden" name="store[]" value="{$vo.0}"> -->
+			</volist>
+        </div>
+    </div>
+    <div class="btn_items btn_sm check_op clearfix">
+        <div class="weui_panel_hd">机具</div>
+        <div class="weui_panel_bd machine clearfix">
+    
+            <volist name="deviceList" id="vo">
+				<a href="javascript:;" data-store="{$vo.store}" data-device="{$vo.device_no}" class="weui_btn weui_btn_plain_default black_bor device <neq name='$searchArray' value='null'><in name='vo.device_no' value='$searchArray.device'>blue_bor<else /><in name='vo.store' value='$searchArray.store'><else />black_bg</in></in><else />blue_bor</neq>">{$vo.device_no}</a>
+				<input type="hidden" name="device[]" value="{$vo.device_no}">
+			</volist>
+            
+        </div>
+    </div>
+    <div class="btn_items btn_sm check_op clearfix">
+        <div class="weui_panel_hd">支付方式</div>
+        <div class="weui_panel_bd machine clearfix">
+			<volist name="transaction_type" id="vo">
+				<a href="javascript:;" data-types="{$vo.0}" class="weui_btn weui_btn_plain_default black_bor types <neq name='$searchArray' value='null'><in name='vo.0' value='$searchArray.types'>blue_bor</in><else />blue_bor</neq>">{$vo.1}</a>
+				<input type="hidden" name="types[]" value="{$vo.0}">
+			</volist>
+        </div>
+    </div>
+    <div class="btn_items btn_sm date_link clearfix">
+        <div class="weui_panel_hd">交易日期</div>
+        <div class="weui_panel_bd machine clearfix">
+            <input type="text" class="black_bor blue_bor" id="transaction_begindate" placeholder="{$transaction_begindate}" value="<neq name='$searchArray.begindate' value='null'>{$searchArray.begindate}</neq>" data-toggle='date'>
+            <input type="text" class="black_bor blue_bor" id="transaction_enddate" placeholder="{$transaction_enddate}"  value="<neq name='$searchArray.enddate' value='null'>{$searchArray.enddate}</neq>" data-toggle='date'>
+        </div>
+    </div>
+    <div class="btn_items btn_sm check_op bor_non" style="display:<neq name='tab' value='tab1'>none</neq>">
+        <div class="weui_panel_hd">交易状态</div>
+        <div class="weui_panel_bd machine clearfix">
+			<volist name="transaction_status" id="vo">
+				<a href="javascript:;" data-status="{$vo.0}" class="weui_btn weui_btn_plain_default black_bor status <neq name='$searchArray' value='null'><in name='vo.0' value='$searchArray.status'>blue_bor</in><else />blue_bor</neq>">{$vo.1}</a>
+				<input type="hidden" name="status[]" value="{$vo.0}">
+			</volist>
+        </div>
+    </div>
+	<div class="margin_none"></div>
+</div>
+
+<!--booton_bar-->
+<div class="botton_btn">
+    <div class="weui-row weui-no-gutter">
+        <div class="weui-col-50">
+            <a href="javascript:;" class="weui_btn reset_btn">重置</a>
+        </div>
+        <div class="weui-col-50">
+            <a href="javascript:;" class="weui_btn success_btn">完成</a>
+        </div>
+    </div>
+</div>
+<script>
+    $(".check_op .weui_panel_bd a").click(function(){
+//        $(this).addClass("blue_bor");
+		if($(this).hasClass("black_bg"))
+			return false;
+        if($(this).hasClass("blue_bor")){
+            $(this).removeClass("blue_bor");
+        } else $(this).addClass("blue_bor");
+    })
+
+    var data_begindate = "{$_SESSION['data_begindate']}"?"{$_SESSION['data_begindate']}":0;
+    var data_enddate = "{$_SESSION['data_enddate']}"?"{$_SESSION['data_enddate']}":0;
+    if(data_begindate){
+    	$("#transaction_begindate").calendar({
+            value: ['{$_SESSION["data_begindate"]}'],
+            dateFormat: 'yyyy-mm-dd',
+            maxDate:'<?php echo date("Y-m-d")?>'
+        });
+    }else{
+    	$("#transaction_begindate").calendar({
+            value: ['{$transaction_begindate}'],
+            dateFormat: 'yyyy-mm-dd',
+            maxDate:'<?php echo date("Y-m-d")?>'
+        });
+    }
+    
+    if(data_enddate){
+    	$("#transaction_enddate").calendar({
+            value: ['{$_SESSION["data_enddate"]}'],
+            dateFormat: 'yyyy-mm-dd',
+            maxDate:'<?php echo date("Y-m-d")?>'
+        });
+    }else{
+    	$("#transaction_enddate").calendar({
+            value: [],
+            dateFormat: 'yyyy-mm-dd',
+            maxDate:'<?php echo date("Y-m-d")?>'
+        });
+    }
+
+	//选择商户
+	$("body").on("click",".store",function(){
+		var _self = $(this);
+		var store = _self.data('store');
+		$(".device").each(function(){
+			var my_store = $(this).data('store');
+			if(store == my_store){
+				if(_self.hasClass("blue_bor")){
+					$(this).removeClass('black_bg');
+					$(this).addClass('blue_bor');
+				}else{
+					$(this).addClass('black_bg');
+					$(this).removeClass('blue_bor');
+				}
+				
+			}
+		})
+	})
+	
+	//选择机具号
+	$("body").on("click","a.device",function(){
+		if($(this).hasClass("black_bg")){
+			return false;
+		}
+	})
+	
+	//重置
+	$("body").on("click",".reset_btn",function(){
+		$("#search_input").val("");
+		$("#transaction_begindate").val("");
+		$("#transaction_enddate").val("");
+		$(".check_op .weui_panel_bd a").each(function(){
+			if(!$(this).hasClass("blue_bor"))
+	        	$(this).addClass("blue_bor");
+			$(this).hasClass("black_bg")
+				$(this).removeClass("black_bg");
+	    })
+	});
+	
+	//完成
+	$("body").on("click",".success_btn",function(){
+		var url = "{:U('index')}";
+		//搜索框
+		var keyword = $("#search_input").val();
+		//商户
+		var store = '';
+		$(".store").each(function(){
+			if($(this).hasClass("blue_bor")){
+				store += ($(this).data('store'))+',';
+			}
+		})
+		if(store){
+			store = store.substr(0,store.length-1);
+		}
+		//机具号
+		var device = '';
+		$(".device").each(function(){
+			if($(this).hasClass("blue_bor")){
+				device += ($(this).data('device'))+',';
+			}
+		})
+		if(device){
+			device = device.substr(0,device.length-1);
+		}
+		//支付方式
+		var types = '';
+		$(".types").each(function(){
+			if($(this).hasClass("blue_bor")){
+				types += ($(this).data('types'))+',';
+			}
+		})
+		if(types){
+			types = types.substr(0,types.length-1);
+		}
+		//交易日期
+		var begindate = $("#transaction_begindate").val();
+		var enddate = $("#transaction_enddate").val();
+		
+		//支付状态
+		var status = '';
+		$(".status").each(function(){
+			if($(this).hasClass("blue_bor")){
+				status += ($(this).data('status'))+',';
+			}
+		})
+		if(status){
+			status = status.substr(0,status.length-1);
+		}
+		var data = {
+			keyword:keyword,
+			store: store,
+			device:device,
+			types:types,
+			begindate:begindate,
+			enddate:enddate,
+			status:status
+		}
+		
+		$('#searchData').val(JSON.stringify(data));
+		//return false;
+		$('#myForm').submit();
+	});
+</script>
+<form id="myForm" action="{:U('index')}" method="post" > 
+	<input name="tab" type="hidden" value="{$tab}" />
+    <input id="searchData" name="searchData" type="hidden" value="" />
+</form>
+ <include file="Public/footer" />

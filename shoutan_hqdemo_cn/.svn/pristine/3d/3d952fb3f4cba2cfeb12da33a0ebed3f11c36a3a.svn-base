@@ -1,0 +1,47 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>{$PageName} -
+    <notempty name="Config.logo_name">
+		{$Config.logo_name}
+    <else/>
+        后台管理系统
+    </notempty>
+     
+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content=""/>
+<meta name="author" content=""/>
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<link href="__TMPL__Public/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/plugins/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
+
+<link href="__TMPL__Public/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/css/style-metro.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+<link href="__TMPL__Public/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/plugins/chosen-bootstrap/chosen/chosen.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+<!-- BEGIN PAGE LEVEL STYLES -->
+
+<link href="__TMPL__Public/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.css" rel="stylesheet" type="text/css"/>
+
+<link href="__TMPL__Public/plugins/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css"
+      media="screen"/>
+<link href="__TMPL__Public/plugins/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css"
+      rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/plugins/select2/select2_metro.css" rel="stylesheet" type="text/css"/>
+<!-- toggle_select -->
+<link href="__TMPL__Public/plugins/toggleselect/multi-select-metro.css" rel="stylesheet" type="text/css" />
+<!--add-tags-->
+<link href="__TMPL__Public/plugins/jquery-tags-input/jquery.tagsinput.css" rel="stylesheet" type="text/css"/>
+
+<link href="__TMPL__Public/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css"/>
+<link href="__TMPL__Public/plugins/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" type="text/css"/>
+
+<!-- END PAGE LEVEL STYLES -->
+<link href="__TMPL__Public/css/global.css" rel="stylesheet" type="text/css"/>
+<link rel="shortcut icon" href="__TMPL__Public/img/favicon_dj.ico"/>
+<script type="text/javascript">
+    var THEME_PATH = "__TMPL__";
+</script>

@@ -1,0 +1,16 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+
+    <div class="controls">
+        <select class="select2 span6" tabindex="-1" name="{$name}[]" multiple="multiple">
+            <volist name="tca.data" id="vo">
+                <in name="vo[0]" value="$info[$name]">
+                    <option value="{$vo[0]}" selected="selected">{$vo[1]}</option>
+                    <else/>
+                    <option value="{$vo[0]}">{$vo[1]}</option>
+                </in>
+            </volist>
+        </select>
+        <span class="help-inline">{$tca.help}</span>
+    </div>
+</div>

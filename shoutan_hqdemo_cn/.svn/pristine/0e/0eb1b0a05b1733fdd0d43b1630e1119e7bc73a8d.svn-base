@@ -1,0 +1,50 @@
+<?php
+/**
+ * 开户
+ * @author zhaojie
+ *
+ */
+namespace Mobile\Controller;
+use Mobile\Controller\BaseController;
+
+class AccountController extends BaseController{
+	/**
+	 * 开户列表
+	 */
+	public function index(){
+		$this->assign('title',"开通下属账户");
+		/*//授权获得用户信息
+		$openid = session('openid');
+		if(empty($openid)){
+			$openid = I('request.openid');
+		}
+
+		if(empty($openid)){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Index/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		}*/
+		
+		//加载HTML模板
+		$this->display();
+	}
+	
+	/**
+	 * 创建新账户
+	 */
+	public function createAccount(){
+		$this->assign('title',"开通下属账户");
+		//加载HTML模板
+		$this->display();
+	}
+	
+}

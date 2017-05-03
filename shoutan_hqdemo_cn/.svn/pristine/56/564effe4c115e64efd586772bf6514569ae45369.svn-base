@@ -1,0 +1,15 @@
+<volist name="today_data" id="vo">
+    <a class="weui_cell" href="javascript:;">
+        <div class="weui_cell_hd">
+           <i class="iconfont">{:getPayType($vo['transaction_type'])}</i>
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>{:transaction_status($vo['transaction_status'])}</p>
+            <small>{$vo.transaction_datetime}</small>
+        </div>
+        <div class="weui_cell_ft">
+            + {$vo.transaction_amount}
+            <p class="org">-{$vo.transaction_commission}</p>
+        </div>
+    </a>
+</volist>

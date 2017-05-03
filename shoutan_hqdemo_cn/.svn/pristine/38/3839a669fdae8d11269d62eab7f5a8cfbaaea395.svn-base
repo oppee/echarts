@@ -1,0 +1,423 @@
+<?php
+namespace HQ\Controller;
+/**
+ * @author HeQi
+ * @email info@heqi.hk
+ */
+class SurveyController extends BaseController {
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = 'survey_title';
+
+    // 高级搜搜状态
+    public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse'),
+    );
+
+    protected function init(){
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+        //Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            'title' => array(
+                'label' => '问卷标题 *',
+                'type' => 'text',
+                'required' => true
+            ),
+            'starttime' => array(
+                'label' => '开始时间 *',
+                'type' => 'datetime',
+                'mod' => 'date',
+                'required' => true
+            ),
+            'endtime' => array(
+                'label' => '结束时间 *',
+                'type' => 'datetime',
+                'mod' => 'date',
+                'required' => true
+            ),
+            'remark' => array(
+                'label' => '问卷描述',
+                'type' => 'textarea',
+                'class' => 'add-tags',
+            ),
+            'question' => array(
+                'label' => '问卷题目',
+                'type' => 'text',
+                'required' => true
+            ),
+            'type' => array(
+                'label' => '题目类型',
+                'type' => 'select',
+            ),
+            'show_other' => array(
+                'label' => '其他答案',
+                'type' => 'select',
+            ),
+            'answer' => array(
+                'label' => '问卷答案',
+                'class' => 'add-tags',
+                'required' => true
+            ),
+        );
+    }
+
+    /*
+       * 列表页面
+       */
+    public function index(){
+        $this->init();	//加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = D($this->tbName); //实例化对象
+        $Where = "deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k => $v){
+            if(I('request.'.$v['status']) != ''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or `".$v['status']."`='".$v['value']."' ";
+                    //注意 这里列表页数据如果用了关联查询 就要写成 $Where_status_info .= " or tbName.".$v['status']."='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+        // 时间
+        if(I('get.starttime')){
+            $Where .=' and (starttime > ' . strtotime($_GET['starttime']) . ')';
+        }
+        if(I('get.endtime')){
+            $Where .=' and (starttime < ' . strtotime($_GET['endtime'] . ' 23:59:59') . ')';
+        }
+
+        if (I('request.keyword')) {
+            $Where .= " and (id like '%" . I('request.keyword') . "%' or title like '%" . I('request.keyword') . "%')";
+        }
+
+        $sorting = I('get.sorting') ? I('get.sorting') : 'id';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+
+        $page_count = count($Obj->where($Where)->select());
+        $Page = new \HQ\Util\Page($page_count, $limit_num); // 实例化分页类 传入总记录数和每页显示的记录数
+        $list = $Obj
+            ->where($Where)
+            ->order($sorting . ' ' . $order)
+            ->limit($Page->firstRow . ',' . $Page->listRows)
+            ->select();
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+
+    /**
+     * 保存数据
+     */
+    public function save() {
+        $this->init();
+        // 条形图 背景class
+        $class = array('progress-success', 'progress-warning', 'progress-danger', '');
+        $score = array(10, 8, 6, 4, 2, 0);
+        //编辑数据
+        $id = I('request.id') ? I('request.id') : null;
+        if($id){
+            $info = M($this->tbName)->where('id = ' . $id)->find();
+            $info_question = M('survey_question')->where('survey_title_id = ' . $id)->order('id asc')->select();
+            $onj_answer = M('survey_answer');
+            $onj_results = M('survey_results');
+            $total_score = 0;
+            foreach($info_question as $k => $v){
+                $answer = $onj_answer->where('deleted = 0 and survey_question_id = ' . $v['id'])->field('id, answer, score')->order('id asc')->select();
+                if(IS_AJAX){
+                    if($v['show_other']){
+                        $answer[] = array('id' => 0, 'answer' => '其他');
+                    }
+                    $count = $onj_results->where(array('deleted' => 0, 'survey_title_id' => $id, 'survey_question_id' => $v['id']))->count('id');
+                    $total_score_tmp = 0;   //每个问题总分
+                    $other_total = 0;   //其他总数
+                    foreach($answer as $k2 => $v2){
+                        $where = array(
+                            'deleted' => 0,
+                            'survey_title_id' => $id,
+                            'survey_question_id' => $v['id'],
+                            'survey_answer_id' => $v2['id']
+                        );
+                        $sum = $onj_results->where($where)->count('id');
+                        $answer[$k2]['percent'] = round($sum / $count, 4) * 100;
+                        $answer[$k2]['class'] = $class[$k2];
+                        $answer[$k2]['num'] = $sum;
+                        $score_tmp = (int)$score[$k2] * $sum;
+                        $answer[$k2]['score'] = $score_tmp;
+                        $total_score_tmp += $score_tmp;
+                        if($v2['id'] == 0){
+                            // 其他内容
+                            $other_arr = $onj_results->where($where)->field('other')->select();
+                            $other_content = '';
+                            foreach($other_arr as $v3){
+                                if(!$v3['other'])
+                                    continue;
+                                $other_content .= $v3['other'] . '<br />';
+                            }
+                            $answer[$k2]['class2'] = 'survey-preview';
+                            $answer[$k2]['data'] = $other_content;
+                        }
+                    }
+                    $total_score += $total_score_tmp / ($info['total'] - $other_total); //取出无效投票（即其他）
+                }
+
+                $info_question[$k]['answer'] = $answer;
+            }
+            $this->assign('total_score', round($total_score, 2));
+            //P($info_question);
+            $this->assign('info_question',$info_question);
+        }
+        if (IS_POST) {
+            foreach ($_POST as $key => $val) {
+                //处理POST数据
+                if (is_array($val)) {
+                    foreach($val as $v){
+                        if (@$this->tca[$key]['required'] && !$v) {
+                            $this->error($this->tca[$key]['label'] . '是必填项!');
+                        }
+                    }
+                }
+                if (@$this->tca[$key]['required'] && !$val) {
+                    $this->error($this->tca[$key]['label'] . '是必填项!');
+                }
+            }
+            // 数据处理
+            $data_title['title'] = $_POST['title'];
+            $data_title['remark'] = $_POST['remark'];
+            $data_title['starttime'] = strtotime($_POST['starttime']);
+            $data_title['endtime'] = strtotime($_POST['endtime']);
+            if($data_title['starttime'] >= $data_title['endtime']){
+                $this->error('开始时间应小于结束时间！');
+            }
+            $data_question['question'] = $_POST['question'];
+            $data_question['type'] = $_POST['type'];
+            $data_question['show_other'] = $_POST['show_other'];
+            $data_answer = array();
+            foreach($_POST['answer'] as $k => $v){
+                $data_answer[$k] = array_filter($v);
+            }
+            $data_answer_scor = array();
+            foreach($_POST['score'] as $k => $v){
+                $data_answer_scor[$k] = array_filter($v);
+            }
+            $Obj = D($this->tbName);
+            $result = $Obj->create();
+            if (!$result) {
+                $this->error($Obj->getError());
+            } else {
+                $data_title['tstamp'] = time();
+                if ($id) {
+                    $Obj->where(array('id' => $id))->save($data_title);
+                    $message = '编辑成功!';
+                } else {
+                    // 添加标题
+                    $data_title['crdate'] = time();
+                    $id = M('survey_title')->add($data_title);
+                    $message = '添加成功!';
+                }
+                // 添加问题
+                if($question_id = $_POST['question_id']){
+                    foreach($data_question['question'] as $k => $v){
+                        $data_question['id'][$k] = $question_id[$k];
+                    }
+                }
+                foreach($data_question['question'] as $k => $v){
+                    $data_question['survey_title_id'][$k] = $id;
+                }
+                $obj_question = M('survey_question');
+                $id_question = $this->addition($obj_question, $data_question);
+
+                // 添加答案
+                $obj_answer = M('survey_answer');
+                $flag = 0;
+                foreach($data_answer as $k => $v){
+                    $data_answer_arr = array();
+                    $data_answer_arr['answer'] = $v;
+                    $data_answer_arr['score'] = $data_answer_scor[$k];
+                    foreach($v as $k2 => $v2){
+                        if($answer_id = $_POST['answer_id'][$k][$k2]){
+                            $data_answer_arr['id'][$k2] = $answer_id;
+                        }
+                        $data_answer_arr['survey_question_id'][$k2] = $id_question[$flag];
+                    }
+                    $flag ++;
+                    $this->addition($obj_answer, $data_answer_arr);
+                }
+                $this->success($message, U(CONTROLLER_NAME . '/index', 'kept=1'));
+                exit;
+            }
+        }
+        //自动渲染字段
+        parent::autoFields($this->tca, $info);
+        $this->assign('info',$info);
+        if(IS_AJAX){
+            $this->display('view');
+        }else{
+            $this->display('info');
+        }
+    }
+    // 处理tasklog信息
+    public function addition($Obj, $array){
+        $data = array();
+        $ids = array();
+        foreach($array as $key => $val){
+            foreach($val as $k => $v){
+                $data[$k][$key] = $v;
+                $data[$k]['tstamp'] = time();
+            }
+        }
+        foreach($data as $v => $k){
+            $ids[] = $Obj->add($k, array(), true);
+        }
+        return $ids;
+    }
+
+    // 删除
+    public function del($id = NULL) {
+        $tbName = $this->tbName != '' ? $this->tbName : CONTROLLER_NAME;
+        $id = $id == NULL ? I('request.id') : $id;
+        $is_del = $this->Config['is_del'];
+        $rs = false;
+        if(I('post.del')){
+            // 编辑删除tasklog
+            if($is_del == 0){
+                $flag1 = M('survey_question')->where('id = ' . $id)->delete();
+                $flag2 = M('survey_answer')->where('survey_question_id = ' . $id)->delete();
+                if($flag1 && $flag2)
+                    $rs = true;
+            }else{
+                $flag1 = M('survey_question')->where('id = ' . $id)->save(array('deleted' => 1));
+                $flag2 = M('survey_answer')->where('survey_question_id = ' . $id)->save(array('deleted' => 1));
+                if($flag1 && $flag2)
+                    $rs = true;
+            }
+        }else{
+            if ($is_del == 0) {
+                if (M($tbName)->where('id = ' . $id)->delete()) {
+                    $question_id = M('survey_question')->where('survey_title_id = ' . $id)->field('id')->select();
+                    M('survey_question')->where('survey_title_id = ' . $id)->delete();
+                    foreach($question_id as $k => $v){
+                        M('survey_answer')->where('survey_question_id = ' . $v['id'])->delete();
+                    }
+                    $rs = true;
+                }
+
+            } else {
+                $flag1 = M($tbName)->where('id = ' . $id)->save(array('deleted' => 1));
+                $question_id = M('survey_question')->where('survey_title_id = ' . $id)->field('id')->select();
+                $flag2 = M('survey_question')->where('survey_title_id = ' . $id)->save(array('deleted' => 1));
+                foreach($question_id as $k => $v){
+                    $flag3 = M('survey_answer')->where('survey_question_id = ' . $v['id'])->save(array('deleted' => 1));
+                }
+                if($flag1 && $flag2 && $flag3)
+                    $rs = true;
+            }
+        }
+        if ($rs) {
+            $this->success('删除成功!', U(CONTROLLER_NAME . '/index', 'kept=1'));
+        } else {
+            $this->error('删除失败，请稍后再试！');
+        }
+    }
+
+    public function op() {
+        $ids = $this->_post('ids');
+        $op = $this->_post('op');
+        $is_del = $this->Config['is_del'];
+
+        $where = array('id' => array('in', $ids));
+        //$tbName = $this->tbName != '' ? $this->tbName : MODULE_NAME;
+        $tbName = $this->tbName;
+        $obj = M($tbName)->where($where);
+
+        switch ($op) {
+            case 'hide':
+                $obj->save(array('hidden' => 1));
+                break;
+            case 'not_hide':
+                $obj->save(array('hidden' => 0));
+                break;
+            case 'hot':
+                $obj->save(array('hot' => 1));
+                break;
+            case 'not_hot':
+                $obj->save(array('hot' => 0));
+                break;
+            case 'top':
+                $obj->save(array('top' => 1));
+                break;
+            case 'not_top':
+                $obj->save(array('top' => 0));
+                break;
+            case 'lock':
+                $obj->save(array('lock' => 1));
+                break;
+            case 'not_lock':
+                $obj->save(array('lock' => 0));
+                break;
+            case 'type_1':
+                $obj->save(array('type' => 1));
+                break;
+            case 'type_2':
+                $obj->save(array('type' => 2));
+                break;
+            case 'type_3':
+                $obj->save(array('type' => 3));
+                break;
+            case 'del':
+                if ($list = $obj->field('id')->select()) {
+                    foreach ($list as $vo) {
+                        $id = $vo['id'];
+                        if ($is_del == 0) {
+                            if (M($tbName)->where('id = ' . $id)->delete()) {
+                                $question_id = M('survey_question')->where('survey_title_id = ' . $id)->field('id')->select();
+                                M('survey_question')->where('survey_title_id = ' . $id)->delete();
+                                foreach($question_id as $k => $v){
+                                    M('survey_answer')->where('survey_question_id = ' . $v['id'])->delete();
+                                }
+                            }
+                        } else {
+                            M($tbName)->where('id = ' . $id)->save(array('deleted' => 1));
+                            $question_id = M('survey_question')->where('survey_title_id = ' . $id)->field('id')->select();
+                            M('survey_question')->where('survey_title_id = ' . $id)->save(array('deleted' => 1));
+                            foreach($question_id as $k => $v){
+                                M('survey_answer')->where('survey_question_id = ' . $v['id'])->save(array('deleted' => 1));
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+        $this->success('操作成功!', U(CONTROLLER_NAME . '/index', 'kept=1'));
+    }
+
+    // ajax删除答案
+    public function delanswer(){
+        $id = I("post.id");
+        $res = M("survey_answer")->where(array('id' => $id))->delete();
+        if($res){
+            $this->success('删除成功！');
+        }else{
+            $this->error("删除失败！");
+        }
+    }
+}
+
+?>

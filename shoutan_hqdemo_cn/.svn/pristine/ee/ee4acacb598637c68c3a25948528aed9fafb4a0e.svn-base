@@ -1,0 +1,24 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+    <div id="city_4" class="chose-city controls">
+    	<select class="prov" name="province"></select> 
+    	<select class="city" name="city"></select>
+    	<select class="dist" name="area"></select>
+	</div>
+	
+	<script type="text/javascript" src="__TMPL__Public/scripts/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="__TMPL__Public/scripts/jquery.cityselect.js"></script>
+	<script type="text/javascript">
+		var city_path = '__TMPL__Public/scripts';
+		var province='{$dq.province}';
+		var city='{$dq.city}';
+		var area='{$dq.area}';
+		$("#city_4").citySelect({
+			prov: province,
+			city: city,
+			dist: area,
+			nodata: "none"
+		});
+	</script>
+   
+</div>

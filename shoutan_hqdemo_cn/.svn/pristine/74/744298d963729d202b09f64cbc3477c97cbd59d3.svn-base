@@ -1,0 +1,76 @@
+<include file="Public/header" />
+<!--header-->
+<header class='weui-header'>
+	<a href="javascript:history.back(-1);" class="turn" title=""><i class="iconfont">&#xe601;</i>一皆通</a>
+    <h1 class="weui-title">注册</h1>
+</header>
+
+<!--logo-->
+<div class="logo">
+    <a href="javascript:;"><img src="__TMPL__Public/images/login_logo.png"/></a>
+</div>
+
+<!--表单-->
+<div class="agree-layer">
+  <div class="agree-bg">
+    <div class="weui_cells_form">
+      <form class="login weui_msg_desc" id="login_form" action="{:U('agree')}" >
+		  <div class="weui_msg_desc_title">
+			  <p>《一皆通商户综合服务框架协议》</p>
+		  </div>
+        <div class="weui_msg_desc">{$Config.agb}</div>
+
+        <input type="hidden" name="openid" value="{$openid}" />
+      </form>
+
+      <p class="weui_btn_area weui_msg_desc_btn">
+        <a href="javascript:;" class="weui_btn agree-btn" id="login_btn" title="同意并且创建用户">同意并创建用户</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+$(function(){
+	wx.config({
+		debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+		appId: "{$jssdk.appId}", // 必填，公众号的唯一标识
+		timestamp: {$jssdk.timestamp}, // 必填，生成签名的时间戳
+		nonceStr: "{$jssdk.nonceStr}", // 必填，生成签名的随机串
+		signature: "{$jssdk.signature}",// 必填，签名，见附录1
+		jsApiList: ['closeWindow'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+	});
+	wx.ready(function () {
+	    $("#login_btn").click(function () {
+			/* $.alert("用户创建成功!", function() {
+				window.location.href = "{:U('login')}"
+			}); */
+	
+	        var sendurls = $("#login_form").attr("action");
+	        var sendForms = "check=1";//$("#login_form").serialize();
+	        $.ajax({
+	            type:'post',
+	            url:sendurls,
+	            data:sendForms,
+	            dataType:'json',
+	            success:function(data){
+	                if(data.status == 1){
+	                    $.alert(data.info, function() {
+	                        //window.location.href = data.url;
+	                    	wx.closeWindow();
+	                    });
+	                }else{
+	                    $.alert(data.info);
+	                }
+	            }
+	        });
+	    });
+	});
+
+});
+</script>
+ <include file="Public/footer" />

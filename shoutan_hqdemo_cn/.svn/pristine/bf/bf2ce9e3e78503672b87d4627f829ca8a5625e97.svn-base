@@ -1,0 +1,28 @@
+<volist name="today_data" id="vo" >
+    <div class="weui_cell_title {$vo.dates}">
+		<span>
+			<b class="blue"><i></i>{$vo.alipay_num}</b>
+			<b class="green"><i></i>{$vo.wechat_num}</b>
+			<b class="gay"><i></i>{$vo.card_num}</b>
+		</span>
+		<span class="cdate">{$vo.dates}</span>
+		<div class="clear"></div>
+    </div>
+    <div class="weui_cells weui_cells_access">
+        <volist name="vo.data" id="voo">
+        <a class="weui_cell" href="javascript:;">
+            <div class="weui_cell_hd">
+               <i class="iconfont">{:getPayType($voo['transaction_type'])}</i>
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>{:transaction_status($voo['transaction_status'])}</p>
+                <small>{$voo.transaction_datetime}</small>
+            </div>
+            <div class="weui_cell_ft">
+                + {$voo.transaction_amount}
+                <p class="org">-{$voo.transaction_commission}</p>
+            </div>
+        </a>
+        </volist>
+    </div>
+</volist>

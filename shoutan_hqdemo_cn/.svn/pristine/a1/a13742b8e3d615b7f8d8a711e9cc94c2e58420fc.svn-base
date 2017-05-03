@@ -1,0 +1,323 @@
+<?php
+namespace HQ\Controller;
+/**
+ * 
+ * @author HeQi, info@heqi.hk
+ */
+
+class OrdersGoodsController extends BaseController {
+
+    //模型配置, 1. label, 2. tips 3. type, 4. data source, 5. special logic
+    private $tca = array();
+    public $tbName = 'Orders';  //CONTROLLER_NAME
+    //private $types = array(array(1, '零元购'), array(2, '消费返现'), array(3, '商城'));
+    private $state = array(array(0, '等待付款'), array(1, '已付款'), array(2, '已发货'), array(3, '已收货'), array(4, ' 取消'));
+    //高级筛选
+    /*public $status_all = array(
+        array('status'=>'hidden', 'value'=>0, 'title'=>'显示', 'class'=>'success'),
+        array('status'=>'hidden', 'value'=>1, 'title'=>'隐藏', 'class'=>'inverse'),
+        array('status'=>'state', 'value'=>0, 'title'=>'等待付款', 'class'=>'warning'),
+        array('status'=>'state', 'value'=>1, 'title'=>'已付款', 'class'=>'important'),
+        array('status'=>'state', 'value'=>2, 'title'=>'已发货', 'class'=>'info'),
+        array('status'=>'state', 'value'=>3, 'title'=>'已收货', 'class'=>'success'),
+        array('status'=>'state', 'value'=>4, 'title'=>'已失效', 'class'=>'inverse'),
+        array('status'=>'state', 'value'=>5, 'title'=>'已过期', 'class'=>'inverse'),
+        array('status'=>'state', 'value'=>6, 'title'=>'缺货', 'class'=>'important')
+    );*/
+    public $delivery_time = array();
+
+    protected function init() {
+        //高级筛选
+        $this->assign('status_all', $this->status_all);
+
+		//送餐时间
+        $this->delivery_time = $this->getDeliveryTime();
+        $this->assign('delivery_time', $this->delivery_time);
+        
+        //分类数据
+        $payment = M('Payment')->select();
+        foreach($payment as $k => $v){
+            $payments[$v['id']] = array($v['id'],$v['title']);
+        }
+        $shipping = M('shipping')->select();
+        foreach($shipping as $k => $v){
+            $shippings[$v['id']] = array($v['id'],$v['name']);
+        }
+        $this->assign('payments', $payments);
+        $this->assign('shippings', $shippings);
+        
+        $this->assign('types', $this->types);
+        
+		//Demo状态下仅标题字段存在于数据库, 其它字段为示例
+        $this->tca = array(
+            'hidden' => array(
+                'label' => '显示',
+                'type' => 'toggle_button',
+                'data' => '0' //checkbox value
+            ),
+            'sorting' => array(
+                'label' => '排列顺序',
+                'type' => 'text'
+            ),
+            'number' => array(
+                'label' => '订单号',
+                'type' => 'text',
+                'required' => true
+            ),
+            'money' => array(
+                'label' => '订单金额',
+                'type' => 'text',
+                'required' => true
+            ),/* 
+            'type' => array(
+                'label' => '订单类型',
+                'type' => 'radio',
+                'data' => $this->types
+            ), */
+            'payment_id' => array(
+                'label' => '支付方式',
+                'type' => 'select',
+                'data' => $payments
+            ),
+/*            'shipping_id' => array(
+                'label' => '配送方式',
+                'type' => 'select',
+                'data' => $shippings
+            ),*/
+            'state' => array(
+                'label' => '订单状态',
+                'type' => 'select',
+                'data' => $this->state
+            ),
+			'username' => array(
+                'label' => '收货人姓名',
+                'type' => 'text'
+            ),
+			'mobile' => array(
+                'label' => '联系方式',
+                'type' => 'text'
+            ),
+            /* 'email' => array(
+                'label' => '收货人邮箱',
+                'type' => 'text'
+            ), */
+            'cbd_0' => array(
+                'label' => '科技园区',
+                'type' => 'text'
+            ),
+            'cbd_1' => array(
+                'label' => '园区楼层',
+                'type' => 'text'
+            ),
+            'address' => array(
+                'label' => '收货人地址',
+                'type' => 'text'
+            ),				
+			'landmark' => array(
+                'label' => '标志建筑',
+                'type' => 'text'
+            ),
+			/*
+            'zipcode' => array(
+                'label' => '收货人邮编',
+                'type' => 'text'
+            ),
+           'province' => array(
+                'label' => '收货人所在省',
+                'type' => 'text'
+            ),
+            'city' => array(
+                'label' => '收货人所在市',
+
+                'type' => 'text'
+            ),
+            'area' => array(
+                'label' => '收货人所在区',
+                'type' => 'text'
+            ),
+            'tel' => array(
+                'label' => '收货人电话',
+                'type' => 'text'
+            ),
+            'fax' => array(
+                'label' => '收货人传真',
+                'type' => 'text'
+            ), */
+            'remark' => array(
+                'label' => '订单备注',
+                'type' => 'textarea'
+            ),
+           /*,
+		    'invoice' => array(
+                'label' => '物流单号',
+                'type' => 'text'
+            ),
+            'invoice_url' => array(
+                'label' => '物流单号查询网址',
+                'type' => 'text'
+            )
+            'win' => array(
+                'label' => '是否中奖',
+                'type' => 'radio',
+                'data' => array(array(0,'没中奖'),array(1,'已中奖'))
+            ),
+            'lotto_num' => array(
+                'label' => '抽奖号',
+                'type' => 'text'
+            ), */
+        );
+    }
+
+    /*
+     * 列表页面
+     */
+
+    public function index() {
+        $this->init(); //加载初始化数据
+        import('@.Util.Page'); // 导入分页类
+        $Obj = M($this->tbName.' as o'); //实例化对象
+        $Where = "o.deleted=0";
+        //高级搜索 数据状态
+        $Where_status = ' and ( ';
+        $Where_status_info = '';
+        foreach($this->status_all as $k=>$v){
+            if(I('request.'.$v['status'])!=''){
+                $I_status = I('request.'.$v['status']);
+                if(in_array($v['value'], $I_status)){
+                    $Where_status_info .= " or o.`".$v['status']."`='".$v['value']."' ";
+                }
+            }
+        }
+        if($Where_status_info==''){
+            unset($Where_status);
+        }else{
+            $Where_status .= substr($Where_status_info, 3).' ) ';
+            $Where .= $Where_status;
+        }
+
+        // 时间搜索
+        if($starttime = I('get.starttime')){
+            $Where .=' and (o.crdate >= ' . strtotime($starttime) . ')';
+        }
+        if($endtime = I('get.endtime')){
+            $Where .=' and (o.crdate <= ' . strtotime($endtime . ' 23:59:59') . ')';
+        }
+        if (I('request.delivery_date')) {
+            $I_delivery_date = trim(I('request.delivery_date'));
+            $I_delivery_date_format_2 = date('Y/m/d', strtotime($I_delivery_date));
+            $Where .= " and (delivery_time like '%" . $I_delivery_date . "%' OR delivery_time like '%" . $I_delivery_date_format_2 . "%')";
+        }
+        if (I('request.delivery_time')!='') {
+            $I_delivery_time = trim(I('request.delivery_time'));
+            $Where .= " and (delivery_time like '%" . $I_delivery_time . "%')";
+        }
+
+        // 地区搜索
+        /* if($province = I('get.chinaprovinces_province')){
+            $Where .=' and (o.province = "' . $province . '")';
+            $dq['province'] = $province;
+        }
+        if($city = I('get.chinaprovinces_city')){
+            $Where .=' and (o.city = "' . $city . '")';
+            $dq['city'] = $city;
+        }
+        if($area = I('get.chinaprovinces_area')){
+            $Where .=' and (o.area = "' . $area . '")';
+            $dq['area'] = $area;
+        }
+        $this->assign("dq",$dq); */
+        //地标级联搜索
+        if(I('get.cbd_0')!=''){
+            $I_cbd_0 = I('get.cbd_0');
+            $Where .= " and (o.cbd_0='" . $I_cbd_0 . "')";
+            if(I('get.cbd_1')!=''){
+                $I_cbd_1 = I('get.cbd_1');
+                $Where .= " and (o.cbd_1='" . $I_cbd_1 . "')";
+            }
+            $CbdCategory = M('CbdCategory');
+            $cbd_0_id = $CbdCategory->where("deleted=0 and hidden=0 and name='".$I_cbd_0."'")->getField('id');
+            $cbd_1_list = $CbdCategory->where('deleted=0 and hidden=0 and parent_id='.$cbd_0_id)->field('name')->order('sorting asc')->select();
+            $this->assign('cbd_1_list', $cbd_1_list);
+        }
+		
+		/* if (I('request.types')) {
+             $Where .= " and o.type = '" . I('request.types') . "'";
+        } */
+        if (I('request.keyword')!='') {
+            $I_keyword = trim(I('request.keyword'));
+            $Where .= " and (o.id='" . $I_keyword . "' or og.id like '%" . $I_keyword . "%' or og.title like '%" . $I_keyword . "%')";
+        }
+        //控制分页显示条数
+        if(I('post.limit_num')!=''){
+            session('page_limit_num', I('post.limit_num'));
+        }
+        //控制列表排序
+        $sorting = I('get.sorting') ? I('get.sorting') : 'goods_num';
+        $order = I('get.order') ? I('get.order') : 'desc';
+        $limit_num = $_SESSION['page_limit_num'] ? $_SESSION['page_limit_num'] : 10;
+        // 实例化分页类 传入总记录数和每页显示的记录数
+        $list_count = $Obj->join(C('DB_PREFIX').'orders_goods as og on og.orders_id=o.id')
+                    ->group('og.goods_id')
+                    ->where($Where)
+                    ->field('og.goods_id')
+                    ->select();
+        $Page = new \HQ\Util\Page(count($list_count), $limit_num);
+        $list = $Obj->join(C('DB_PREFIX').'orders_goods as og on og.orders_id=o.id')
+                    ->group('og.goods_id')
+                    ->where($Where)
+                    ->field('og.goods_id as goods_id, og.title as goods_title, sum(og.quantity) as goods_num, sum(og.price*og.quantity) as goods_amount')
+                    ->order($sorting.' '.$order)
+                    ->limit($Page->firstRow . ',' . $Page->listRows)
+                    ->select();
+        //echo $Obj->getLastSql();exit;
+        //dump($list);exit;
+        //总计数量和总销售额
+        $total_goods_num = $total_goods_amount = 0;
+        foreach($list as $v){
+            $total_goods_num += $v['goods_num'];
+            $total_goods_amount += $v['goods_amount'];
+        }
+        $this->assign('total_goods_num', $total_goods_num);
+        $this->assign('total_goods_amount', $total_goods_amount);
+        //实际收入
+        $Where .= ' and (o.state=1 or o.state=2 or o.state=3)';
+        $orders_money = $Obj->where($Where)->field('sum(o.money) as income')->find();
+        $this->assign('real_income', $orders_money['income']);
+        
+        //读取一级地标
+        $cbd_0_list = M('cbd_category')->where('deleted=0 and hidden=0 and parent_id=0')->order('sorting asc')->field('name')->select();
+        $this->assign('cbd_0_list', $cbd_0_list);
+        
+        $this->assign('list', $list); // 赋值数据集
+        $this->assign('page', $Page->show()); // 分页显示输出
+        $this->display(); // 输出模板
+    }
+	
+    //获取地标级联
+    public function getCbdList(){
+        $name = I('name');
+        $CbdCategory = M('CbdCategory');
+        $id = $CbdCategory->where("deleted=0 and hidden=0 and name='".$name."'")->getField('id');
+        $cbd_list = $CbdCategory->where('deleted=0 and hidden=0 and parent_id='.$id)->field('name')->order('sorting asc')->select();
+        $this->success($cbd_list);
+    }
+	
+    //获取送餐时间(从后台配置获取区间 以1小时为偏移量)
+    public function getDeliveryTime($start_time = '', $end_time = ''){
+        $time_list = array();
+        if($this->Config['delivery_time']){
+            $time = explode('-', trim($this->Config['delivery_time']));
+            $start_time = ($start_time && $start_time>$time[0]) ? date('H', strtotime(trim($start_time))) : date('H', strtotime(trim($time[0])));
+            $end_time = ($end_time  && $end_time<$time[1]) ? date('H', strtotime(trim($end_time))) : date('H', strtotime(trim($time[1])));
+            $time_length = $end_time - $start_time;
+            //这里长度-1，结束时间不往后推一小时
+            for ($i=0; $i<$time_length; $i++) {
+                $time_list[$i] = $start_time+$i;
+            }
+        }
+        return $time_list;
+    }	
+	
+}
+
+?>

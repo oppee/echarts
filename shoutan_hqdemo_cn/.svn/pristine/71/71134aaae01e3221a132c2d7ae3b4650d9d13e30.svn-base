@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <include file="Public:meta"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <div id="portlet-config" class="modal hide">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"></button>
+                <h3>Widget Settings</h3>
+            </div>
+            <div class="modal-body">
+                Widget settings form goes here
+            </div>
+        </div>
+        <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>{$Think.CONTROLLER_NAME}</small>
+                    </h3>
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="icon-home"></i>
+                            <a href="{:U('Index/index')}">管理中心</a>
+
+                        </li>
+
+                        <li class="pull-right no-text-shadow">
+                            <div id="dashboard-report-range"
+                                 class="dashboard-date-range tooltips no-tooltip-on-touch-device responsive"
+                                 data-tablet="" data-desktop="tooltips" data-placement="top"
+                                 data-original-title="Change dashboard date range">
+                                <i class="icon-calendar"></i>
+                                <span></span>
+                                <i class="icon-angle-down"></i>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <div id="dashboard">
+                <!-- BEGIN DASHBOARD STATS -->
+                <div class="row-fluid">
+                    <!--<div class="span6 responsive fix-offset" data-tablet="span6" data-desktop="span6">
+                        <div class="dashboard-stat purple">
+                            <div class="visual">
+                                <i class="icon-comments"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">{$count_today_message|default=0}</div>
+                                <div class="desc">今日留言</div>
+                            </div>
+                            <a class="more" href="{:U('Message/index')}">查看更多 <i class="m-icon-swapright m-icon-white"></i></a>
+                        </div>
+                    </div>-->
+					 <div class="span6 responsive fix-offset" data-tablet="span6" data-desktop="span6">
+                        <div class="dashboard-stat blue">
+                            <div class="visual">
+                                <i class="icon-user"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">{$count_user|default=0}</div>
+                                <div class="desc">会员总数</div>
+                            </div>
+                            <a class="more" href="{:U('User/index')}">查看更多 <i class="m-icon-swapright m-icon-white"></i></a>
+                        </div>
+                    </div>
+					
+                    <div class="span6 responsive" data-tablet="span6" data-desktop="span6">
+                        <div class="dashboard-stat green">
+                            <div class="visual"><i class="icon-shopping-cart"></i></div>
+                            <div class="details">
+                                <div class="number">{$count_topic|default=0}</div>
+                                <div class="desc">帖子总数</div>
+                            </div>
+                            <a class="more" href="{:U('topic/index')}">查看更多 <i class="m-icon-swapright m-icon-white"></i></a>
+                        </div>
+                    </div>
+                   
+                   <!-- <div class="span6 responsive" data-tablet="span6" data-desktop="span6">
+                        <div class="dashboard-stat yellow">
+                            <div class="visual">
+                                <i class="icon-globe"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">{$count_news|default=0}</div>
+                                <div class="desc">文章总数</div>
+                            </div>
+                            <a class="more" href="{:U('News/index')}">查看更多 <i class="m-icon-swapright m-icon-white"></i></a>
+                        </div>
+                    </div>-->
+                    <!--<div class="span6 responsive fix-offset" data-tablet="span6" data-desktop="span6">
+                        <div class="dashboard-stat blue">
+                            <div class="visual">
+                                <i class="icon-jpy"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">{$count_today_orders|default=0}</div>
+                                <div class="desc">今日订单</div>
+                            </div>
+                            <a class="more" href="{:U('Orders/index')}">查看更多 <i class="m-icon-swapright m-icon-white"></i></a>
+                        </div>
+                    </div>-->
+                </div>
+                <div class="clearfix"></div>
+               
+
+            </div>
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+<include file="Public:footer"/>
+<script src="__TMPL__Public/plugins/jquery-easy-pie-chart/jquery.easy-pie-chart.js" type="text/javascript"></script>
+<script src="__TMPL__Public/scripts/index.js" type="text/javascript"></script>
+<include file="Public:js"/>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        Index.init();
+        //Index.initJQVMAP(); // init index page's custom scripts
+        //Index.initCalendar(); // init index page's custom scripts
+        //Index.initCharts(); // init index page's custom scripts
+        //Index.initChat();
+        //Index.initMiniCharts();
+        //Index.initDashboardDaterange();
+        //Index.initIntro();
+    });
+</script>
+</body>
+<!-- END BODY -->
+</html>

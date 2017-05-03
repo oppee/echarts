@@ -1,0 +1,10 @@
+<div class="control-group {$name}">
+	<label class="control-label">{$tca.label}<if condition="$tca['required'] eq true">*</if></label>
+    <div class="controls">
+        <select class="select2 span6" tabindex="-1" name="{$name}">
+            <option value=""></option>
+            {$tca.data}
+        </select>
+        <span class="help-inline">{$tca.help}</span>
+    </div>
+</div>

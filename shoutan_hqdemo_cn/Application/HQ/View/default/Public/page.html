@@ -1,0 +1,6 @@
+<div class="pagination pull-right">{$page}</div>
+<div class="page-jump pull-right">
+    <form action="" method="get" id="page_jump_form" onsubmit="return jumpPage()">
+        <button type="submit" class="jump-btn" id="jump-btn">跳转 <i class="icon-share-alt"></i></button>至<input class="jump-page" name="p" value="{$_GET['p']|default=1}" type="text"/>页
+    </form>
+</div>

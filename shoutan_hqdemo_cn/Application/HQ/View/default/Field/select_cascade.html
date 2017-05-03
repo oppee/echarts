@@ -1,0 +1,27 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+  <div class="controls" id="demo1"></div>
+  <script type="text/javascript" src="__TMPL__Public/scripts/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="__TMPL__Public/scripts/chinaprovinces_0.2.1.js"></script>
+  <script type="text/javascript">
+	  var province='{$dq.province}';
+	  var city='{$dq.city}';
+	  var area='{$dq.area}';
+	  $("#demo1").chinaprovinces({valueType:'name',province:province,city:city,area:area,change:function(province,city,area){
+		$("#demo1_province").val(province);
+		$("#demo1_city").val(city);
+		$("#demo1_area").val(area);
+	  }});
+	function setSelectedIndex(id,value,iterator){
+            for(var i = 0; i < document.getElementById(id).length; i++)
+            {
+                if (document.getElementById(id).options[i].value==value){
+                    document.getElementById(id).selectedIndex = i;
+                }
+            }
+            if(typeof iterator == "function") iterator();
+    }
+    setSelectedIndex("demo1",'{$dq.province}');
+  </script>
+   
+</div>

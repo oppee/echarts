@@ -1,0 +1,58 @@
+<?php
+/**
+ * 用户服务接口
+ *
+ */
+namespace Api\Controller;
+
+class UserFwxmController extends BaseController {
+
+	/**
+	 * 新增服务
+	 */
+	public function newUserFwxm(){
+		
+		//服务项目
+		$service_item = I('request.service_item');
+		//公司名称
+		$company_name = I('request.company_name');
+		//公司地址
+		$company_address = I('request.company_address');
+		//联系人
+		$contact_name = I('request.contact_name');
+		//联系电话
+		$contact_tel = I('request.contact_tel');
+		//用户申请表主键
+		$user_fwxm_id = I('request.user_fwxm_id');
+		//方便联系时间
+		$contact_time = I('request.contact_time');
+		//催促标识
+		$urge_flg = "0";
+		
+		$json['service_item'] = $service_item;
+		$json['company_name'] = $company_name;
+		$json['company_address'] = $company_address;
+		$json['contact_name'] = $contact_name;
+		$json['contact_tel'] = $contact_tel;
+		$json['user_fwxm_id'] = $user_fwxm_id;
+		$json['service_item'] = $service_item;
+		$json['contact_time'] = $contact_time;
+		$json['urge_flg'] = $urge_flg;
+		
+		$md5str = md5(json_encode($json));
+		$json['md5str'] = $md5str;
+		
+		//RSA加密
+		import("Api.Util.RSA");
+		$rsa = new \RSA();
+		$rs = $rsa->encrypted(json_encode($json));
+		
+		echo $rs;
+		
+	}
+	
+	
+	
+}
+
+?>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <include file="Public:meta"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.css"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>{$Think.CONTROLLER_NAME}</small>
+                    </h3>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+			<h3 class="form-section"></h3>
+			<div class="row-fluid">
+				<div class="span12">
+					<div class="control-group">
+						<label class="control-label"><i class="icon-download-alt"></i> 备份当前数据库：</label>
+						<div class="controls"><button type="button" id="btn-backup" class="btn green" data-url="{:U(CONTROLLER_NAME.'/backall')}"><i class="icon-download"></i> 点击备份</button>
+						<span class="help-inline"></span></div>
+					</div>
+				</div>
+			</div>
+			<h3 class="form-section"></h3>
+			<div class="row-fluid">
+				<div class="span12">
+					<div class="control-group">
+						<label class="control-label"><i class="icon-upload-alt"></i> 已备份的数据库文件列表：</label>
+						<!-- <div class="controls"><button type="button" id="btn-backup" class="btn red"><i class="icon-upload"></i> 点击恢复</button> -->
+						<span class="help-inline"></span></div>
+						<div class="dataTables_length pull-left">
+							<form id="limit_form" name="limit_form" method="post" action="">
+								<label for="limit_num">
+									<select class="limit_num" id="limit_num" name="limit_num">
+										<volist name="page_limit_num" id="vo">
+											<option <eq name="_SESSION['page_limit_num']" value="$vo"> selected="selected" </eq> value="{$vo}">{$vo}</option>
+										</volist>
+									</select>
+									个记录/每个页面
+								</label>
+							</form>
+						</div>
+						
+						<div class="portlet-body">
+							<table class="table table-striped table-hover table-bordered">
+								<notempty name="list">
+									<thead>
+										<tr>
+											<th>文件名称</th>
+											<th class="sorting <if condition='isset($_GET["sorting"]) AND isset($_GET["order"]) AND $_GET["sorting"] eq "fileTime"'>sorting-{$_GET['order']}</if><if condition="!isset($_GET['sorting'])">sorting-desc</if>" data-sorting="fileTime">备份时间</th>
+											<th>文件大小</th>
+											<th>管理操作</th>
+										</tr>
+									</thead>
+									<tbody>
+									<volist name="list" id="vo">
+										<tr>
+											<td>{$vo.name}</td>
+											<td>{$vo.time|date='Y-m-d H:i:s',###}</td>
+											<td>{$vo.size}</td>
+											<td>
+												<div class="action_btn btn3">
+													<a class="btn yellow-stripe mini recover-bak" href="javascript:;" data-href="{:U(CONTROLLER_NAME.'/recoverbak', array('file'=>$vo['name']))}">恢复</a></if>
+													<a class="btn green-stripe mini download-bak" href="{:U(CONTROLLER_NAME.'/downloadbak', array('file'=>$vo['name']))}">下载</a></if>
+													<a class="btn red-stripe mini delete-bak" href="javascript:;" data-href="{:U(CONTROLLER_NAME.'/deletebak', array('file'=>$vo['name']))}">删除</a></if>
+												</div>
+											</td>
+										</tr>
+									</volist>
+									</tbody>
+								<else />
+									<span>没有发现更多内容...</span>
+								</notempty>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="pages clearfix" style="margin-right:20px;">
+				<include file="Public:page" />
+			</div>
+			<div class="clearfix"></div>
+        </div>
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<include file="Public:footer"/>
+<!-- <script type="text/javascript" src="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.js"></script> -->
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $('#btn-backup').live('click', function(){
+			var _this = $(this);
+			var url = _this.attr('data-url');
+            $.ajax({
+                type: "post",
+                url: url,
+                data: {},
+                dataType:"json",
+                success: function(json){
+					_this.html('<i class="icon-download"></i> 点击备份').attr('disabled','').prop('disabled',false);
+					custom_alert(json.info);
+					setTimeout(function(){
+						location=location;
+					},1000);
+                },
+                beforeSend: function(){
+					_this.html('<i class="icon-download"></i> 备份中...').attr('disabled','disabled').prop('disabled',true);
+                }
+            });
+            return false;
+        })
+        $('.delete-bak').live('click', function(){
+			var _this = $(this);
+			var url = _this.attr('data-href');
+			custom_confirm('确定删除此条备份吗？', function(){
+				$.ajax({
+					type: "get",
+					url: url,
+					data: {},
+					dataType:"json",
+					success: function(json){
+						if(json.status==1){
+							_this.closest('tr').fadeOut('slow');
+						}else{
+							custom_alert(json.info);
+						}
+					},
+					beforeSend: function(){
+					}
+				});
+				return false;
+			})
+        })
+        $('.recover-bak').live('click', function(){
+			var _this = $(this);
+			var url = _this.attr('data-href');
+			custom_confirm('确定恢复此条备份吗？', function(){
+				$.ajax({
+					type: "get",
+					url: url,
+					data: {},
+					dataType:"json",
+					success: function(json){
+						custom_alert(json.info);
+					},
+					beforeSend: function(){
+					}
+				});
+				return false;
+			})
+        })
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

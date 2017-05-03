@@ -1,0 +1,55 @@
+<include file="Public:header"/>
+<!--账户列表-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/account.jpg"/>
+</div>
+
+<div class="weui_cells account_list">
+	<volist name="list" id="vo">
+		<div class="weui_cell">
+			<p>{$vo.crm_kh_dpmc}</p>
+			<h2>{$vo.mobile}</h2>
+			<div class="list_link">{$vo.accessStr}<a class="blue fr unbind" href="javaScript:;" data-id="{$vo.id}" data-uid="{$vo.users}">解绑</a> </div>
+		</div>
+	</volist>
+</div>
+
+<div style="height:90px;">&nbsp;</div>
+<div class="weui_btn_area fixed_weui_btn">
+	<a href="{:U('createAccount')}" class="weui_btn weui_btn_warn" title="创建新账户">创建新账户</a>
+</div>
+<script>
+$(document).ready(function(){
+	$('.unbind').click(function(){
+		var _this=$(this);
+		var _key=_this.attr('data-id');
+		var _ukey=_this.attr('data-uid');
+		if(!_key || !_ukey){
+			$.alert("获取参数错误！");
+			return false;
+		}		
+		$.ajax({
+			url:"{:U('unAccountBind')}",
+			method:"POST",
+			data: { key: _key,ukey:_ukey },
+			dataType:"json",
+			success:function(data){
+				if(data.status>0){
+					$.alert(data.info,function(){
+						_this.parent('div').parent('.weui_cell').remove();
+					});
+				}else{
+					$.alert(data.info);
+					return false;
+				}
+			},
+			error:function(){
+				$.alert("网络不给力哦，请稍后再试。。。");
+				return false;
+			},
+			async:false
+		});
+	});
+});
+</script>
+<include file="Public:footer"/>

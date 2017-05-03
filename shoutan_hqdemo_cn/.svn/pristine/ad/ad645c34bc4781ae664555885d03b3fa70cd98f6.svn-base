@@ -1,0 +1,63 @@
+<include file="Public:header"/>
+
+<div class="account_banner">
+	<img src="__TMPL__Public/images/apply_index.png"/>
+</div>
+
+<div class="weui_cells account_list bindlist apply_list">
+	<volist name="list" id="vo">
+		<div class="weui_cell">
+			<p>
+				<i class="apply_ico data_ico"></i><?php echo date('Y-m-d',strtotime($vo['application_time'])); ?> 
+				<span><?php echo date('H:i:s',strtotime($vo['application_time'])); ?></span>
+				<if condition="$vo['contact_status'] eq 1">
+				<span class="fr">已联系</span>
+				<else />
+				<span class="fr ogr_color">未联系</span>
+				</if>
+			</p>
+			<h1>申请 {$vo.service_item}</h1>
+			<div class="list_link"><span>{$vo.company_name}</span><span>{$vo.contact_name}</span>
+				<?php if((empty($vo['remind_time']) || strtotime($vo['remind_time'])<strtotime(date('Y-m-d 00:00:00'))) && ($vo['contact_status']==0)){ ?>
+				<a class="blue_ico apply_ico updRemind" href="javaScript:;" data-id="{$vo.id}"></a> 
+				<?php } ?>
+			</div>
+		</div>
+	</volist>
+</div>
+
+<p class="weui_btn_area list_btn apply_btn">
+	<a href="{:U('service')}" class="weui_btn weui_btn_warn" title="创建新账户">创建新账户</a>
+</p>
+<script>
+$(document).ready(function(){
+	$('.updRemind').click(function(){
+		var _this=$(this);
+		var _key=_this.attr('data-id');
+		if(!_key){
+			$.alert("获取参数错误！");
+			return false;
+		}		
+		$.ajax({
+			url:"{:U('updateRemind')}",
+			method:"POST",
+			data: { key: _key },
+			dataType:"json",
+			success:function(data){
+				if(data.status>0){
+					_this.hide();
+				}else{
+					$.alert(data.info);
+					return false;
+				}
+			},
+			error:function(){
+				$.alert("网络不给力哦，请稍后再试。。。");
+				return false;
+			},
+			async:false
+		});
+	});
+});
+</script>
+<include file="Public:footer"/>

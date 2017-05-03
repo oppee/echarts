@@ -1,0 +1,13 @@
+<div class="control-group {$name}">
+    <label class="control-label">{$tca.label}</label>
+    <div class="controls">
+        <div class="success-toggle-button">
+            <eq name="info[$name]" value="$tca.data">
+                <input type="checkbox" class="toggle" checked="checked" name="{$name}" value="{$tca.data}"/>
+                <else/>
+                <input type="checkbox" class="toggle" name="{$name}" value="{$tca.data}"/>
+            </eq>
+        </div>
+        <span class="help-block">{$tca.help}</span>
+    </div>
+</div>

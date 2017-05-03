@@ -1,0 +1,150 @@
+<?php
+namespace Mobile\Controller;
+use Think\Page;
+// use Mobile\Controller\BaseController;
+/**
+ * 商户圈
+ * @author zhaojie
+ */
+class BusinessController extends BaseController{
+	private $appid;
+	private $secret;
+	
+	public function _initialize(){
+		$this->appid = C('WECHAT_APPID');
+		$this->secret = C('WECHAT_SECRET');
+		parent::_initialize();
+	}
+	
+	/**
+	 * 商圈首页
+	 */
+	public function index(){
+	
+		$this->assign('title',"我的圈子");
+		//授权获得用户信息
+		$openid = session('openid');
+		if(empty($openid)){
+			$openid = I('request.openid');
+		}
+		/* if(empty($openid) || $openid == '-1'){
+			$code = I('request.code');
+			if($code){
+				$openid_array = $this->getOpenid($code);
+				$openid = $openid_array['openid'];
+				$access_token = $openid_array['access_token'];
+				session('openid',$openid_array['openid'],3600);
+				session('access_token',$access_token,3600);
+			}else{
+				$url = "http://" . $_SERVER['SERVER_NAME'] . "" . U("Mobile/Business/".ACTION_NAME);
+				$scope = I('request.scope')?I('request.scope'):'snsapi_userinfo';
+				$this->autho_url($url, $scope);die;
+			}
+		}
+		if(session('access_token')){
+			$access_token = session("access_token");
+		}
+		$wechat_info = $this->getWechatUserinfo($openid,$access_token);
+		$this->assign('wechat_info',$wechat_info);
+		 */
+		$user_id = I('requet.userid');
+		//查询论坛一级分类
+		$where_p = array('parent_id' => 0);
+		$P_Obj = M('topic_category');
+		$business_category = $P_Obj->where($where_p)->select();
+		$this->assign('business_category',$business_category);
+		//获取二级分类并获取最新帖子时间
+		foreach($business_category as $key => $val){
+			$c_where = array("parent_id"=>$val['id']);
+			$t_tmp = $P_Obj->where($c_where)->select();
+			foreach ($t_tmp as $k => $v){
+				$where = array("category" => $v['id']);
+				$v['newdata'] = M('topic')->where($where)->field('title,user_id,crdate,category,max(crdate)')->find();
+				$t_business[] = $v;
+			}
+		}
+		$this->assign('t_business',$t_business);
+		$this->display();
+	}
+	
+	/**
+	 * 商圈列表
+	 */
+	public function lists(){
+		$category = I('request.category');
+		$P_Obj = M('topic_category');
+		$where_c = array("id" => $category);
+		//查询分类
+		$category_info = $P_Obj->where($where_c)->find();
+		$this->assign('category',$category_info);
+
+		$t_obj = M('topic');
+		//统计数量
+		$count_num = $t_obj->alias('a')->where("a.category='{$category}'")->count();
+		$this->assign('count_num',$count_num);
+		
+		//今日帖子
+		$today_where = array("a.category"=>$category,'a.crdate'=>array('gt',strtotime(date('Y-m-d'))));
+		$today_num = $t_obj->alias('a')->where($today_where)->count();
+		$this->assign('today_num',$today_num);
+		
+		//查询列表
+		$pagesize = 3;
+		$Page = new \Think\Page($count_num, $pagesize);
+		$lists = $t_obj->where(array('deleted' => 0, 'hidden' => 0,"category"=>$category))->limit($Page->firstRow . ',' . $Page->listRows)->select();
+		$this->assign("lists",$lists);
+		
+		 
+		$this->assign('title',$category_info['name']);
+		//分类点击数+1
+		$this->addHit("topic_category", $category);
+		$this->display();
+	}
+	
+	/**
+	 * 商圈加载更多
+	 */
+	public function getListJson(){
+		$category = I('request.category');
+		$t_obj = M('topic');
+		//查询列表
+		$count_num = $t_obj->alias('a')->where("a.category='{$category}'")->count();
+		$this->assign('count_num',$count_num);
+		$pagesize = 3;
+		$page = I('request.page');
+		$Page = new \Think\Page($count_num, $pagesize);
+		$lists = $t_obj->where(array('deleted' => 0, 'hidden' => 0,"category"=>$category))->page($page,$pagesize)->select();
+		$data['count'] = count($lists);
+		$data['list'] = $lists;
+ 		$this->ajaxReturn($data,JSON);
+	}
+	
+	//商圈帖子详情
+	public function info() {
+		$this->assign('title',"话题");
+		$id = I('request.id');
+		$info = M('topid')->find($id);
+// 		var_dump($info);die;
+		$this->display();
+	}
+
+	//发表帖子
+	public function fabiao(){
+		if(IS_POST){
+			
+		}else{
+			$this->display();
+		}
+	}
+	
+	public function topiclinks(){
+		$id = I('request.id');
+		$tbName = "topic";
+		$this->likes($tbName, $id);
+		$data = array(
+			"code" => "0",
+			"info" => "success",
+		);
+		$this->ajaxReturn($data,JSON);
+	}
+}

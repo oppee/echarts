@@ -1,0 +1,378 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js"> <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+    <include file="Public:meta"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/jquery-nestable/jquery.nestable.css"/>
+    <link rel="stylesheet" type="text/css" href="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.css"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed">
+<include file="Public:header"/>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <include file="Public:sidebar"/>
+    <!-- BEGIN PAGE -->
+    <div class="page-content">
+        <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <div id="portlet-config" class="modal hide">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"></button>
+                <h3>portlet Settings</h3>
+            </div>
+            <div class="modal-body">
+                <p>Here will be a configuration form</p>
+            </div>
+        </div>
+        <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+        <!-- BEGIN PAGE CONTAINER-->
+        <div class="container-fluid">
+            <!-- BEGIN PAGE HEADER-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                    <h3 class="page-title">{$ParentPageName}
+                        <small>Menu</small>
+                    </h3>
+                    <!-- END PAGE TITLE & BREADCRUMB-->
+                </div>
+            </div>
+            <!-- END PAGE HEADER-->
+            <!-- BEGIN PAGE CONTENT-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="portlet">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-plus"></i>{$PageName}</div>
+                        </div>
+                        <div class="portlet-body form">
+                            <form action="" class="form-horizontal" method="post">  
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">显示</label>
+                                            <div class="controls">
+                                                <div class="success-toggle-button">
+                                                    <if condition="$menu_info['hidden'] eq '0' or I('get.cmd') eq 'menu_add'">
+                                                        <input type="checkbox" class="toggle" checked="checked" name="hidden" value="0"/>
+                                                    <else/>
+														<input type="checkbox" class="toggle" name="hidden" value="0"/>
+													</if>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">显示位置</label>
+                                        <div class="controls">
+											<label class="checkbox"><input type="checkbox" value="0" name="position[]" <if condition="in_array(0,$position) eq true">checked="checked"</if> >主导航</label>
+											<label class="checkbox"><input type="checkbox" value="1" name="position[]" <if condition="in_array(1,$position) eq true">checked="checked"</if> >页头导航</label>
+											<label class="checkbox"><input type="checkbox" value="2" name="position[]" <if condition="in_array(2,$position) eq true">checked="checked"</if> >页脚导航</label>
+											<label class="checkbox"><input type="checkbox" value="3" name="position[]" <if condition="in_array(3,$position) eq true">checked="checked"</if> >帮助导航</label>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>                              
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">父级</label>
+                                            <div class="controls">
+                                                <select data-placeholder="请选择父级" class="select2 span12" tabindex="-1" name="parent_id">
+                                                    <option value="0">顶级</option>{$menu_tree}</select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">系统内容</label>
+                                            <div class="controls">
+                                                <select data-placeholder="" class="select2 span12" tabindex="-1" name="cate_tree" id="cate_tree" data-url="{:U('Index/menu')}">
+                                                    <option value="0">请选择...</option>
+                                                        <optgroup label="商品分类">
+                                                        <volist name="goods_tree" id="vo2">
+                                                            <option <if condition="strtolower($menu_info['model']) eq 'goods' AND substr($menu_info['param'],3) eq $vo2[0]">selected="selected"</if> value="Goods_{$vo2[0]}">{$vo2[1]}</option>
+                                                        </volist>
+                                                        </optgroup>
+                                                        <optgroup label="文章分类">
+                                                        <volist name="news_tree" id="vo">
+                                                            <option <if condition="strtolower($menu_info['model']) eq 'news' AND $menu_info['type'] eq 1 AND substr($menu_info['param'],3) eq $vo[0]">selected="selected"</if> value="News_{$vo[0]}">{$vo[1]}</option>
+                                                        </volist>
+                                                        </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">标题</label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" name="title" value="{$menu_info.title}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">别名</label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" name="alias" value="{$menu_info.alias}"/>
+                                                <span class="help-inline">请填写英文字母、下划线或数字，并且不出现空格！</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">类型</label>
+                                            <div class="controls">
+                                                <select data-placeholder="请选择菜单类型" class="medium span12" tabindex="-1" name="type" id="menu_type">
+													<option value="0" <eq name="menu_info.type" value="0">selected="selected"</eq> >内容页面</option>
+													<option value="1" <eq name="menu_info.type" value="1">selected="selected"</eq> >内部链接</option>
+													<option value="2" <eq name="menu_info.type" value="2">selected="selected"</eq> >外部链接</option>
+													<option value="3" <eq name="menu_info.type" value="3">selected="selected"</eq> >标题菜单</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">打开方式</label>
+                                            <div class="controls">
+                                                <select data-placeholder="请选择打开方式" class="span12" tabindex="-1" name="target">
+													<option value="_self" <eq name="menu_info.target" value="_self">selected="selected"</eq> >当前窗口</option>
+													<option value="_blank" <eq name="menu_info.target" value="_blank">selected="selected"</eq> >新窗口</option>
+													<option value="_parent" <eq name="menu_info.target" value="_parent">selected="selected"</eq> >父级窗口</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">图标</label>
+                                            <div class="controls">
+                                                <select data-placeholder="请选择图标" class="span12 select2" tabindex="-1" name="icon"
+                                                        id="menu_icon">
+                                                    <option value="">无图标</option>
+                                                    <volist name="icons" id="level1">
+                                                        <optgroup label="{$level1.label}">
+                                                            <volist name="level1.value" id="level2">
+                                                                <eq name="menu_info.icon" value="$level2">
+                                                                    <option value="{$level2}" selected="selected">{$level2}</option>
+                                                                    <else/>
+                                                                    <option value="{$level2}">{$level2}</option>
+                                                                </eq>
+                                                            </volist>
+                                                        </optgroup>
+                                                    </volist>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group image">
+                                            <label class="control-label">菜单图片</label>
+                                            <div class="controls">
+                                                <div class="span12 fileupload <notempty name="menu_info[image]">fileupload-exists<else />fileupload-new</notempty>" data-provides="fileupload">
+                                                    <div class="input-append">
+                                                        <div class="uneditable-input">
+                                                            <i class="icon-file fileupload-exists"></i> 
+                                                            <span class="fileupload-filename">
+                                                                <notempty name="menu_info[image]">
+                                                                    {$menu_info[image]}
+                                                                </notempty>
+                                                            </span>
+                                                        </div>
+                                                        <span class="btn btn-file">
+                                                            <span class="fileupload-new">选择图片</span>
+                                                            <span class="fileupload-exists">更改图片</span>
+                                                            <input type="file" class="default" name="image" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="fileupload-preview thumbnail">
+                                                      <notempty name="menu_info[image]">
+                                                        <img src="__ROOT__/{$Config['path_upload']}Menu/{$menu_info[image]}"/>
+                                                      </notempty>
+                                                    </div>
+                                                    <div class="btn-box">
+                                                      <notempty name="menu_info[image]">
+                                                        <a class="btn green-stripe mini image_view fileupload-change" href="#show_pic" data-toggle="modal" data-width="auto" rel="__ROOT__/{$Config['path_upload']}Menu/{$menu_info[image]}">预览 <i class="icon-eye-open"></i></a>
+                                                      </notempty>
+                                                      <div class="clear"></div>
+                                                      <a class="btn red-stripe mini image_delete fileupload-exists" href="javascript:void(0);" data-dismiss="fileupload">删除 <i class="icon-trash"></i></a>
+                                                      <input type="hidden" value="0" name="delete_image" class="fileupload-delete" />
+                                                    </div>
+                                                </div>
+                                                <span class="help-block">{$tca.help}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row-fluid menu_type menu_type1 hide">
+                                    <div class="span6">
+                                        <div class="control-group menu_type menu_type1 hide">
+                                            <label class="control-label">模块</label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" name="model" value="{$menu_info.model}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group menu_type menu_type1 hide">
+                                            <label class="control-label">方法</label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" name="action" value="{$menu_info.action}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid menu_type menu_type1 hide">
+                                    <div class="span6">
+                                        <div class="control-group menu_type menu_type1 hide">
+                                            <label class="control-label">参数</label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" name="param" value="{$menu_info.param}"/>
+                                                <span class="help-inline">例:groupid=1&cmd=abc</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid menu_type menu_type2 hide">
+                                    <div class="span6">
+                                        <div class="control-group menu_type menu_type2 hide">
+                                            <label class="control-label">链接</label>
+                                            <div class="controls">
+                                                <input type="text" class="m-wrap span12" name="url" value="{$menu_info.url}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid menu_type menu_type0 hide">
+                                    <div class="span12">
+                                        <div class="control-group menu_type menu_type0 hide">
+                                            <label class="control-label">页面内容</label>
+                                            <div class="controls">
+                                                <script id="container" name="content" type="text/plain" style="height:500px">{$menu_info.content}</script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid menu_type menu_type1 menu_type0 hide">
+                                    <div class="span6">
+                                        <div class="control-group menu_type menu_type1 menu_type0 hide">
+                                            <label class="control-label">页面标题</label>
+                                            <div class="controls"><input type="text" name="meta_title" class="span12 m-wrap " value="{$menu_info.meta_title}"><span class="help-inline">一般不超过80个字符</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="control-group menu_type menu_type1 menu_type0 hide ">
+                                            <label class="control-label">页面关键字</label>
+                                            <div class="controls"><input type="text" name="meta_keywords" class="span12 m-wrap" value="{$menu_info.meta_keywords}"><span class="help-inline">如有多个，请在每个之间使用半角逗号（,）分隔</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label">备注</label>
+                                            <div class="controls"><textarea class="span12 m-wrap" rows="3" name="remark">{$menu_info.remark}</textarea></div>
+                                        </div>
+                                    </div>
+                                    <div class="span6 menu_type menu_type1 menu_type0 hide">
+                                        <div class="control-group menu_type menu_type1 menu_type0 hide">
+                                            <label class="control-label">页面描述</label>
+                                            <div class="controls"><textarea name="meta_description" rows="3" class="span12 m-wrap">{$menu_info.meta_description}</textarea><span class="help-inline">一般不超过200个字符</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+																
+                                <div class="form-actions">
+                                    <button type="submit" class="btn blue">保存数据 <i class="icon-save"></i></button>
+                                    <a href="{:U('Index/menu', array('app'=>I('request.app')))}" class="btn">返回列表 <i class="icon-share-alt"></i></a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+
+<div id="menu_add_box" class="modal hide fade" tabindex="-1" data-backdrop="static" data-keyboard="false"
+     data-width="760"></div>
+
+<include file="Public:footer"/>
+<script type="text/javascript" src="__TMPL__Public/plugins/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        // initiate layout and plugins
+
+        //图标选择
+        var format = function (state) {
+            if (!state.id) return state.text; // optgroup
+            return '<i class="' + state.id + '"></i> ' + state.text;
+        };
+				
+        $("#menu_icon").select2({
+            allowClear: true,
+            formatResult: format,
+            formatNoMatches: function () {
+                return "对不起，没有找到匹配项";
+            },
+            formatSelection: format,
+            escapeMarkup: function (m) {
+                return m;
+            }
+        });
+        
+        $('#cate_tree').click(function(){
+            var cateInfo = $('#cate_tree option:selected').val();
+            var url = $('#cate_tree').attr('data-url');
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: "cateInfo="+cateInfo,
+                dataType:"json",
+                success: function(json){
+                    if(json.data!=null){
+                        $('input[name="title"]').val(json.data.name);
+                        $('input[name="alias"]').val(json.data.alias);
+                        $('input[name="model"]').val(json.data.model);
+                        $('input[name="action"]').val(json.data.action);
+                        $('input[name="param"]').val(json.data.param);
+                    }
+                },
+                error: function(json){
+                    $('input').val('');
+                }
+            });
+        });
+    });
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

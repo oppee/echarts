@@ -1,0 +1,3 @@
+<?php
+//000000000000a:3:{i:0;a:7:{s:2:"id";s:1:"1";s:5:"image";N;s:4:"name";s:9:"茶叶类";s:4:"type";N;s:3:"pid";s:1:"0";s:6:"remark";s:0:"";s:5:"title";s:9:"茶叶类";}i:1;a:7:{s:2:"id";s:1:"2";s:5:"image";N;s:4:"name";s:9:"茶具类";s:4:"type";N;s:3:"pid";s:1:"0";s:6:"remark";s:0:"";s:5:"title";s:9:"茶具类";}i:2;a:7:{s:2:"id";s:1:"3";s:5:"image";N;s:4:"name";s:6:"酒店";s:4:"type";N;s:3:"pid";s:1:"0";s:6:"remark";s:0:"";s:5:"title";s:6:"酒店";}}
+?>

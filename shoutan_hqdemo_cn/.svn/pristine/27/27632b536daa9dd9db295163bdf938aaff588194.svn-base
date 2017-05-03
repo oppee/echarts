@@ -1,0 +1,147 @@
+
+<include file="Public:header"/>
+<!--开通下属账户-->
+<div class="account_banner">
+	<img src="__TMPL__Public/images/account.jpg"/>
+</div>
+
+<div class="weui_cells create_account">
+	<div class="weui_cell dro_sec" id="divselect">
+		<span>选择商户</span>
+		<b class="fr"><i class="fa fa-angle-down" id="fa"></i></b>
+		<div class="radio" style="display: none;">
+			<div class="weui_cells weui_cells_radio">
+				<volist name="list" id="vo">
+					<label class="weui_cell weui_check_label" for="x{$vo.crm_kh_khjlID}">
+						<div class="weui_cell_bd weui_cell_primary">
+							<p>{$vo.crm_kh_dpmc}</p>
+						</div>
+						<div class="weui_cell_ft">
+							<input type="radio" class="weui_check" name="radio1" value="{$vo.store}" id="x{$vo.crm_kh_khjlID}">
+							<i class="weui_icon_checked"></i>
+						</div>
+					</label>
+				</volist>
+			</div>
+		</div>
+		<input name="" type="hidden" value="3" id="inputselect">
+	</div>
+	<div class="weui_cell flex">
+		<div class="weui_cell_hd"><label class="weui_label">手机号</label></div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input" type="tel" id="phone" name="phone" placeholder="请输入手机号">
+		</div>
+	</div>
+	<div class="weui_cell choose_kinds">
+		<span>开通权限(可多选)</span>
+		<div class="weui_cells weui_cells_checkbox">
+			<volist name="accessList" id="avo">
+				<label class="weui_cell weui_check_label" for="s{$avo.id}">
+					<div class="weui_cell_bd weui_cell_primary">
+						<p>{$avo.title}</p>
+					</div>
+					<div class="weui_cell_hd">
+						<input type="checkbox" class="weui_check" name="checkbox1" value="{$avo.id}" id="s{$avo.id}">
+						<i class="weui_icon_checked"></i>
+					</div>
+				</label>
+			</volist>
+		</div>
+	</div>
+	<div class="weui_btn_area" style="margin-top: 160px;">
+		<a href="javascript:;" class="weui_btn weui_btn_warn" id="btnCommit" title="完成">完成</a>
+	</div>
+</div>
+
+<script>
+	//    下拉
+	$(function(){
+		$.divselect("#divselect","#inputselect");
+	});
+
+	jQuery.divselect = function(divselectid,inputselectid) {
+		var inputselect = $(inputselectid);
+		$(divselectid+" span").click(function(){
+			var ul = $(divselectid+" .radio");
+			if(ul.css("display")=="none"){
+				//展开
+				ul.slideDown("fast");
+				$('#fa').removeClass('fa-angle-down').addClass('fa-angle-up');
+			}else{
+				//收起
+				ul.slideUp("fast");
+				$('#fa').removeClass('fa-angle-up').addClass('fa-angle-down');
+			}
+		});
+		$(divselectid+" .fr").click(function(){
+			var ul = $(divselectid+" .radio");
+			if(ul.css("display")=="none"){
+				ul.slideDown("fast");
+				$('#fa').removeClass('fa-angle-down').addClass('fa-angle-up');
+			}else{
+				ul.slideUp("fast");
+				$('#fa').removeClass('fa-angle-up').addClass('fa-angle-down');
+			}
+		});
+		$(divselectid+" .radio .weui_cell_bd p").click(function(){
+			var txt = $(this).text();
+			$(divselectid+" span").html(txt);
+			var value = $(this).attr("selectid");
+			inputselect.val(value);
+			$(divselectid+" .radio").hide();
+		});
+	};
+	
+  	$("#btnCommit").click(function () {
+  		var radio=$("input[name='radio1']:checked");
+  		var _radioval="";
+  		if(radio.length<1){
+  			 $.alert('请输入商户！');
+             return false;
+  		}else{
+  			$("input[name='radio1']:checked").each(function(){
+  				_radioval=$(this).val();
+  			});
+  		}
+  		if(_radioval==""){
+  			 $.alert('请输入商户！');
+             return false;
+  		}
+        var _phone = $("#phone").val();
+        if(_phone==''){
+            $.alert('请输入手机号码！');
+            return false;
+        }else{
+            if(!(/^1[3|4|5|7|8][0-9]\d{8,8}$/).test(_phone)){
+                $.alert('请输入有效的手机号码！');
+                return false;
+            }
+        }
+        var _check=$("input[name='checkbox1']:checked");
+        if(_check.length<1){
+        	 $.alert('请选择要开通的权限！');
+             return false;
+        }
+        var _accessStr="";
+        _check.each(function(){
+        	_accessStr+=$(this).val()+",";
+        });
+		
+        var sendurls = "{:U('addAccount')}";
+        $.ajax({
+            type:'post',
+            url:sendurls,
+            data:{store:_radioval,phone:_phone,accessStr:_accessStr},
+            dataType:'json',
+            success:function(data){
+                if(data.status == 1){
+                    window.location.href = data.url;
+                }else{
+                    $.alert(data.info);
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+<include file="Public:footer"/>
